@@ -50,4 +50,21 @@ htpasswd -cm /cm/etc/svn-users username
     * For subsequent user creations use
       {{{
 htpasswd -m /cm/etc/svn-users username
-      }}}  
+      }}}
+  # *Generate a Selfsigned SSL Certificate*
+    {{{
+    genkey --days 1024 servername
+    }}}
+    Then you need to edit _/etc/httpd/conf.d/ssl.conf_ to have it utilize your new certificate
+    {{{
+  SSLCertificateFile /etc/pki/tls/certs/servername.cert
+  SSLCertificateKeyFile /etc/pki/tls/private/servername.key
+    }}}
+  # *Setting the access permission levels*
+    Edit _/cm/etc/svnauthorz.conf_ so it contains the following
+    {{{
+[/]
+username = rw
+    }}}
+  # *Install the subversion administration tool*
+    _details soon_  
