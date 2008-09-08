@@ -11,12 +11,15 @@
       <!-- <inherits name="com.google.gwt.user.theme.dark.Dark"/>     -->
 
       <!-- Other module inherits                                      -->
-
+	  <inherits name='com.gwtext.GwtExt'/>
 
       <!-- Specify the app entry point class.                         -->
       <entry-point class='com.gorthaur.svnadmin.client.SvnAdministration'/>
     
       <!-- Specify the application specific style sheet.              -->
       <stylesheet src='SvnAdministration.css' />
+      <stylesheet src="js/resources/css/ext-all.css" />
+	  <script src="js/adapter/ext/ext-base.js" />
+	  <script src="js/ext-all.js" />
 	
 </module>
