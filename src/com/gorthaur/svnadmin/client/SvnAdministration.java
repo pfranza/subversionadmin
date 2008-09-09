@@ -16,6 +16,7 @@ public class SvnAdministration extends Panel implements EntryPoint {
 
 	final MainPanel mainPanel = new MainPanel();
 	final LoginWindow login = new LoginWindow();
+	private static Viewport viewPort;
 	
 	public SvnAdministration() {
 		setBorder(false);  
@@ -28,8 +29,9 @@ public class SvnAdministration extends Panel implements EntryPoint {
 		login.addListener(new LoginWindowListener() {
 			public void loginSuccess() {				
 				mainPanel.setVisible(true);
-				SvnAdministration.this.doLayout();
 				login.hide();
+				SvnAdministration.this.doLayout();
+				viewPort.doLayout();
 			}
 		});
 		
@@ -37,6 +39,8 @@ public class SvnAdministration extends Panel implements EntryPoint {
 			public void logout() {
 				mainPanel.setVisible(false);
 				login.show(SvnAdministration.this.getId());
+				SvnAdministration.this.doLayout();
+				viewPort.doLayout();
 			}
 		});
 		
@@ -45,6 +49,6 @@ public class SvnAdministration extends Panel implements EntryPoint {
 	}
 
 	public void onModuleLoad() {
-		new Viewport(this);
+		viewPort = new Viewport(this);
 	}
 }
