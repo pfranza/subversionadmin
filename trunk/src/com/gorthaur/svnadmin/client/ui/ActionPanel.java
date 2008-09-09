@@ -1,8 +1,10 @@
 package com.gorthaur.svnadmin.client.ui;
 
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.gwtext.client.core.RegionPosition;
 import com.gwtext.client.widgets.Panel;
-import com.gwtext.client.widgets.form.Label;
 import com.gwtext.client.widgets.layout.AccordionLayout;
 import com.gwtext.client.widgets.layout.BorderLayout;
 import com.gwtext.client.widgets.layout.BorderLayoutData;
@@ -13,9 +15,9 @@ public class ActionPanel extends Panel {
 
 	private class UserAdminMenu extends Panel {
 		
-		private Label addUser = new Label("Add User"); 
-		private Label modUser = new Label("Modify User");
-		private Label delUser = new Label("Delete User");
+		private Hyperlink addUser = new Hyperlink("Add User", "0"); 
+		private Hyperlink modUser = new Hyperlink("Modify User", "1");
+		private Hyperlink delUser = new Hyperlink("Delete User", "2");
 		
 		public UserAdminMenu() {
 			super("Users");
@@ -24,13 +26,14 @@ public class ActionPanel extends Panel {
 			add(addUser);
 			add(modUser);
 			add(delUser);
+			
 		}
 		
 	}
 	
 	private class NotificationsMenu extends Panel {
 		
-		private Label configureNotifications = new Label("Configure");
+		private Hyperlink configureNotifications = new Hyperlink("Configure", "3");
 		
 		public NotificationsMenu() {
 			super("Notifications");
@@ -43,8 +46,8 @@ public class ActionPanel extends Panel {
 	
 	private class InformationMenu extends Panel {
 		
-		private Label stats = new Label("Statistics"); 
-		private Label backups = new Label("Backups");
+		private Hyperlink stats = new Hyperlink("Statistics", "4"); 
+		private Hyperlink backups = new Hyperlink("Backups", "5");
 		
 		public InformationMenu() {
 			super("Server Info");
@@ -67,10 +70,19 @@ public class ActionPanel extends Panel {
 		}
 	}
 	
-	private class ContentPanel extends Panel {
+	private class ContentPanel extends Panel implements HistoryListener {
+		
+		private CardLayout layout = new CardLayout(false);
+		private AddUserFormPanel addUserForm = new AddUserFormPanel();
+		
 		public ContentPanel() {
-			setCollapsible(false);
-			setLayout(new CardLayout(true));
+			setLayout(layout);
+			History.addHistoryListener(this);
+			add(addUserForm);			
+		}
+
+		public void onHistoryChanged(String historyToken) {
+			setActiveItem(Integer.valueOf(historyToken));
 		}
 	}
 	
