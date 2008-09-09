@@ -19,7 +19,7 @@ public class MainPanel extends Panel {
 	public MainPanel() {
 	
 		setLayout(new FitLayout());
-		setPaddings(15);
+		setPaddings(0);
 		setBorder(true);
 		
 		createToolbar();
