@@ -11,53 +11,78 @@ import com.gwtext.client.widgets.layout.VerticalLayout;
 
 public class ActionPanel extends Panel {
 
+	private class UserAdminMenu extends Panel {
+		
+		private Label addUser = new Label("Add User"); 
+		private Label modUser = new Label("Modify User");
+		private Label delUser = new Label("Delete User");
+		
+		public UserAdminMenu() {
+			super("Users");
+			setLayout(new VerticalLayout(10));
+			setPaddings(15);
+			add(addUser);
+			add(modUser);
+			add(delUser);
+		}
+		
+	}
+	
+	private class NotificationsMenu extends Panel {
+		
+		private Label configureNotifications = new Label("Configure");
+		
+		public NotificationsMenu() {
+			super("Notifications");
+			setLayout(new VerticalLayout(10));
+			setPaddings(15);			
+			add(configureNotifications);
+		}
+		
+	}
+	
+	private class InformationMenu extends Panel {
+		
+		private Label stats = new Label("Statistics"); 
+		private Label backups = new Label("Backups");
+		
+		public InformationMenu() {
+			super("Server Info");
+			setLayout(new VerticalLayout(10));
+			setPaddings(15); 
+			add(stats);
+			add(backups);
+		}
+	}
+	
+	private class MenuPanel extends Panel {
+		public MenuPanel() {
+			setCollapsible(false);
+			setWidth(200);
+			setLayout(new AccordionLayout(true));
+
+			add(new UserAdminMenu());
+			add(new NotificationsMenu());
+			add(new InformationMenu());
+		}
+	}
+	
+	private class ContentPanel extends Panel {
+		public ContentPanel() {
+			setCollapsible(false);
+			setLayout(new CardLayout(true));
+		}
+	}
+	
+	private MenuPanel menu = new MenuPanel();
+	private ContentPanel content = new ContentPanel();
+	
 	public ActionPanel() {
 		setLayout(new BorderLayout());
 		setBorder(false);
-		
-		
-		Panel menu = new Panel();
-			menu.setCollapsible(false);
-			menu.setWidth(200);
-			menu.setLayout(new AccordionLayout(true));
 			
-			Panel userAdministration = new Panel("Users");
-				userAdministration.setLayout(new VerticalLayout(10));
-				userAdministration.setPaddings(15);
-				Label addUser = new Label("Add User"); 
-				Label modUser = new Label("Modify User");
-				Label delUser = new Label("Delete User");
-				userAdministration.add(addUser);
-				userAdministration.add(modUser);
-				userAdministration.add(delUser);
-				
-			Panel postCommitAdmin = new Panel("Notifications");
-				postCommitAdmin.setLayout(new VerticalLayout(10));
-				postCommitAdmin.setPaddings(15);
-				Label configureNotifications = new Label("Configure");
-				postCommitAdmin.add(configureNotifications);
-			
-			Panel info = new Panel("Server Info");
-				info.setLayout(new VerticalLayout(10));
-				info.setPaddings(15);
-				Label stats = new Label("Statistics"); 
-				Label backups = new Label("Backups"); 
-				info.add(stats);
-				info.add(backups);
-
-			menu.add(userAdministration);
-			menu.add(postCommitAdmin);
-			menu.add(info);
-
-			
-		add(menu, new BorderLayoutData(RegionPosition.WEST));
-		
-		Panel main = new Panel();
-			main.setCollapsible(false);
-			main.setLayout(new CardLayout(true));
-			
-		add(main, new BorderLayoutData(RegionPosition.CENTER));
-		
+		add(menu, new BorderLayoutData(RegionPosition.WEST));			
+		add(content, new BorderLayoutData(RegionPosition.CENTER));		
 	}
 	
 }
