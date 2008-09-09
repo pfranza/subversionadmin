@@ -17,7 +17,7 @@ public class MainPanel extends Panel {
 			
 		setTopToolbar(toolbar);
 		
-		add(new LoginPanel());
+
 
 	}
 	
