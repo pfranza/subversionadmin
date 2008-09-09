@@ -26,14 +26,9 @@ public class LoginPanel extends Panel {
 		add(username);	
 		add(passLabel);
 		add(password);
-		
-		clear();
+
 	}
 	
-	public void clear() {
-		username.setRawValue("");
-		password.setRawValue("");
-	}
 	
 	public String getUsername() {
 		return username.getText().trim();
