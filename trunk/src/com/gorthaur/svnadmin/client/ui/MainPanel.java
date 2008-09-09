@@ -22,6 +22,9 @@ public class MainPanel extends Panel {
 		setBorder(true);
 		
 		Toolbar toolbar = new Toolbar();
+			toolbar.addFill();
+		
+		
 			toolbar.addButton(new ToolbarButton("Logout", new ClickListener() {
 
 				public void onClick(Button button, EventObject e) {
