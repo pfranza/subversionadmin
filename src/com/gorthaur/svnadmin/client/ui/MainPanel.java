@@ -14,6 +14,7 @@ import com.gwtext.client.widgets.layout.FitLayout;
 public class MainPanel extends Panel {
 
 	private List<MainPanelListener> listeners = new ArrayList<MainPanelListener>();
+	private ActionPanel actionPanel = new ActionPanel();
 	
 	public MainPanel() {
 	
@@ -21,22 +22,24 @@ public class MainPanel extends Panel {
 		setPaddings(15);
 		setBorder(true);
 		
+		createToolbar();
+		add(actionPanel);
+
+	}
+
+	private void createToolbar() {
 		Toolbar toolbar = new Toolbar();
 			toolbar.addFill();
 		
-		
 			toolbar.addButton(new ToolbarButton("Logout", new ClickListener() {
-
 				public void onClick(Button button, EventObject e) {
 					for(MainPanelListener l: listeners) {
 						l.logout();
 					}
 				}
-				
 			}));
 			
 		setTopToolbar(toolbar);
-	
 	}
 	
 	public void addListener(MainPanelListener listener) {

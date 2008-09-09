@@ -16,15 +16,16 @@ public class LoginWindow extends Window {
 
 	private List<LoginWindowListener> listeners = new ArrayList<LoginWindowListener>();
 	
+	private LoginPanel userdata = new LoginPanel(); 
+	
 	public LoginWindow() {
-		LoginPanel userdata = new LoginPanel(); 
+		
 		setTitle("Login");  
 		setClosable(false);
 		setResizable(false);
 		setWidth(220);  
 		setHeight(130);  
-		setPlain(true); 
-		setCloseAction(Window.CLOSE);	
+			
 		setLayout(new BorderLayout());  
 		add(userdata, new BorderLayoutData(RegionPosition.CENTER));
 		
