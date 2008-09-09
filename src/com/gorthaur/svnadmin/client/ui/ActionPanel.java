@@ -58,7 +58,7 @@ public class ActionPanel extends Panel {
 	private class MenuPanel extends Panel {
 		public MenuPanel() {
 			setCollapsible(false);
-			setWidth(200);
+			setWidth(150);
 			setLayout(new AccordionLayout(true));
 
 			add(new UserAdminMenu());
