@@ -26,16 +26,16 @@ public class ChangeMiner {
 			String password, long revisionNumber) {
 
 		long startRevision = revisionNumber;
-		long endRevision = revisionNumber; 
+		long endRevision = revisionNumber;
 
 		SVNRepository repository = null;
 		try {
 			repository = SVNRepositoryFactory.create(SVNURL
 					.parseURIEncoded(repos));
-			
+
 			ISVNAuthenticationManager authManager = SVNWCUtil
 					.createDefaultAuthenticationManager(username, password);
-			
+
 			repository.setAuthenticationManager(authManager);
 
 			Collection<?> logEntries = repository.log(new String[] { "" },
@@ -73,16 +73,21 @@ public class ChangeMiner {
 					.hasNext();) {
 				SVNLogEntryPath entryPath = (SVNLogEntryPath) logEntry
 						.getChangedPaths().get(changedPaths.next());
-				buf.append(" "
-						+ entryPath.getType()
-						+ " "
-						+ entryPath.getPath()
-						+ ((entryPath.getCopyPath() != null) ? " (from "
-								+ entryPath.getCopyPath() + " revision "
-								+ entryPath.getCopyRevision() + ")" : ""))
-								.append(System.getProperty("line.separator"));
+				buf
+						.append(
+								" "
+										+ entryPath.getType()
+										+ " "
+										+ entryPath.getPath()
+										+ ((entryPath.getCopyPath() != null) ? " (from "
+												+ entryPath.getCopyPath()
+												+ " revision "
+												+ entryPath.getCopyRevision()
+												+ ")"
+												: "")).append(
+								System.getProperty("line.separator"));
 				changesList.add(entryPath.getPath());
-				if(entryPath.getCopyPath() != null) {
+				if (entryPath.getCopyPath() != null) {
 					changesList.add(entryPath.getCopyPath());
 				}
 			}
@@ -105,21 +110,31 @@ public class ChangeMiner {
 		public final String getChanges() {
 			return changes;
 		}
-		
+
 		public final Date getDate() {
 			return date;
 		}
-		
+
 		@Override
 		public String toString() {
 			StringBuffer buf = new StringBuffer();
-			buf.append("revision: ").append(getRevision()).append(System.getProperty("line.separator"));
-			buf.append("author: ").append(getAuthor()).append(System.getProperty("line.separator"));
-			buf.append("date: ").append(getDate()).append(System.getProperty("line.separator"));
-			buf.append("message: ").append(getMessage()).append(System.getProperty("line.separator"));
-			buf.append("changes: ").append(System.getProperty("line.separator"));
-			buf.append(getChanges()).append(System.getProperty("line.separator"));
+			buf.append("revision: ").append(getRevision()).append(
+					System.getProperty("line.separator"));
+			buf.append("author: ").append(getAuthor()).append(
+					System.getProperty("line.separator"));
+			buf.append("date: ").append(getDate()).append(
+					System.getProperty("line.separator"));
+			buf.append("message: ").append(getMessage()).append(
+					System.getProperty("line.separator"));
+			buf.append("changes: ")
+					.append(System.getProperty("line.separator"));
+			buf.append(getChanges()).append(
+					System.getProperty("line.separator"));
 			return buf.toString();
+		}
+
+		public List<String> getChangeSet() {
+			return changesList;
 		}
 
 	}
