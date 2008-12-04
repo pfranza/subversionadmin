@@ -1,8 +1,10 @@
 package com.peterfranza.svnadmin.server;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.tmatesoft.svn.core.SVNLogEntry;
@@ -30,8 +32,10 @@ public class ChangeMiner {
 		try {
 			repository = SVNRepositoryFactory.create(SVNURL
 					.parseURIEncoded(repos));
+			
 			ISVNAuthenticationManager authManager = SVNWCUtil
 					.createDefaultAuthenticationManager(username, password);
+			
 			repository.setAuthenticationManager(authManager);
 
 			Collection<?> logEntries = repository.log(new String[] { "" },
@@ -55,6 +59,7 @@ public class ChangeMiner {
 		private String message;
 		private String changes;
 		private Date date;
+		private List<String> changesList = new ArrayList<String>();
 
 		private ChangeSummary(SVNLogEntry logEntry) {
 			this.revision = logEntry.getRevision();
@@ -76,6 +81,10 @@ public class ChangeMiner {
 								+ entryPath.getCopyPath() + " revision "
 								+ entryPath.getCopyRevision() + ")" : ""))
 								.append(System.getProperty("line.separator"));
+				changesList.add(entryPath.getPath());
+				if(entryPath.getCopyPath() != null) {
+					changesList.add(entryPath.getCopyPath());
+				}
 			}
 
 			this.changes = buf.toString();
