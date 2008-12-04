@@ -20,7 +20,8 @@ public class ChangeSetEmailer {
 			String subject = "svn commit: " + set.getMessage();
 			MailSender.sendMail(ApplicationProperties
 					.getProperty("smtp_server"), getFromAddress(data, set
-					.getAuthor(), "no-reply@svnserver.com"), getToAddresses(
+					.getAuthor(), ApplicationProperties
+					.getProperty("default_from_email")), getToAddresses(
 					data, set.getChangeSet()), subject.length() < 100 ? subject
 					: (subject.substring(0, 100) + "..."), set.toString());
 
