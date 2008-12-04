@@ -23,10 +23,8 @@ public class ChangeMiner {
 	public static ChangeSummary getSummary(String repos, String username,
 			String password, long revisionNumber) {
 
-		// String url = "http://svn.svnkit.com/repos/svnkit/trunk/doc";
-
 		long startRevision = revisionNumber;
-		long endRevision = revisionNumber; // HEAD (the latest) revision
+		long endRevision = revisionNumber; 
 
 		SVNRepository repository = null;
 		try {
