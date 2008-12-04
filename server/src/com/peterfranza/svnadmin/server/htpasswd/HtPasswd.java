@@ -7,7 +7,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -27,11 +29,18 @@ public class HtPasswd {
 	
 	public boolean authenticate(String username, String password) {
 		String crypt = passwds.get(username);
+		if(crypt == null || password.trim().length() == 0) {
+			return false;
+		}
 		return UnixCrypt.matches(crypt, password);
 	}
 	
 	public void setUserPassword(String username, String password) {
 		passwds.put(username, UnixCrypt.crypt(password));
+	}
+	
+	public List<String> getUsernames() {
+		return new ArrayList<String>(passwds.keySet());
 	}
 	
 	public void removeUser(String username) {
