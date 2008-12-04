@@ -3,6 +3,7 @@ package com.peterfranza.svnadmin.server.htpasswd;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.List;
 
 public class HtPasswordFileWrapper {
 
@@ -35,6 +36,10 @@ public class HtPasswordFileWrapper {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public List<String> getUsernames() {
+		return passwd.getUsernames();
 	}
 	
 }

@@ -7,6 +7,8 @@
 	<classpathentry kind="lib" path="lib/gwtext.jar"/>
 	<classpathentry kind="lib" path="libs/mail.jar"/>
 	<classpathentry kind="lib" path="libs/svnkit.jar"/>
+	<classpathentry kind="lib" path="libs/jetty-6.1.14.jar"/>
+	<classpathentry kind="lib" path="libs/jetty-util-6.1.14.jar"/>
 	<classpathentry kind="var" path="JUNIT_HOME/junit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -12,6 +12,10 @@ import java.util.List;
 public class SupplementalData {
 
 	public static class User {
+		
+		public static enum ACCESS_LEVEL {USER, ADMIN};
+		
+		private ACCESS_LEVEL accessLevel = ACCESS_LEVEL.USER; 		
 		private String username;
 		private String emailAddress;
 		private List<String> subscriptions = new ArrayList<String>();
@@ -46,6 +50,14 @@ public class SupplementalData {
 
 		public final void setSubscriptions(List<String> subscriptions) {
 			this.subscriptions = subscriptions;
+		}
+		
+		public final void setAccessLevel(ACCESS_LEVEL l) {
+			accessLevel = l;
+		}
+		
+		public final ACCESS_LEVEL getAccessLevel() {
+			return accessLevel;
 		}
 
 	}
