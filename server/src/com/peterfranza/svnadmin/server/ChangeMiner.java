@@ -118,19 +118,24 @@ public class ChangeMiner {
 		@Override
 		public String toString() {
 			StringBuffer buf = new StringBuffer();
+			
+			buf.append(getMessage())
+				.append(System.getProperty("line.separator"))
+				.append(System.getProperty("line.separator"))
+				.append(System.getProperty("line.separator"));
+			
 			buf.append("revision: ").append(getRevision()).append(
 					System.getProperty("line.separator"));
 			buf.append("author: ").append(getAuthor()).append(
 					System.getProperty("line.separator"));
 			buf.append("date: ").append(getDate()).append(
 					System.getProperty("line.separator"));
-			buf.append("message: ").append(getMessage()).append(
-					System.getProperty("line.separator"));
+
 			buf.append("changes: ")
 					.append(System.getProperty("line.separator"));
 			buf.append(getChanges()).append(
 					System.getProperty("line.separator"));
-			return buf.toString();
+			return buf.toString().trim();
 		}
 
 		public List<String> getChangeSet() {
