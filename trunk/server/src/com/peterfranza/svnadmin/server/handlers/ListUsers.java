@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.peterfranza.svnadmin.server.AdminServer;
 import com.peterfranza.svnadmin.server.ApplicationProperties;
-import com.peterfranza.svnadmin.server.htpasswd.HtPasswordFileWrapper;
+import com.peterfranza.svnadmin.server.acldb.filedelegates.HtPasswordFileWrapper;
 
 public class ListUsers implements DataFeed {
 

@@ -15,11 +15,11 @@ import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.AbstractHandler;
 
+import com.peterfranza.svnadmin.server.acldb.filedelegates.HtPasswordFileWrapper;
 import com.peterfranza.svnadmin.server.handlers.Authenticate;
 import com.peterfranza.svnadmin.server.handlers.ChangePassword;
 import com.peterfranza.svnadmin.server.handlers.DataFeed;
 import com.peterfranza.svnadmin.server.handlers.ListUsers;
-import com.peterfranza.svnadmin.server.htpasswd.HtPasswordFileWrapper;
 
 public class AdminServer {
 

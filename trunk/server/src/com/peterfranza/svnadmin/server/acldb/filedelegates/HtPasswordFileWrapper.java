@@ -1,4 +1,4 @@
-package com.peterfranza.svnadmin.server.htpasswd;
+package com.peterfranza.svnadmin.server.acldb.filedelegates;
 
 import java.io.File;
 import java.io.FileInputStream;
