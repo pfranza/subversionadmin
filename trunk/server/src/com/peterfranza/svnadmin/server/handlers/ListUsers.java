@@ -13,7 +13,6 @@ import com.peterfranza.svnadmin.server.htpasswd.HtPasswordFileWrapper;
 
 public class ListUsers implements DataFeed {
 
-	@Override
 	public void respond(PrintWriter writer, HttpServletRequest request) {
 		
 		try {

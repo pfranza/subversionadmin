@@ -16,7 +16,6 @@ public class ChangePassword implements DataFeed {
 
 //	/rest/changepassword?username=pfranza&passwd=password&targetuser=u1&newpassword=newpass
 	
-	@Override
 	public void respond(PrintWriter writer, HttpServletRequest request) {
 		try {
 			HtPasswordFileWrapper passwd = new HtPasswordFileWrapper(new File(ApplicationProperties.getProperty("access_file")));
