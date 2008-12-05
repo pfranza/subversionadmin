@@ -10,7 +10,7 @@ import com.peterfranza.svnadmin.server.ApplicationProperties;
 import com.peterfranza.svnadmin.server.SupplementalData;
 import com.peterfranza.svnadmin.server.SupplementalData.User;
 import com.peterfranza.svnadmin.server.SupplementalData.User.ACCESS_LEVEL;
-import com.peterfranza.svnadmin.server.htpasswd.HtPasswordFileWrapper;
+import com.peterfranza.svnadmin.server.acldb.filedelegates.HtPasswordFileWrapper;
 
 public class ChangePassword implements DataFeed {
 
