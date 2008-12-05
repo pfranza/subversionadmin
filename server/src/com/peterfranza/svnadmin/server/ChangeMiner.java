@@ -12,6 +12,8 @@ import org.tmatesoft.svn.core.SVNLogEntryPath;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
+import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
+import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
@@ -19,7 +21,18 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 public class ChangeMiner {
 
 	static {
-		DAVRepositoryFactory.setup();
+		
+		String url = ApplicationProperties.getProperty("repository_url");
+		if(url.startsWith("file")) {
+			FSRepositoryFactory.setup();
+		} else if(url.startsWith("http")) {
+			DAVRepositoryFactory.setup();
+		} else if(url.startsWith("svn")) {
+			SVNRepositoryFactoryImpl.setup();
+		} else {
+			throw new RuntimeException("Can't setup svn connector");
+		}
+		
 	}
 
 	public static ChangeSummary getSummary(String repos, String username,

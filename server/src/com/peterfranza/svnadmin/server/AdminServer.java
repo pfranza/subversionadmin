@@ -60,7 +60,6 @@ public class AdminServer {
 		
 		server.addHandler(new AbstractHandler() {
 
-			@Override
 			public void handle(String target, HttpServletRequest request,
 					HttpServletResponse response, int dispatch) throws IOException,
 					ServletException {

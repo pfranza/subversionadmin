@@ -8,7 +8,6 @@ public class Authenticate implements DataFeed {
 
 //	/rest/auth?username=pfranza&passwd=password
 	
-	@Override
 	public void respond(PrintWriter writer, HttpServletRequest request) {
 		writer.println("ok");
 	}
