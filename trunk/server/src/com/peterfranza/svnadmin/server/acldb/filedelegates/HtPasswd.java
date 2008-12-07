@@ -17,6 +17,24 @@ public class HtPasswd {
 	
 	private Map<String, String> passwds = new HashMap<String, String>();
 	
+	public static class UserNamePasswordSet {
+		private String username;
+		private String password;
+		public UserNamePasswordSet(String username, String password) {
+			super();
+			this.username = username;
+			this.password = password;
+		}
+		public final String getUsername() {
+			return username;
+		}
+		public final String getPassword() {
+			return password;
+		}
+		
+		
+	}
+	
 	public HtPasswd(InputStream passowrdFile) throws Exception {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(passowrdFile));
 		String line = null;
@@ -25,6 +43,14 @@ public class HtPasswd {
 			passwds.put(parts[0], parts[1]);
 		}
 		reader.close();
+	}
+	
+	public List<UserNamePasswordSet> getAllUsers() {
+		ArrayList<UserNamePasswordSet> l = new ArrayList<UserNamePasswordSet>();
+		for (Entry<String, String> entry : passwds.entrySet()) {
+			l.add(new UserNamePasswordSet(entry.getKey(), entry.getValue()));
+		}
+		return l;
 	}
 	
 	public boolean authenticate(String username, String password) {
