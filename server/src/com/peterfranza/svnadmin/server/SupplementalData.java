@@ -100,4 +100,13 @@ public class SupplementalData {
 		}
 		return instance;
 	}
+
+	public String getUserEmailAddress(String username) {
+		for(User u: users) {
+			if(u.getUsername().equalsIgnoreCase(username)) {
+				return u.getEmailAddress();
+			}
+		}
+		return "";
+	}
 }
