@@ -54,6 +54,7 @@ public class ModifyUserFormPanel extends Panel {
 									new XmlReader("row", new RecordDef(new FieldDef[] {
 											new StringFieldDef("name", "name"),
 											new StringFieldDef("email"),
+											new StringFieldDef("admin"),
 											new StringFieldDef("subscriptions"),
 											new StringFieldDef("group")
 									})){{
@@ -115,7 +116,7 @@ public class ModifyUserFormPanel extends Panel {
 			});
 		}};
 		private TextField password = new TextField("Password", "password", 210){{
-			setAllowBlank(false);
+			setAllowBlank(true);
 			setInvalidText("Invalid Password");
 			setMaxLength(8);
 			setValidator(new Validator() {
@@ -126,7 +127,7 @@ public class ModifyUserFormPanel extends Panel {
 			
 		}};
 		private TextField password_again = new TextField("Password Again", "password_again", 210){{
-			setAllowBlank(false);
+			setAllowBlank(true);
 			setInvalidText("Passwords don't match.");
 			setMaxLength(8);
 			setValidator(new Validator() {
@@ -148,9 +149,10 @@ public class ModifyUserFormPanel extends Panel {
 		public UserPreferencesPanel() {
 			add(name);
 			add(email);
-			add(password);
-			add(password_again);
-			
+			FieldSet pwset = new FieldSet("Leave Blank To Keep Unchanged");
+			pwset.add(password);
+			pwset.add(password_again);
+			add(pwset);
 			addButton(save);
 		}
 		

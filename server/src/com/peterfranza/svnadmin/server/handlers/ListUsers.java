@@ -33,6 +33,7 @@ public class ListUsers implements DataFeed {
 				writer.append("  <row>");
 				writer.append("    <name>"+u.getUsername()+"</name>");
 				writer.append("    <email>"+u.getEmail()+"</email>");
+				writer.append("    <admin>"+Boolean.toString(AdminServer.isAdmin(u.getUsername()))+"</admin>");
 				writer.append("    <subscriptions>");
 
 				for (Iterator<Subscription> iterator = u.getSubscriptions().iterator(); iterator.hasNext();) {
