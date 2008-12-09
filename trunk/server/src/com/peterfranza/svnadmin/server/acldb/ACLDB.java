@@ -5,6 +5,8 @@ import java.util.List;
 
 public class ACLDB {
 
+	protected ACLDB() {}
+	
 	private List<User> users = new ArrayList<User>();
 	private List<Group> groups = new ArrayList<Group>();
 	private List<AccessRule> rules = new ArrayList<AccessRule>();
@@ -16,11 +18,11 @@ public class ACLDB {
 		private String password;
 		private String email;
 		private List<Subscription> subscriptions = new ArrayList<Subscription>();
+		private boolean isAdmin = false;
 		
-		public User(String username2, String password2, String email) {
+		protected User(String username2, String password2) {
 			this.username = username2;
 			this.password = password2;
-			this.email = email;
 		}
 		
 		public final String getUsername() {
@@ -52,12 +54,21 @@ public class ACLDB {
 		public String toString() {
 			return username;
 		}
+
+		public boolean isAdmin() {
+			return isAdmin;
+		}
+		
+		public void setAdmin(boolean b) {
+			isAdmin = b;
+		}
 		
 	}
 	
 	protected static class Group extends ACLItem {
 		private String name;
 		private List<ACLItem> members = new ArrayList<ACLItem>();
+		private List<Subscription> subscriptions = new ArrayList<Subscription>();
 		
 		public final String getName() {
 			return name;
@@ -70,6 +81,14 @@ public class ACLDB {
 		}
 		public final void setMembers(List<ACLItem> members) {
 			this.members = members;
+		}
+		
+		public final List<Subscription> getSubscriptions() {
+			return subscriptions;
+		}
+		
+		public final void setSubscriptions(List<Subscription> subscriptions) {
+			this.subscriptions = subscriptions;
 		}
 		
 		@Override
@@ -106,7 +125,7 @@ public class ACLDB {
 		
 	}
 	
-	private static class Subscription {
+	protected static class Subscription {
 		private String path;
 
 		public final String getPath() {

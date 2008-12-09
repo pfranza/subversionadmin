@@ -15,7 +15,7 @@ import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.AbstractHandler;
 
-import com.peterfranza.svnadmin.server.acldb.filedelegates.HtPasswordFileWrapper;
+import com.peterfranza.svnadmin.server.acldb.ACLOperationsDelegate;
 import com.peterfranza.svnadmin.server.handlers.Authenticate;
 import com.peterfranza.svnadmin.server.handlers.ChangePassword;
 import com.peterfranza.svnadmin.server.handlers.DataFeed;
@@ -93,14 +93,7 @@ public class AdminServer {
 	}
 	
 	public static boolean authenticate(String username, String password) {
-		try {
-			HtPasswordFileWrapper passwd = new HtPasswordFileWrapper(new File(ApplicationProperties.getProperty("access_file")));
-			return passwd.authenticate(username, password);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return false;
+		return ACLOperationsDelegate.getInstance().authenticate(username, password);
 	}
 
 	public static void main(String[] args) throws Exception {
