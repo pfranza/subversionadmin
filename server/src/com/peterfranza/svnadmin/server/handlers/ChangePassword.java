@@ -15,7 +15,7 @@ public class ChangePassword implements DataFeed {
 		try {
 			
 			if(request.getParameter("targetuser").equals(request.getParameter("username")) ||
-					isAdmin(request.getParameter("username"))) {
+					AdminServer.isAdmin(request.getParameter("username"))) {
 				ACLOperationsDelegate.getInstance().setPassword(request.getParameter("targetuser"), request.getParameter("newpassword"));
 				writer.println("ok");
 			} else {
@@ -27,8 +27,6 @@ public class ChangePassword implements DataFeed {
 
 	}
 
-	private boolean isAdmin(String username) {	
-		return ACLOperationsDelegate.getInstance().isAdmin(username);
-	}
+
 
 }

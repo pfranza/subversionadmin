@@ -3,6 +3,7 @@ package com.gorthaur.svnadmin.client.ui;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Label;
 import com.gwtext.client.core.RegionPosition;
 import com.gwtext.client.widgets.Panel;
 import com.gwtext.client.widgets.layout.AccordionLayout;
@@ -17,37 +18,22 @@ public class ActionPanel extends Panel {
 		
 		private Hyperlink addUser = new Hyperlink("Add User", "0"); 
 		private Hyperlink modUser = new Hyperlink("Modify User", "1");
-		private Hyperlink delUser = new Hyperlink("Delete User", "2");
 		
 		public UserAdminMenu() {
 			super("Users");
 			setLayout(new VerticalLayout(10));
 			setPaddings(15);
 			add(addUser);
-			add(modUser);
-			add(delUser);
-			
+			add(modUser);			
 		}
 		
 	}
 	
-	private class NotificationsMenu extends Panel {
-		
-		private Hyperlink configureNotifications = new Hyperlink("Configure", "3");
-		
-		public NotificationsMenu() {
-			super("Notifications");
-			setLayout(new VerticalLayout(10));
-			setPaddings(15);			
-			add(configureNotifications);
-		}
-		
-	}
 	
 	private class InformationMenu extends Panel {
 		
-		private Hyperlink stats = new Hyperlink("Statistics", "4"); 
-		private Hyperlink backups = new Hyperlink("Backups", "5");
+		private Hyperlink stats = new Hyperlink("Statistics", "2"); 
+		private Hyperlink backups = new Hyperlink("Backups", "3");
 		
 		public InformationMenu() {
 			super("Server Info");
@@ -65,25 +51,31 @@ public class ActionPanel extends Panel {
 			setLayout(new AccordionLayout(true));
 
 			add(new UserAdminMenu());
-			add(new NotificationsMenu());
 			add(new InformationMenu());
 		}
 	}
 	
-	private class ContentPanel extends Panel implements HistoryListener {
+	private class ContentPanel extends Panel {
 		
 		private CardLayout layout = new CardLayout(false);
 		private AddUserFormPanel addUserForm = new AddUserFormPanel();
 		
 		public ContentPanel() {
 			setLayout(layout);
-			History.addHistoryListener(this);
-			add(addUserForm);			
+			History.addHistoryListener(new HistoryListener() {
+				public void onHistoryChanged(String historyToken) {
+						setActiveItem(Integer.valueOf(historyToken));
+				}
+			});
+			
+			add(addUserForm);
+			add(new Label("1"));
+			add(new Label("2"));
+			add(new Label("3"));
+			add(new Label("4"));
+			add(new Label("5"));
 		}
-
-		public void onHistoryChanged(String historyToken) {
-			setActiveItem(Integer.valueOf(historyToken));
-		}
+		
 	}
 	
 	private MenuPanel menu = new MenuPanel();

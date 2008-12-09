@@ -14,8 +14,10 @@ import com.gwtext.client.widgets.layout.FitLayout;
  */
 public class SvnAdministration extends Panel implements EntryPoint {
 
-	final MainPanel mainPanel = new MainPanel();
-	final LoginWindow login = new LoginWindow();
+	private static SvnAdministration instance;
+	
+	private final MainPanel mainPanel = new MainPanel();
+	private final LoginWindow login = new LoginWindow();
 	
 	public SvnAdministration() {
 		setBorder(false);  
@@ -43,8 +45,21 @@ public class SvnAdministration extends Panel implements EntryPoint {
 	}
 
 	public void onModuleLoad() {
+		instance = this;
 		Viewport view = new Viewport(this);
 		view.doLayout();
 		mainPanel.setVisible(false);
+	}
+	
+	public static SvnAdministration getInstance() {
+		return instance;
+	}
+	
+	public String getUsername() {
+		return login.getUsername();
+	}
+	
+	public String getPassword() {
+		return login.getPassword();
 	}
 }

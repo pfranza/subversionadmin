@@ -319,10 +319,10 @@ public class ACLDBFileDelegate {
 		return buf.toString().trim();
 	}
 	
-	public static void main(String[] args) throws Exception {
-		ACLDBFileDelegate f = new ACLDBFileDelegate();
-		f.save();
-	}
+//	public static void main(String[] args) throws Exception {
+//		ACLDBFileDelegate f = new ACLDBFileDelegate();
+//		f.save();
+//	}
 	
 	
 }
