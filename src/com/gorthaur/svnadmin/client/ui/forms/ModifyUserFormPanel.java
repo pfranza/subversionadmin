@@ -13,6 +13,7 @@ import com.gwtext.client.widgets.Button;
 import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.Panel;
 import com.gwtext.client.widgets.event.PanelListenerAdapter;
+import com.gwtext.client.widgets.form.Checkbox;
 import com.gwtext.client.widgets.form.ComboBox;
 import com.gwtext.client.widgets.form.FieldSet;
 import com.gwtext.client.widgets.form.FormPanel;
@@ -119,6 +120,7 @@ public class ModifyUserFormPanel extends Panel {
 			setAllowBlank(true);
 			setInvalidText("Invalid Password");
 			setMaxLength(8);
+			setPassword(true);
 			setValidator(new Validator() {
 				public boolean validate(String value) throws ValidationException {
 					return (value.trim().length() > 2 && value.trim().length() < 9) || value.trim().length() == 0;
@@ -130,6 +132,7 @@ public class ModifyUserFormPanel extends Panel {
 			setAllowBlank(true);
 			setInvalidText("Passwords don't match.");
 			setMaxLength(8);
+			setPassword(true);
 			setValidator(new Validator() {
 				public boolean validate(String value) throws ValidationException {
 					return value.equals(password.getText());
@@ -138,17 +141,24 @@ public class ModifyUserFormPanel extends Panel {
 					
 		}};
 		
+		private Checkbox isAdmin = new Checkbox("Administrator", "isadmin") {{
+			setValue(false);
+		}};
+		
+		
 		private Button save = new Button("Save Changes");
 		
 		public void loadSettings(Record record) {
 			name.setValue(record.getAsString("name"));
 			email.setValue(record.getAsString("email"));
+			isAdmin.setValue(Boolean.valueOf(record.getAsString("admin")));
 		}
 
 		
 		public UserPreferencesPanel() {
 			add(name);
 			add(email);
+			add(isAdmin);
 			FieldSet pwset = new FieldSet("Leave Blank To Keep Unchanged");
 			pwset.add(password);
 			pwset.add(password_again);
