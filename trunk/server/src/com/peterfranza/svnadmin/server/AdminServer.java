@@ -51,7 +51,7 @@ public class AdminServer {
 						}
 					} else {
 						response.setContentType("text/html");
-						response.getWriter().println("<h2>Access Denied</h2>");
+						response.getWriter().println("Access Denied");
 						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 						((Request) request).setHandled(true);
 					}
