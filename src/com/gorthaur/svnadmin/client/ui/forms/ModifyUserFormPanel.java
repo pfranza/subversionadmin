@@ -14,14 +14,12 @@ import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.Panel;
 import com.gwtext.client.widgets.event.PanelListenerAdapter;
 import com.gwtext.client.widgets.form.ComboBox;
-import com.gwtext.client.widgets.form.Field;
 import com.gwtext.client.widgets.form.FieldSet;
 import com.gwtext.client.widgets.form.FormPanel;
 import com.gwtext.client.widgets.form.TextField;
 import com.gwtext.client.widgets.form.ValidationException;
 import com.gwtext.client.widgets.form.Validator;
 import com.gwtext.client.widgets.form.event.ComboBoxListenerAdapter;
-import com.gwtext.client.widgets.form.event.TextFieldListenerAdapter;
 
 public class ModifyUserFormPanel extends Panel {
 
@@ -122,7 +120,7 @@ public class ModifyUserFormPanel extends Panel {
 			setMaxLength(8);
 			setValidator(new Validator() {
 				public boolean validate(String value) throws ValidationException {
-					return value.trim().length() > 2 && value.trim().length() < 9;
+					return (value.trim().length() > 2 && value.trim().length() < 9) || value.trim().length() == 0;
 				}
 			});
 			
