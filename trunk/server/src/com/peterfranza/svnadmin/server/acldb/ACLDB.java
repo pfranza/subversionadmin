@@ -13,7 +13,7 @@ public class ACLDB {
 	
 	protected static class ACLItem {}
 	
-	protected static class User extends ACLItem {
+	public static class User extends ACLItem {
 		private String username;
 		private String password;
 		private String email;
@@ -125,7 +125,7 @@ public class ACLDB {
 		
 	}
 	
-	protected static class Subscription {
+	public static class Subscription {
 		private String path;
 
 		public final String getPath() {

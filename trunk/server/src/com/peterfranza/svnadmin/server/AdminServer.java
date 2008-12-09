@@ -21,6 +21,7 @@ import com.peterfranza.svnadmin.server.handlers.Authenticate;
 import com.peterfranza.svnadmin.server.handlers.ChangePassword;
 import com.peterfranza.svnadmin.server.handlers.DataFeed;
 import com.peterfranza.svnadmin.server.handlers.ListUsers;
+import com.peterfranza.svnadmin.server.handlers.UserPreferences;
 
 public class AdminServer {
 
@@ -32,6 +33,7 @@ public class AdminServer {
 			put("/rest/listUsers", new ListUsers());
 			put("/rest/changepassword", new ChangePassword());
 			put("/rest/adduser", new AddNewUser());
+			put("/rest/userPrefs", new UserPreferences());
 		}
 	};
 
@@ -46,7 +48,7 @@ public class AdminServer {
 						DataFeed feed = feeds.get(target);
 						if (feed != null) {
 							response.setStatus(HttpServletResponse.SC_OK);
-							feed.respond(response.getWriter(), request);
+							feed.respond(response.getWriter(), request, response);
 							((Request) request).setHandled(true);
 						}
 					} else {

@@ -4,6 +4,8 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
+import com.gorthaur.svnadmin.client.ui.forms.AddUserFormPanel;
+import com.gorthaur.svnadmin.client.ui.forms.ModifyUserFormPanel;
 import com.gwtext.client.core.RegionPosition;
 import com.gwtext.client.widgets.Panel;
 import com.gwtext.client.widgets.layout.AccordionLayout;
@@ -58,7 +60,9 @@ public class ActionPanel extends Panel {
 	private class ContentPanel extends Panel {
 		
 		private CardLayout layout = new CardLayout(false);
+		
 		private AddUserFormPanel addUserForm = new AddUserFormPanel();
+		private ModifyUserFormPanel modifyUserForm = new ModifyUserFormPanel();
 		
 		public ContentPanel() {
 			setLayout(layout);
@@ -69,7 +73,7 @@ public class ActionPanel extends Panel {
 			});
 			
 			add(addUserForm);
-			add(new Label("1"));
+			add(modifyUserForm);
 			add(new Label("2"));
 			add(new Label("3"));
 			add(new Label("4"));
