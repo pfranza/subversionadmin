@@ -16,6 +16,7 @@ import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.AbstractHandler;
 
 import com.peterfranza.svnadmin.server.acldb.ACLOperationsDelegate;
+import com.peterfranza.svnadmin.server.handlers.AddNewUser;
 import com.peterfranza.svnadmin.server.handlers.Authenticate;
 import com.peterfranza.svnadmin.server.handlers.ChangePassword;
 import com.peterfranza.svnadmin.server.handlers.DataFeed;
@@ -30,6 +31,7 @@ public class AdminServer {
 			put("/rest/auth", new Authenticate());
 			put("/rest/listUsers", new ListUsers());
 			put("/rest/changepassword", new ChangePassword());
+			put("/rest/adduser", new AddNewUser());
 		}
 	};
 
@@ -43,7 +45,6 @@ public class AdminServer {
 					if(authenticate(request.getParameter("username"), request.getParameter("passwd"))) {
 						DataFeed feed = feeds.get(target);
 						if (feed != null) {
-//							response.setContentType("text/x-json");
 							response.setStatus(HttpServletResponse.SC_OK);
 							feed.respond(response.getWriter(), request);
 							((Request) request).setHandled(true);
@@ -105,6 +106,10 @@ public class AdminServer {
 		for(StackTraceElement ste: e.getStackTrace()) {
 			out.println(ste.toString());
 		}
+	}
+	
+	public static boolean isAdmin(String username) {	
+		return ACLOperationsDelegate.getInstance().isAdmin(username);
 	}
 
 }
