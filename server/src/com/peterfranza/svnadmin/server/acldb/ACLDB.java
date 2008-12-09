@@ -9,7 +9,7 @@ public class ACLDB {
 	private List<Group> groups = new ArrayList<Group>();
 	private List<AccessRule> rules = new ArrayList<AccessRule>();
 	
-	private static class ACLItem {}
+	protected static class ACLItem {}
 	
 	protected static class User extends ACLItem {
 		private String username;
@@ -48,11 +48,14 @@ public class ACLDB {
 			this.subscriptions = subscriptions;
 		}
 		
-		
+		@Override
+		public String toString() {
+			return username;
+		}
 		
 	}
 	
-	private static class Group extends ACLItem {
+	protected static class Group extends ACLItem {
 		private String name;
 		private List<ACLItem> members = new ArrayList<ACLItem>();
 		
@@ -69,9 +72,14 @@ public class ACLDB {
 			this.members = members;
 		}
 		
+		@Override
+		public String toString() {
+			return "@" + name;
+		}
+		
 	}
 	
-	private static class AccessRule {
+	protected static class AccessRule {
 		private String directory;
 		private List<ACLItem> allow_read = new ArrayList<ACLItem>();
 		private List<ACLItem> allow_write = new ArrayList<ACLItem>();
