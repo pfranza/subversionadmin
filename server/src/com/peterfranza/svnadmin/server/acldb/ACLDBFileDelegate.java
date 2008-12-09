@@ -4,31 +4,76 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 import java.util.List;
 
 import com.peterfranza.svnadmin.server.ApplicationProperties;
-import com.peterfranza.svnadmin.server.SupplementalData;
 import com.peterfranza.svnadmin.server.acldb.ACLDB.ACLItem;
 import com.peterfranza.svnadmin.server.acldb.ACLDB.AccessRule;
 import com.peterfranza.svnadmin.server.acldb.ACLDB.Group;
+import com.peterfranza.svnadmin.server.acldb.ACLDB.Subscription;
 import com.peterfranza.svnadmin.server.acldb.ACLDB.User;
 
 public class ACLDBFileDelegate {
 	
 	private ACLDB acl = new ACLDB();
 	
-	public ACLDBFileDelegate() throws Exception {
-		
-		SupplementalData supplement = SupplementalData.getInstance();			
-		populateUserData(supplement);
-		
+	protected ACLDBFileDelegate() throws Exception {
+				
+		populateUserData();
 		String groupsFile = readGroupsFile();
 		populateGroups(groupsFile);
+		populateSupplementData();		
 		populateAccessRules(groupsFile);
-		
+
+	}
+	
+	protected ACLDB getACL() {
+		return acl;
+	}
+
+	private void populateSupplementData() throws Exception {
+		File f = new File(ApplicationProperties.getProperty("supplement_datafile"));
+		if(f.exists()) {
+			BufferedReader reader = new BufferedReader(new FileReader(f));
+
+			String line = reader.readLine();
+			while(line != null) {
+				if(line.trim().length() > 0) {
+					String[] parts = line.split(":");
+					if(line.startsWith("@")) {
+						Group g = getGroup(parts[0].replaceAll("@", ""));
+						if(g != null) {
+							String[] subscriptions = parts[1].split("\\s*,\\s*");
+							for (final String string : subscriptions) {
+								g.getSubscriptions().add(new Subscription() {{
+									setPath(string);
+								}});
+							}
+						}
+					} else {
+						User u = getUser(parts[0]);
+						if(u != null) {
+							u.setEmail(parts[1]);
+							u.setAdmin(Boolean.valueOf(parts[2]));
+							try {
+								String[] subscriptions = parts[3].split("\\s*,\\s*");
+								for (final String string : subscriptions) {
+									u.getSubscriptions().add(new Subscription() {{
+										setPath(string);
+									}});
+								}
+							} catch (ArrayIndexOutOfBoundsException a) {}
+						}
+					}
+				}
+
+				line = reader.readLine();
+			}
+		}
 	}
 
 	private void populateAccessRules(String groupsFile) throws IOException {
@@ -137,43 +182,100 @@ public class ACLDBFileDelegate {
 	}
 
 	private String readGroupsFile() throws FileNotFoundException, IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(new File(ApplicationProperties.getProperty("svn_groups"))));
-		StringBuffer buf = new StringBuffer();
-		String line = reader.readLine();
-		while(line != null) {
-			if(!line.startsWith("#") && line.trim().length() > 0) {
-				buf.append(line.trim()).append(System.getProperty("line.separator"));
+		File f = new File(ApplicationProperties.getProperty("svn_groups"));
+		if(f.exists()) {
+			BufferedReader reader = new BufferedReader(new FileReader(f));
+			StringBuffer buf = new StringBuffer();
+			String line = reader.readLine();
+			while(line != null) {
+				if(!line.startsWith("#") && line.trim().length() > 0) {
+					buf.append(line.trim()).append(System.getProperty("line.separator"));
+				}
+				line = reader.readLine();
 			}
-			line = reader.readLine();
+			return buf.toString().trim();
+		} else {
+			throw new RuntimeException("Groups File Not Found");
+		}
+	}
+
+	private void populateUserData()
+			throws FileNotFoundException, IOException {
+		File f = new File(ApplicationProperties.getProperty("access_file"));
+		if(f.exists()) {
+			BufferedReader reader = new BufferedReader(new FileReader(f));
+			String line = reader.readLine();
+			while(line != null) {
+				String[] parts = line.split(":");
+				acl.getUsers().add(new User(
+						parts[0], 
+						parts[1]));
+				line = reader.readLine();
+			}
+		} else {
+			throw new RuntimeException("Htpasswd File Not Found");
+		}
+	}
+	
+	public synchronized void save() {
+		String buf = savePasswordFile();
+		String group = saveGroupsFile();
+		String supplement = saveSupplementData();
+		
+//		System.out.println(buf);
+//		System.out.println("------------------------");
+//		System.out.println(group);
+//		System.out.println("------------------------");
+//		System.out.println(supplement);
+		writeFile(buf, ApplicationProperties.getProperty("access_file"));
+		writeFile(group, ApplicationProperties.getProperty("svn_groups"));
+		writeFile(supplement, ApplicationProperties.getProperty("supplement_datafile"));
+	}
+
+	private void writeFile(String buf, String fileName) {
+		try {
+			FileWriter writer = new FileWriter(new File(fileName));
+			writer.write(buf);
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+	}
+
+	private String saveSupplementData() {
+		StringBuffer buf = new StringBuffer();
+		
+		for(User u: acl.getUsers()) {
+			buf.append(u.getUsername()).append(":").append(u.getEmail())
+				.append(":").append(Boolean.toString(u.isAdmin()))
+				.append(":").append(printSubscriptions(u.getSubscriptions()))
+				.append(System.getProperty("line.separator"));
+		}
+		
+		for(Group g: acl.getGroups()) {
+			buf.append("@").append(g.getName()).append(":")
+				.append(printSubscriptions(g.getSubscriptions()))
+				.append(System.getProperty("line.separator"));
+		}
+		
+		return buf.toString();
+	}
+
+	private String printSubscriptions(List<Subscription> subscriptions) {
+		StringBuffer buf = new StringBuffer();
+		for (Iterator<Subscription> iterator = subscriptions.iterator(); iterator.hasNext();) {
+			Subscription subscription = iterator.next();
+			buf.append(subscription.getPath());
+			if(iterator.hasNext()) {
+				buf.append(", ");
+			}
 		}
 		return buf.toString().trim();
 	}
 
-	private void populateUserData(SupplementalData supplement)
-			throws FileNotFoundException, IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(new File(ApplicationProperties.getProperty("access_file"))));
-		String line = reader.readLine();
-		while(line != null) {
-			String[] parts = line.split(":");
-			acl.getUsers().add(new User(
-					parts[0], 
-					parts[1], 
-					supplement.getUserEmailAddress(parts[0])));
-			line = reader.readLine();
-		}
-	}
-	
-	public void save() {
-		String buf = savePasswordFile();
-		String group = saveGroupsFile();
-		
-		System.out.println(buf);
-		System.out.println("------------------------");
-		System.out.println(group);
-	}
-
 	private String saveGroupsFile() {
 		StringBuffer buf = new StringBuffer();
+		if(acl.getGroups().size() > 0) {
 		buf.append("[groups]").append(System.getProperty("line.separator"));
 		for(Group g: acl.getGroups()) {
 			if(g.getMembers().size() > 0) {
@@ -191,6 +293,8 @@ public class ACLDBFileDelegate {
 		}
 		
 		buf.append(System.getProperty("line.separator"));
+		}
+		
 		for (AccessRule accessRule : acl.getRules()) {
 			if(accessRule.getAllow_read().size() + accessRule.getAllow_write().size() > 0) {
 				buf.append("[proj:"+accessRule.getDirectory()+"]").append(System.getProperty("line.separator"));
