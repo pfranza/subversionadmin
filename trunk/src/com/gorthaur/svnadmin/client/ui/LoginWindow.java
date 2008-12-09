@@ -9,6 +9,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.gorthaur.svnadmin.client.SvnAdministration;
 import com.gorthaur.svnadmin.client.ui.listeners.ClickListener;
 import com.gwtext.client.core.EventObject;
 import com.gwtext.client.core.RegionPosition;
@@ -61,6 +62,7 @@ public class LoginWindow extends Window {
 								for(LoginWindowListener l: listeners) {
 									l.loginSuccess();
 								}
+								SvnAdministration.getInstance().doLayout();
 							} else {
 								com.google.gwt.user.client.Window.alert("Access Denied");
 							}
