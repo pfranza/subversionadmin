@@ -3,6 +3,8 @@ package com.peterfranza.svnadmin.server.acldb;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.peterfranza.svnadmin.server.acldb.ACLDB.ACLItem;
+import com.peterfranza.svnadmin.server.acldb.ACLDB.Group;
 import com.peterfranza.svnadmin.server.acldb.ACLDB.Subscription;
 import com.peterfranza.svnadmin.server.acldb.ACLDB.User;
 import com.peterfranza.svnadmin.server.acldb.utils.UnixCrypt;
@@ -54,7 +56,7 @@ public class ACLOperationsDelegate {
 		}
 		return null;
 	}
-	private User getUser(String username) {
+	public User getUser(String username) {
 			for(User u: acl.getACL().getUsers()) {
 				if(u.getUsername().equals(username)) {
 					return u;
@@ -125,6 +127,35 @@ public class ACLOperationsDelegate {
 			acl.getACL().getUsers().add(u);
 			save();
 		}
+	}
+
+	public List<String> getGroupMembership(String username) {
+		List<String> l = new ArrayList<String>();
+		synchronized(lock) {
+			for(Group g: acl.getACL().getGroups()) {
+				if(isMemeberOfGroup(username, g)) {
+					l.add(g.getName());
+				}
+			}
+		}
+		return l;
+	}
+
+	private boolean isMemeberOfGroup(String username, Group g) {
+		for(ACLItem i: g.getMembers()) {
+			if(i instanceof Group) {
+				boolean flag = isMemeberOfGroup(username, (Group)i);
+				if(flag) {
+					return true;
+				}
+			} else {
+				User u = (User)i;
+				if(u.getUsername().equals(username)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 }

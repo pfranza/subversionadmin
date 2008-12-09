@@ -1,4 +1,4 @@
-package com.gorthaur.svnadmin.client.ui;
+package com.gorthaur.svnadmin.client.ui.forms;
 
 
 import com.google.gwt.http.client.Request;
