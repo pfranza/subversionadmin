@@ -157,5 +157,26 @@ public class ACLOperationsDelegate {
 		}
 		return false;
 	}
+
+	public void updateUser(String username, String email,
+			String admin, String password) {
+		synchronized(lock) {			
+			User u = getUser(username);
+			u.setEmail(email);
+			u.setAdmin(Boolean.valueOf(admin));
+			if(password != null && password.length() > 1) {
+				u.setPassword(UnixCrypt.crypt(password));
+			}
+			save();
+		}
+	}
+	
+	public void deleteUser(String username) {
+		synchronized(lock) {			
+			User u = getUser(username);
+			acl.getACL().getUsers().remove(u);
+			save();
+		}
+	}
 	
 }

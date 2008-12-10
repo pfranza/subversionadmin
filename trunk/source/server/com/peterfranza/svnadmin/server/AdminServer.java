@@ -19,7 +19,9 @@ import com.peterfranza.svnadmin.server.handlers.AddNewUser;
 import com.peterfranza.svnadmin.server.handlers.Authenticate;
 import com.peterfranza.svnadmin.server.handlers.ChangePassword;
 import com.peterfranza.svnadmin.server.handlers.DataFeed;
+import com.peterfranza.svnadmin.server.handlers.DeleteUser;
 import com.peterfranza.svnadmin.server.handlers.ListUsers;
+import com.peterfranza.svnadmin.server.handlers.UpdateUser;
 import com.peterfranza.svnadmin.server.handlers.UserPreferences;
 
 public class AdminServer {
@@ -33,6 +35,8 @@ public class AdminServer {
 			put("/rest/changepassword", new ChangePassword());
 			put("/rest/adduser", new AddNewUser());
 			put("/rest/userPrefs", new UserPreferences());
+			put("/rest/updateUser", new UpdateUser());
+			put("/rest/deleteUser", new DeleteUser());
 		}
 	};
 

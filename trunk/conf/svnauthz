@@ -1,31 +1,7 @@
-#
-# specify groups here
-#
 [groups]
-team1 = ross, rachel, pfranza, test
+team1 = pfranza, test
+team2 = test, pfranza
 
-#
-# team1 group has a read/write access to project1 repository
-# all subdirectories
-# all others have read access only 
-#
-[project1:/]
+[proj:/]
 @team1 = rw
-* = r
-
-#
-# project2 repository, only harry and sally have read-write access to project2
-#
-[project2:/]
-harry = rw
 pfranza = rw
-* = r
-
-#
-# ross is helping with the time zone part of the project2
-#
-[project2:/timezone]
-harry = rw
-sally = rw
-ross = rw
-* = r
