@@ -1,6 +1,7 @@
 package com.gorthaur.svnadmin.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
 import com.gorthaur.svnadmin.client.ui.LoginWindow;
@@ -57,7 +58,21 @@ public class SvnAdministration  implements EntryPoint {
 
 	public void onModuleLoad() {
 		instance = this;
+		
+		Timer t = new Timer() {
+			public void run() {
+				initDisplay();
+			}
+		};
+		t.schedule(500);
+		
+		Window.setTitle("SVN Administration");
+		
+	}
+
+	private void initDisplay() {
 		new Viewport(mainPanel);
+		
 		displayLogin();
 		Window.addWindowResizeListener(new WindowResizeListener() {
 

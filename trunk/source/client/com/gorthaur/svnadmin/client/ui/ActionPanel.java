@@ -80,16 +80,19 @@ public class ActionPanel extends Panel {
 	
 	private class ContentPanel extends Panel {
 		
-		private CardLayout layout = new CardLayout(false);
+		private CardLayout layout = new CardLayout();
 		
 		private AddUserFormPanel addUserForm = new AddUserFormPanel();
 		private ModifyUserFormPanel modifyUserForm = new ModifyUserFormPanel();
 		
 		public ContentPanel() {
 			setLayout(layout);
+			History.newItem("");
 			History.addHistoryListener(new HistoryListener() {
 				public void onHistoryChanged(String historyToken) {
+					if(historyToken.trim().length() > 0) {
 						setActiveItem(Integer.valueOf(historyToken));
+					}
 				}
 			});
 			
@@ -102,7 +105,7 @@ public class ActionPanel extends Panel {
 			add(new Label("6"));
 			add(new Label("7"));
 			
-			History.newItem("");
+			
 		}
 		
 	}

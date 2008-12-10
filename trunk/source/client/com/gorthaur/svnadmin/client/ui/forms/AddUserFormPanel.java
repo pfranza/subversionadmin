@@ -97,6 +97,7 @@ public class AddUserFormPanel extends Panel {
 	public AddUserFormPanel() {
 
 		setBorder(false);
+		setWidth(500);
 		setPaddings(15);
 		
 		FormPanel form = new FormPanel();
@@ -104,7 +105,7 @@ public class AddUserFormPanel extends Panel {
 		form.setTitle("Add User");  
 		form.setFrame(false);  
 		form.setPaddings(5, 5, 5, 0);  
-		form.setWidth(350);  
+		form.setWidth(450);  
 		form.setLabelWidth(75);  
 		
 		password.setPassword(true);

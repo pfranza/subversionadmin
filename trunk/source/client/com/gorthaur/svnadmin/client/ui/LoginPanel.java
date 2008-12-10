@@ -5,17 +5,23 @@ import com.gwtext.client.widgets.form.TextField;
 
 public class LoginPanel extends FieldSet {
 
-	private TextField username = new TextField("<B>Username</B>");
-	private TextField password = new TextField("<B>Password</B>");
+	private TextField username = new TextField("<B>Username</B>"){{
+		setAutoWidth(true);
+	}};
+	
+	private TextField password = new TextField("<B>Password</B>") {{
+		setPassword(true);
+		setAutoWidth(true);
+	}};
 	
 	public LoginPanel() {
 		setBorder(false);
+		setPaddings(10, 0, 0, 0);
+		setAutoWidth(true);
+		
 		add(username);	
 		add(password);
-		setPaddings(10, 0, 0, 0);
-		username.setAutoWidth(true);
-		password.setAutoWidth(true);
-		setAutoWidth(true);
+		
 	}
 	
 	
