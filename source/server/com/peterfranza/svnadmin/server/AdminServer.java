@@ -99,11 +99,6 @@ public class AdminServer {
 	public static boolean authenticate(String username, String password) {
 		return ACLOperationsDelegate.getInstance().authenticate(username, password);
 	}
-
-	public static void main(String[] args) throws Exception {
-		new AdminServer(Integer.valueOf(ApplicationProperties
-				.getProperty("server_port")));
-	}
 	
 	public static void outputError(Exception e, PrintWriter out) {
 		for(StackTraceElement ste: e.getStackTrace()) {
@@ -113,6 +108,20 @@ public class AdminServer {
 	
 	public static boolean isAdmin(String username) {	
 		return ACLOperationsDelegate.getInstance().isAdmin(username);
+	}
+	
+	public static void main(String[] args) throws Exception {
+		if(args.length == 0) {
+			System.out.println("Starting Server.");
+			new AdminServer(Integer.valueOf(ApplicationProperties
+					.getProperty("server_port")));
+		} else if(args.length == 2 && args[0].equals("--notify")) {
+			ChangeSetEmailer.sendChangeSetEmail(Long.valueOf(args[1]));
+		} else {
+			System.out.println("Usage: <noargs>        - start server");
+			System.out.println("       --notify <changeset number> - send notification hook");
+		}
+		
 	}
 
 }

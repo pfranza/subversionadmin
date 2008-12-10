@@ -39,8 +39,4 @@ public class ChangeSetEmailer {
 		return addresses.toArray(new String[addresses.size()]);
 	}
 
-	public static void main(String[] args) {
-		sendChangeSetEmail(Long.valueOf(args[0]));
-	}
-
 }
