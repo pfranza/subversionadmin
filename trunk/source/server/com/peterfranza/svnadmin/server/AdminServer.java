@@ -1,8 +1,7 @@
 package com.peterfranza.svnadmin.server;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,26 +67,28 @@ public class AdminServer {
 					ServletException {
 				
 				if(target.equals("/")) {
-					target = "SvnAdministration.html";
+					target = "/SvnAdministration.html";
 				}
-				
-				File f = new File("www/com.gorthaur.svnadmin.SvnAdministration", target);
-				if(f.exists()) {
-					response.setStatus(HttpServletResponse.SC_OK);
-					
-				    FileInputStream fis  = new FileInputStream(f);
-				    try {
-				        byte[] buf = new byte[1024];
-				        int i = 0;
-				        while ((i = fis.read(buf)) != -1) {
-				            response.getOutputStream().write(buf, 0, i);
-				        }
-				    } catch(Exception e) {
-				    	e.printStackTrace();
+
+				String str = "/com.gorthaur.svnadmin.SvnAdministration" + target;
+			    InputStream fis  = AdminServer.class.getResourceAsStream(str);
+				    if(fis != null) {
+				    	response.setStatus(HttpServletResponse.SC_OK);
+				    	
+
+				    	try {
+				    		byte[] buf = new byte[1024];
+				    		int i = 0;
+				    		while ((i = fis.read(buf)) != -1) {
+				    			response.getOutputStream().write(buf, 0, i);
+				    		}
+				    	} catch(Exception e) {
+						    System.out.println(str);
+				    		e.printStackTrace();
+				    	}
+				    	((Request) request).setHandled(true);
 				    }
-		
-					((Request) request).setHandled(true);
-				}
+
 			}
 			
 		});
