@@ -17,10 +17,11 @@ public class MainPanel extends Panel {
 	private ActionPanel actionPanel = new ActionPanel();
 	
 	public MainPanel() {
-	
+
 		setLayout(new FitLayout());
 		setPaddings(0);
 		setBorder(true);
+		setTitle("SVN Administration");
 		
 		createToolbar();
 		add(actionPanel);

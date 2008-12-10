@@ -113,15 +113,18 @@ public class AddUserFormPanel extends Panel {
 		FieldSet set = new FieldSet("User Info"); 
 		set.setCollapsible(false);  
 		set.setAutoHeight(true); 
+		set.setPaddings(5);
 		
 		set.add(username);
 		set.add(email);
 		set.add(password);
 		set.add(password_again);
 		
+		
+		set.addButton(clear);
+		set.addButton(submit);
+		
 		form.add(set);
-		form.addButton(clear);
-		form.addButton(submit);
 				
 		clear.addListener(new ClickListener() {
 			public void onClick(Button button, EventObject e) {

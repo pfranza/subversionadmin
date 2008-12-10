@@ -102,9 +102,7 @@ public class ActionPanel extends Panel {
 			add(new Label("6"));
 			add(new Label("7"));
 			
-			if(History.getToken().trim().length() > 0) {
-				setActiveItem(Integer.valueOf(History.getToken()));
-			}
+			History.newItem("");
 		}
 		
 	}
