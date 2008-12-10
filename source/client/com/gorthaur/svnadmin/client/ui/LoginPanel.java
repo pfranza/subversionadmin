@@ -1,32 +1,21 @@
 package com.gorthaur.svnadmin.client.ui;
 
-import com.gwtext.client.widgets.Panel;
-import com.gwtext.client.widgets.form.Label;
+import com.gwtext.client.widgets.form.FieldSet;
 import com.gwtext.client.widgets.form.TextField;
-import com.gwtext.client.widgets.layout.TableLayout;
 
-public class LoginPanel extends Panel {
+public class LoginPanel extends FieldSet {
 
-	private Label userLabel = new Label("Username: ");
-	private TextField username = new TextField();
-	
-	private Label passLabel = new Label("Password: ");
-	private TextField password = new TextField();
+	private TextField username = new TextField("<B>Username</B>");
+	private TextField password = new TextField("<B>Password</B>");
 	
 	public LoginPanel() {
-		setLayout(new TableLayout(2));
 		setBorder(false);
-		setPaddings(10, 5, 5, 5);		
-		
-		password.setPassword(true);
-		password.setAllowBlank(false);
-		username.setAllowBlank(false);
-		
-		add(userLabel);
 		add(username);	
-		add(passLabel);
 		add(password);
-
+		setPaddings(10, 0, 0, 0);
+		username.setAutoWidth(true);
+		password.setAutoWidth(true);
+		setAutoWidth(true);
 	}
 	
 	
