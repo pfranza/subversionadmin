@@ -1,23 +1,12 @@
-<project basedir="." name="JLVCDT"  default="compile">
+<project basedir="." name="JLVCDT"  default="dist">
 	
 	<property name="gwt.home" location="C:/gwt-windows-1.5.0/"/>
 	
-	<target name="compile">
-		
-		<delete dir="classes" failonerror="no"/>
-		<mkdir dir="classes"/>
-		
+	<target name="compile_client">
+	
 		<delete dir="temp" failonerror="no"/>
 		<mkdir dir="temp/web_classes"/>
-	
-		<javac srcdir="source/server" destdir="classes">
-			<classpath>
-			      <fileset dir="lib">
-			        <include name="**/*.jar"/>
-			      </fileset>
-			</classpath>
-		</javac>
-			
+		
 		<javac srcdir="source/client" destdir="temp/web_classes">
 			<classpath>
 			      <fileset dir="lib">
@@ -50,7 +39,45 @@
 				<arg value="com.gorthaur.svnadmin.SvnAdministration"/>
 			
 		</java>
+	
+		<jar destfile="lib/SvnAdminClient.jar"
+			basedir="www"/>
 		
+		<delete dir="www" failonerror="no"/>
+		<delete dir="temp" failonerror="no"/>
+	
+	</target>
+	
+	<target name="compile_server">
+		
+		<delete dir="classes" failonerror="no"/>
+		<mkdir dir="classes"/>
+	
+		<javac srcdir="source/server" destdir="classes">
+			<classpath>
+			      <fileset dir="lib">
+			        <include name="**/*.jar"/>
+			      </fileset>
+			</classpath>
+		</javac>
+		
+	</target>
+	
+	<target name="dist" depends="compile_client, compile_server">
+		<taskdef name="one-jar" classname="com.simontuffs.onejar.ant.OneJarTask" 
+			classpath="lib/one-jar-ant-task-0.96.jar" onerror="report"/>
+		
+        <one-jar destfile="SvnAdmin.jar" manifest="lib/SvnAdmin.mf">
+            <main>
+                <fileset dir="classes"/>
+            </main>
+            <lib>
+			<fileset dir="lib">
+			    <include name="**/*.jar"/>
+			</fileset>
+            </lib>
+        	
+        </one-jar>
 	</target>
 	
 </project>

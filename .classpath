@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="server/src"/>
+	<classpathentry kind="src" path="source/client"/>
+	<classpathentry kind="src" path="source/server"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="C:/gwt-windows-1.5.0/gwt-user.jar"/>
 	<classpathentry kind="lib" path="lib/gwtext.jar"/>
-	<classpathentry kind="lib" path="libs/mail.jar"/>
-	<classpathentry kind="lib" path="libs/svnkit.jar"/>
-	<classpathentry kind="lib" path="libs/jetty-6.1.14.jar"/>
-	<classpathentry kind="lib" path="libs/jetty-util-6.1.14.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-6.1.14.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-util-6.1.14.jar"/>
+	<classpathentry kind="lib" path="lib/mail.jar"/>
+	<classpathentry kind="lib" path="lib/svnkit.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api-2.5-6.1.14.jar"/>
+	<classpathentry kind="lib" path="lib/SvnAdminClient.jar"/>
 	<classpathentry kind="var" path="JUNIT_HOME/junit.jar"/>
-	<classpathentry kind="output" path="bin"/>
+	<classpathentry kind="output" path="classes"/>
 </classpath>
