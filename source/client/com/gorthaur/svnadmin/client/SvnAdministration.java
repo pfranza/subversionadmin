@@ -4,10 +4,9 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.gorthaur.svnadmin.client.ui.LoginWindow;
 import com.gorthaur.svnadmin.client.ui.MainPanel;
-import com.gorthaur.svnadmin.client.ui.LoginWindow.LoginWindowListener;
-import com.gorthaur.svnadmin.client.ui.MainPanel.MainPanelListener;
 import com.gwtext.client.widgets.Viewport;
 
 /**
@@ -17,32 +16,28 @@ public class SvnAdministration  implements EntryPoint {
 
 	private static SvnAdministration instance;
 	
-	private final LoginWindow login = new LoginWindow();
-	
-	private final MainPanel mainPanel = new MainPanel() {{
-		setMonitorResize(true);
-		setMaskDisabled(true);
-	}};
-
-	
-	
-	public SvnAdministration() {
-	
+	private final LoginWindow login = new LoginWindow(){{
 		
-		login.addListener(new LoginWindowListener() {
-			
+		addListener(new LoginWindowListener() {
 			public void loginSuccess() {		
 				hideLogin();
 			}
 		});
 		
-		mainPanel.addListener(new MainPanelListener() {
+	}};
+	
+	private final MainPanel mainPanel = new MainPanel() {{
+		setMonitorResize(true);
+		setMaskDisabled(true);
+		
+		addListener(new MainPanelListener() {
 			public void logout() {
 				displayLogin();
 			}
 		});
 		
-	}
+	}};
+
 
 	private void displayLogin() {
 		login.show();
@@ -66,13 +61,15 @@ public class SvnAdministration  implements EntryPoint {
 		};
 		t.schedule(500);
 		
+		RootPanel.get().add(mainPanel);
+				
 		Window.setTitle("SVN Administration");
 		
 	}
 
 	private void initDisplay() {
+		mainPanel.removeFromParent();
 		new Viewport(mainPanel);
-		
 		displayLogin();
 		Window.addWindowResizeListener(new WindowResizeListener() {
 
@@ -84,6 +81,7 @@ public class SvnAdministration  implements EntryPoint {
 			}
 			
 		});
+		
 	}
 	
 	public static SvnAdministration getInstance() {

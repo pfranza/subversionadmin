@@ -45,6 +45,7 @@ public class ModifyUserFormPanel extends Panel {
 		setSelectOnFocus(true);  
 		setWidth(300);
 		setPageSize(10);
+		setGrow(true);
 		setDisplayField("name");	
 		
 	}};
@@ -91,6 +92,7 @@ public class ModifyUserFormPanel extends Panel {
 					usersList.setStore(mStore);
 					mStore.load(0, 10);
 					done = true;
+					usersList.autoSize();
 				} else {
 					refreshDataStore();
 				}
