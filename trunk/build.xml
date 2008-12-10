@@ -1,0 +1,56 @@
+<project basedir="." name="JLVCDT"  default="compile">
+	
+	<property name="gwt.home" location="C:/gwt-windows-1.5.0/"/>
+	
+	<target name="compile">
+		
+		<delete dir="classes"/>
+		<mkdir dir="classes"/>
+		
+		<delete dir="temp" />
+		<mkdir dir="temp/web_classes"/>
+	
+		<javac srcdir="server/src" destdir="classes">
+			<classpath>
+			      <fileset dir="lib">
+			        <include name="**/*.jar"/>
+			      </fileset>
+			</classpath>
+		</javac>
+			
+		<javac srcdir="src" destdir="temp/web_classes">
+			<classpath>
+			      <fileset dir="lib">
+			        <include name="**/*.jar"/>
+			      </fileset>
+				  <fileset dir="${gwt.home}">
+				  	<include name="**/*.jar"/>
+				  </fileset>
+			</classpath>
+		</javac>
+		
+		<copy todir="temp/web_classes">
+			<fileset dir="src"/>
+		</copy>
+				
+		<java classname="com.google.gwt.dev.GWTCompiler" 
+			fork="true" maxmemory="256m">
+			<classpath>
+			    <fileset dir="lib">
+			      <include name="**/*.jar"/>
+			    </fileset>
+				<fileset dir="${gwt.home}">
+				  	<include name="**/*.jar"/>
+				</fileset>
+				<pathelement location="temp/web_classes"/>
+			</classpath>
+			
+				<arg value="-out"/>
+				<arg value="www"/>
+				<arg value="com.gorthaur.svnadmin.SvnAdministration"/>
+			
+		</java>
+		
+	</target>
+	
+</project>
