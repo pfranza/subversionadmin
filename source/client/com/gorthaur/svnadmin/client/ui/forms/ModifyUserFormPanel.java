@@ -1,7 +1,15 @@
 package com.gorthaur.svnadmin.client.ui.forms;
 
+import com.google.gwt.http.client.Request;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestCallback;
+import com.google.gwt.http.client.RequestException;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.gorthaur.svnadmin.client.SvnAdministration;
+import com.gorthaur.svnadmin.client.ui.listeners.ClickListener;
+import com.gwtext.client.core.EventObject;
 import com.gwtext.client.data.FieldDef;
 import com.gwtext.client.data.HttpProxy;
 import com.gwtext.client.data.Record;
@@ -17,16 +25,14 @@ import com.gwtext.client.widgets.form.Checkbox;
 import com.gwtext.client.widgets.form.ComboBox;
 import com.gwtext.client.widgets.form.FieldSet;
 import com.gwtext.client.widgets.form.FormPanel;
-import com.gwtext.client.widgets.form.Label;
-import com.gwtext.client.widgets.form.MultiFieldPanel;
 import com.gwtext.client.widgets.form.TextField;
 import com.gwtext.client.widgets.form.ValidationException;
 import com.gwtext.client.widgets.form.Validator;
 import com.gwtext.client.widgets.form.event.ComboBoxListenerAdapter;
-import com.gwtext.client.widgets.grid.GridPanel;
 
 public class ModifyUserFormPanel extends Panel {
 
+	private Store mStore;
 
 	private final ComboBox usersList = new ComboBox() {{
 		setMinChars(1);  
@@ -39,10 +45,27 @@ public class ModifyUserFormPanel extends Panel {
 		setSelectOnFocus(true);  
 		setWidth(300);
 		setPageSize(10);
-		setDisplayField("name");		
+		setDisplayField("name");	
+		
 	}};
 	
-	private UserPreferencesPanel userPrefs = new UserPreferencesPanel();
+	private UserPreferencesPanel userPrefs = new UserPreferencesPanel(new UserPreferencesPanelListener() {
+
+		public void doRefresh() {
+			refreshDataStore();
+		}		
+	});
+
+	private void refreshDataStore() {
+		try {
+			usersList.clearValue();
+			mStore.reload();
+			usersList.reset();
+		} catch (Exception e) {
+			Window.alert("doRefresh: " + e.getMessage());
+		}
+	}
+	
 	
 	public ModifyUserFormPanel() {
 
@@ -52,7 +75,7 @@ public class ModifyUserFormPanel extends Panel {
 			
 			public void onShow(Component component) {
 				if(!done) {
-					Store mStore = new Store(
+					mStore = new Store(
 							new HttpProxy(URL.encode("/rest/listUsers?username="+SvnAdministration.getInstance().getUsername()+
 									"&passwd=" + SvnAdministration.getInstance().getPassword())),
 									new XmlReader("row", new RecordDef(new FieldDef[] {
@@ -68,6 +91,8 @@ public class ModifyUserFormPanel extends Panel {
 					usersList.setStore(mStore);
 					mStore.load(0, 10);
 					done = true;
+				} else {
+					refreshDataStore();
 				}
 				
 				super.onShow(component);
@@ -82,7 +107,7 @@ public class ModifyUserFormPanel extends Panel {
 		form.setTitle("Modify User");  
 		form.setFrame(false);  
 		form.setPaddings(5, 5, 5, 0);  
-		form.setWidth(460);  
+		form.setWidth(500);  
 		form.setLabelWidth(75);  
 		
 		FieldSet set = new FieldSet();
@@ -149,77 +174,115 @@ public class ModifyUserFormPanel extends Panel {
 			setValue(false);
 		}};
 		
-		private GroupMembershipEditor groups = new GroupMembershipEditor();
 		
-		private Button save = new Button("Save Changes");
+		private Button save = new Button("Save Changes"){{
+			addListener(new ClickListener() {
+
+				public void onClick(Button button, EventObject e) {
+					RequestBuilder rb = new RequestBuilder(RequestBuilder.GET, URL.encode("/rest/updateUser?username="+SvnAdministration.getInstance().getUsername()+
+									"&passwd=" + SvnAdministration.getInstance().getPassword()+
+									"&targetUser=" + name.getValueAsString() +
+									"&targetEmail=" + email.getValueAsString() +
+									"&targetAdmin=" + Boolean.toString(isAdmin.getValue())+
+									"&targetPasswd=" + password.getValueAsString()
+									
+					));
+					
+					try {
+						rb.sendRequest("", new RequestCallback() {
+
+							public void onError(Request request, Throwable exception) {
+								Window.alert("Error: " + exception.getMessage());
+							}
+
+							public void onResponseReceived(Request request,
+									Response response) {
+								Window.alert(response.getText());
+								reset();
+								listener.doRefresh();
+							}
+							
+						});
+					} catch (RequestException e1) {
+						Window.alert("Error: " + e1.getMessage());
+					}
+					
+				}
+			
+			});
+		}};
+		private Button delete = new Button("Delete User"){{
+			addListener(new ClickListener() {
+
+				public void onClick(Button button, EventObject e) {
+					if(Window.confirm("Continue deleting user " + name.getValueAsString() + "?")) {
+						RequestBuilder rb = new RequestBuilder(RequestBuilder.GET, URL.encode("/rest/deleteUser?username="+SvnAdministration.getInstance().getUsername()+
+								"&passwd=" + SvnAdministration.getInstance().getPassword()+
+								"&targetUser=" + name.getValueAsString()
+								
+				));
+				
+				try {
+					rb.sendRequest("", new RequestCallback() {
+
+						public void onError(Request request, Throwable exception) {
+							Window.alert("Error: " + exception.getMessage());
+						}
+
+						public void onResponseReceived(Request request,
+								Response response) {
+							Window.alert(response.getText());
+							reset();
+							listener.doRefresh();
+						}
+						
+					});
+				} catch (RequestException e1) {
+					Window.alert("Error: " + e1.getMessage());
+				}
+					}
+				}
+				
+			});
+		}};
+
+		private UserPreferencesPanelListener listener;
+		
+		public UserPreferencesPanel(UserPreferencesPanelListener listener) {
+			add(name);
+			add(email);
+			add(isAdmin);
+			
+			FieldSet pwset = new FieldSet("Leave Blank To Keep Unchanged");
+			pwset.add(password);
+			pwset.add(password_again);
+			add(pwset);			
+			
+			addButton(delete);
+			addButton(save);
+			this.listener = listener;
+		}
 		
 		public void loadSettings(Record record) {
 			name.setValue(record.getAsString("name"));
 			email.setValue(record.getAsString("email"));
-			isAdmin.setValue(Boolean.valueOf(record.getAsString("admin")));
+			isAdmin.setValue(Boolean.valueOf(record.getAsString("admin")));		
 		}
-
 		
-		public UserPreferencesPanel() {
-			add(name);
-			add(email);
-			add(isAdmin);
-			FieldSet pwset = new FieldSet("Leave Blank To Keep Unchanged");
-			pwset.add(password);
-			pwset.add(password_again);
-			add(pwset);
-			add(groups);
-			addButton(save);
+		private void reset() {
+			name.setValue("");
+			email.setValue("");
+			isAdmin.setValue(false);
+			password.setValue("");
+			password_again.setValue("");
 		}
 		
 	}
 	
-	private static class GroupMembershipEditor extends FieldSet {
-		
-		private final ComboBox groupsList = new ComboBox() {{
-			setMinChars(1);  
-			setFieldLabel("Select Group");   
-			setMode(ComboBox.REMOTE);  
-			setTriggerAction(ComboBox.ALL);  
-			setEmptyText("Select Group");  
-			setLoadingText("Searching...");  
-			setTypeAhead(true);  
-			setSelectOnFocus(true);  
-			setWidth(300);
-			setPageSize(10);
-			setDisplayField("group");		
-		}};
-		
-		private final GridPanel grid = new GridPanel(){{
 
-			setFrame(true);  
-			setStripeRows(true);  
-//			setAutoExpandColumn("company");  
-
-			setHeight(350);  
-			setWidth(400);  
-			
-		}};
-		
-		private Button add = new Button("Add");
-		private Button remove = new Button("Remove Selected Group(s)");
-		
-		public GroupMembershipEditor() {
-			setTitle("Group Membership");
-			setCollapsible(true);
-			setCollapsed(true);
-			
-			MultiFieldPanel m1 = new MultiFieldPanel();
-			m1.addToRow(groupsList, 300);
-			m1.addToRow(new Label(""), 7);
-			m1.addToRow(add, 100);
-			
-			add(m1);
-			add(grid);
-			
-			addButton(remove);
-		}
-		
+	
+	private interface UserPreferencesPanelListener {
+		void doRefresh();
 	}
 	
 }

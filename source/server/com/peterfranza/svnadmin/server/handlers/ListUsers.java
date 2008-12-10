@@ -56,7 +56,7 @@ public class ListUsers implements DataFeed {
 				writer.append("    </groups>");
 				writer.append("  </row>");	
 			}
-			
+
 			writer.append(" </dataset>");
 
 			

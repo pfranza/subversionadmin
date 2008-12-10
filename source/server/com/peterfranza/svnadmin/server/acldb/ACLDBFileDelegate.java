@@ -47,11 +47,12 @@ public class ACLDBFileDelegate {
 					if(line.startsWith("@")) {
 						Group g = getGroup(parts[0].replaceAll("@", ""));
 						if(g != null) {
-							String[] subscriptions = parts[1].split("\\s*,\\s*");
-							for (final String string : subscriptions) {
-								g.getSubscriptions().add(new Subscription() {{
-									setPath(string);
-								}});
+							if(parts.length > 1) {
+								for (final String string : parts[1].split("\\s*,\\s*")) {
+									g.getSubscriptions().add(new Subscription() {{
+										setPath(string);
+									}});
+								}
 							}
 						}
 					} else {
