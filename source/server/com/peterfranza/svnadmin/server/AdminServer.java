@@ -120,8 +120,7 @@ public class AdminServer {
 		} else {
 			System.out.println("Usage: <noargs>        - start server");
 			System.out.println("       --notify <changeset number> - send notification hook");
-		}
-		
+		}	
 	}
 
 }

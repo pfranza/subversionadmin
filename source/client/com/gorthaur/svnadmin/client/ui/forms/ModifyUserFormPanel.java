@@ -17,10 +17,13 @@ import com.gwtext.client.widgets.form.Checkbox;
 import com.gwtext.client.widgets.form.ComboBox;
 import com.gwtext.client.widgets.form.FieldSet;
 import com.gwtext.client.widgets.form.FormPanel;
+import com.gwtext.client.widgets.form.Label;
+import com.gwtext.client.widgets.form.MultiFieldPanel;
 import com.gwtext.client.widgets.form.TextField;
 import com.gwtext.client.widgets.form.ValidationException;
 import com.gwtext.client.widgets.form.Validator;
 import com.gwtext.client.widgets.form.event.ComboBoxListenerAdapter;
+import com.gwtext.client.widgets.grid.GridPanel;
 
 public class ModifyUserFormPanel extends Panel {
 
@@ -116,6 +119,7 @@ public class ModifyUserFormPanel extends Panel {
 				}		
 			});
 		}};
+		
 		private TextField password = new TextField("Password", "password", 210){{
 			setAllowBlank(true);
 			setInvalidText("Invalid Password");
@@ -145,6 +149,7 @@ public class ModifyUserFormPanel extends Panel {
 			setValue(false);
 		}};
 		
+		private GroupMembershipEditor groups = new GroupMembershipEditor();
 		
 		private Button save = new Button("Save Changes");
 		
@@ -163,7 +168,56 @@ public class ModifyUserFormPanel extends Panel {
 			pwset.add(password);
 			pwset.add(password_again);
 			add(pwset);
+			add(groups);
 			addButton(save);
+		}
+		
+	}
+	
+	private static class GroupMembershipEditor extends FieldSet {
+		
+		private final ComboBox groupsList = new ComboBox() {{
+			setMinChars(1);  
+			setFieldLabel("Select Group");   
+			setMode(ComboBox.REMOTE);  
+			setTriggerAction(ComboBox.ALL);  
+			setEmptyText("Select Group");  
+			setLoadingText("Searching...");  
+			setTypeAhead(true);  
+			setSelectOnFocus(true);  
+			setWidth(300);
+			setPageSize(10);
+			setDisplayField("group");		
+		}};
+		
+		private final GridPanel grid = new GridPanel(){{
+
+			setFrame(true);  
+			setStripeRows(true);  
+//			setAutoExpandColumn("company");  
+
+			setHeight(350);  
+			setWidth(400);  
+			
+		}};
+		
+		private Button add = new Button("Add");
+		private Button remove = new Button("Remove Selected Group(s)");
+		
+		public GroupMembershipEditor() {
+			setTitle("Group Membership");
+			setCollapsible(true);
+			setCollapsed(true);
+			
+			MultiFieldPanel m1 = new MultiFieldPanel();
+			m1.addToRow(groupsList, 300);
+			m1.addToRow(new Label(""), 7);
+			m1.addToRow(add, 100);
+			
+			add(m1);
+			add(grid);
+			
+			addButton(remove);
 		}
 		
 	}
