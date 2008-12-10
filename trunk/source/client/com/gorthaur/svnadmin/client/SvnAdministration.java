@@ -1,6 +1,7 @@
 package com.gorthaur.svnadmin.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.user.client.Timer;
 import com.gorthaur.svnadmin.client.ui.LoginWindow;
 import com.gorthaur.svnadmin.client.ui.MainPanel;
 import com.gorthaur.svnadmin.client.ui.LoginWindow.LoginWindowListener;
@@ -16,8 +17,15 @@ public class SvnAdministration extends Panel implements EntryPoint {
 
 	private static SvnAdministration instance;
 	
-	private final MainPanel mainPanel = new MainPanel();
 	private final LoginWindow login = new LoginWindow();
+	
+	private final MainPanel mainPanel = new MainPanel() {{
+		setVisible(false);
+	}};
+
+	private Viewport view;
+	
+	
 	
 	public SvnAdministration() {
 		setBorder(false);  
@@ -30,6 +38,14 @@ public class SvnAdministration extends Panel implements EntryPoint {
 			public void loginSuccess() {				
 				mainPanel.setVisible(true);
 				login.hide();
+				
+				Timer t = new Timer() {
+					public void run() {
+						view.doLayout();
+					}
+				};
+				t.schedule(500);
+				
 			}
 		});
 		
@@ -46,9 +62,7 @@ public class SvnAdministration extends Panel implements EntryPoint {
 
 	public void onModuleLoad() {
 		instance = this;
-		Viewport view = new Viewport(this);
-		view.doLayout();
-		mainPanel.setVisible(false);
+		view = new Viewport(this);	
 	}
 	
 	public static SvnAdministration getInstance() {
