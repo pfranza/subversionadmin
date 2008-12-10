@@ -4,13 +4,13 @@
 	
 	<target name="compile">
 		
-		<delete dir="classes"/>
+		<delete dir="classes" failonerror="no"/>
 		<mkdir dir="classes"/>
 		
-		<delete dir="temp" />
+		<delete dir="temp" failonerror="no"/>
 		<mkdir dir="temp/web_classes"/>
 	
-		<javac srcdir="server/src" destdir="classes">
+		<javac srcdir="source/server" destdir="classes">
 			<classpath>
 			      <fileset dir="lib">
 			        <include name="**/*.jar"/>
@@ -18,7 +18,7 @@
 			</classpath>
 		</javac>
 			
-		<javac srcdir="src" destdir="temp/web_classes">
+		<javac srcdir="source/client" destdir="temp/web_classes">
 			<classpath>
 			      <fileset dir="lib">
 			        <include name="**/*.jar"/>
@@ -30,7 +30,7 @@
 		</javac>
 		
 		<copy todir="temp/web_classes">
-			<fileset dir="src"/>
+			<fileset dir="source/client"/>
 		</copy>
 				
 		<java classname="com.google.gwt.dev.GWTCompiler" 
