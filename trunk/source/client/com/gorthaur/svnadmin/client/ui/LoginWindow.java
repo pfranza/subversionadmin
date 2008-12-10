@@ -12,37 +12,30 @@ import com.google.gwt.http.client.URL;
 import com.gorthaur.svnadmin.client.SvnAdministration;
 import com.gorthaur.svnadmin.client.ui.listeners.ClickListener;
 import com.gwtext.client.core.EventObject;
-import com.gwtext.client.core.RegionPosition;
 import com.gwtext.client.widgets.Button;
-import com.gwtext.client.widgets.Panel;
 import com.gwtext.client.widgets.Window;
-import com.gwtext.client.widgets.layout.BorderLayout;
-import com.gwtext.client.widgets.layout.BorderLayoutData;
+import com.gwtext.client.widgets.layout.FormLayout;
 
 public class LoginWindow extends Window {
 
 	private List<LoginWindowListener> listeners = new ArrayList<LoginWindowListener>();
 	
 	private LoginPanel userdata = new LoginPanel(); 
+	private Button loginButton = new Button("Login");
 	
 	public LoginWindow() {
 		
 		setTitle("Login");  
 		setClosable(false);
 		setResizable(false);
-		setWidth(220);  
-		setHeight(130);  
-			
-		setLayout(new BorderLayout());  
-		add(userdata, new BorderLayoutData(RegionPosition.CENTER));
+		setWidth(275);  
+//		setHeight(130);
 		
-		Panel buttons = new Panel();
-		buttons.setBorder(false);
-		buttons.setPaddings(0, 145, 5, 15);
-		Button loginButton = new Button("Login");
-		buttons.add(loginButton);
 		
-		add(buttons, new BorderLayoutData(RegionPosition.SOUTH));
+		setLayout(new FormLayout());
+
+		add(userdata);
+		addButton(loginButton);
 
 		loginButton.addListener(new ClickListener() {
 			
