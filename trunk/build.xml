@@ -80,4 +80,8 @@
         </one-jar>
 	</target>
 	
+	<target name="launch" depends="dist">
+	  <java jar="SvnAdmin.jar" fork="true"/>
+	</target>
+	
 </project>
