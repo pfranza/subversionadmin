@@ -21,6 +21,7 @@ import com.peterfranza.svnadmin.server.handlers.ChangePassword;
 import com.peterfranza.svnadmin.server.handlers.CheckGroupName;
 import com.peterfranza.svnadmin.server.handlers.CreateGroup;
 import com.peterfranza.svnadmin.server.handlers.DataFeed;
+import com.peterfranza.svnadmin.server.handlers.DeleteGroup;
 import com.peterfranza.svnadmin.server.handlers.DeleteUser;
 import com.peterfranza.svnadmin.server.handlers.ListGroupMembers;
 import com.peterfranza.svnadmin.server.handlers.ListGroups;
@@ -48,6 +49,7 @@ public class AdminServer {
 			put("/rest/checkGroupName", new CheckGroupName());
 			put("/rest/createGroup", new CreateGroup());
 			put("/rest/updateGroup", new UpdateGroup());
+			put("/rest/deleteGroup", new DeleteGroup());
 			
 		}
 	};

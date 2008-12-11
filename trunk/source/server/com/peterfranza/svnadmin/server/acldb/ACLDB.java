@@ -1,6 +1,7 @@
 package com.peterfranza.svnadmin.server.acldb;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ACLDB {
@@ -11,14 +12,27 @@ public class ACLDB {
 	private List<Group> groups = new ArrayList<Group>();
 	private List<AccessRule> rules = new ArrayList<AccessRule>();
 	
-	protected static class ACLItem {}
+	protected static abstract class ACLItem {
+
+		public abstract boolean isValid();
+		
+	}
 	
-	public static class User extends ACLItem {
+	protected User createNewUser(String username2, String password2) {
+		return new User(username2, password2);
+	}
+	
+	protected Group createNewGroup() {
+		return new Group();
+	}
+	
+	public class User extends ACLItem {
 		private String username;
 		private String password;
 		private String email;
 		private List<Subscription> subscriptions = new ArrayList<Subscription>();
 		private boolean isAdmin = false;
+		
 		
 		protected User(String username2, String password2) {
 			this.username = username2;
@@ -62,10 +76,17 @@ public class ACLDB {
 		public void setAdmin(boolean b) {
 			isAdmin = b;
 		}
+
+		@Override
+		public boolean isValid() {
+			return ACLDB.this.users.contains(this);
+		}
+		
+		
 		
 	}
 	
-	protected static class Group extends ACLItem {
+	protected class Group extends ACLItem {
 		private String name;
 		private List<ACLItem> members = new ArrayList<ACLItem>();
 		private List<Subscription> subscriptions = new ArrayList<Subscription>();
@@ -74,9 +95,15 @@ public class ACLDB {
 			return name;
 		}
 		public final void setName(String name) {
-			this.name = name;
+			this.name = name.replaceAll("@", "");
 		}
 		public final List<ACLItem> getMembers() {
+			for (Iterator<ACLItem> iterator = members.iterator(); iterator.hasNext();) {
+				ACLItem type = iterator.next();
+				if(type == null || !type.isValid()) {
+					iterator.remove();
+				}
+			}
 			return members;
 		}
 		public final void setMembers(List<ACLItem> members) {
@@ -93,7 +120,18 @@ public class ACLDB {
 		
 		@Override
 		public String toString() {
-			return "@" + name;
+			return "@" + getName() ;
+		}
+		
+		@Override
+		public boolean isValid() {
+			return ACLDB.this.groups.contains(this);
+		}
+		
+		public void addMember(ACLItem i) {
+			if(i.isValid()) {
+				this.members.add(i);
+			}
 		}
 		
 	}

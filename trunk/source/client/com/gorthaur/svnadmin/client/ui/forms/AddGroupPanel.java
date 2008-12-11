@@ -228,7 +228,7 @@ public class AddGroupPanel extends Panel {
 						}};
 	}
 	
-	protected String getFeedUrl() {
+	private String getFeedUrl() {
 		return "/rest/listGroupMembership?username="+SvnAdministration.getInstance().getUsername()+
 		"&passwd=" + SvnAdministration.getInstance().getPassword();
 	}
