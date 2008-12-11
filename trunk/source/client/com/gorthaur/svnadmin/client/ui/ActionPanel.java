@@ -4,6 +4,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
+import com.gorthaur.svnadmin.client.ui.forms.AddGroupPanel;
 import com.gorthaur.svnadmin.client.ui.forms.AddUserFormPanel;
 import com.gorthaur.svnadmin.client.ui.forms.ModifyUserFormPanel;
 import com.gwtext.client.core.RegionPosition;
@@ -84,6 +85,7 @@ public class ActionPanel extends Panel {
 		
 		private AddUserFormPanel addUserForm = new AddUserFormPanel();
 		private ModifyUserFormPanel modifyUserForm = new ModifyUserFormPanel();
+		private AddGroupPanel addGroup = new AddGroupPanel();
 		
 		public ContentPanel() {
 			setLayout(layout);
@@ -99,7 +101,7 @@ public class ActionPanel extends Panel {
 			add(addUserForm);
 			add(modifyUserForm);
 			add(new Label("Manage Subscriptions"));
-			add(new Label("3"));
+			add(addGroup);
 			add(new Label("4"));
 			add(new Label("5"));
 			add(new Label("6"));
