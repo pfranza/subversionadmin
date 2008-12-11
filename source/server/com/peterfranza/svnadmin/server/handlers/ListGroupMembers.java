@@ -17,6 +17,9 @@ public class ListGroupMembers implements DataFeed {
 		List<String> included = getIncluded(request.getParameter("groupName"));
 		List<String> excluded = getExcluded(request.getParameter("groupName"));
 		
+		included.remove("@" + request.getParameter("groupName"));
+		excluded.remove("@" + request.getParameter("groupName"));
+		
 		response.setContentType("text/xml");
 		writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		writer.append("<dataset>");
@@ -40,12 +43,10 @@ public class ListGroupMembers implements DataFeed {
 	private List<String> getExcluded(String parameter) {
 		List<String> l = new ArrayList<String>();
 		if(parameter != null) {
-			
+			l.addAll(getAllPossible());
+			l.removeAll(getIncluded(parameter));
 		} else {
-			l.addAll(ACLOperationsDelegate.getInstance().getUserOperations().getUsernames());
-			for(String s: ACLOperationsDelegate.getInstance().getGroupOperations().getGroupNames()) {
-				l.add("@" + s);
-			}
+			l.addAll(getAllPossible());
 		}
 		return l;
 	}
@@ -53,7 +54,16 @@ public class ListGroupMembers implements DataFeed {
 	private List<String> getIncluded(String parameter) {
 		List<String> l = new ArrayList<String>();
 		if(parameter != null) {
-			
+			l.addAll(ACLOperationsDelegate.getInstance().getGroupOperations().getGroupMembers(parameter));
+		}
+		return l;
+	}
+	
+	private List<String> getAllPossible() {
+		List<String> l = new ArrayList<String>();
+		l.addAll(ACLOperationsDelegate.getInstance().getUserOperations().getUsernames());
+		for(String s: ACLOperationsDelegate.getInstance().getGroupOperations().getGroupNames()) {
+			l.add("@" + s);
 		}
 		return l;
 	}

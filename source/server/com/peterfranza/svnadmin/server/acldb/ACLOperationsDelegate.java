@@ -147,25 +147,24 @@ public class ACLOperationsDelegate {
 
 			synchronized(lock) {
 				
-				Group g = new Group(){{
-					setName(groupName);					
-				}};
+				Group g = acl.getACL().createNewGroup();
+				g.setName(groupName);
 				
 				acl.getACL().getGroups().add(g);
 				
 				for(String add: addUsers) {
 					
 					if(add.startsWith("@")) {
-						g.getMembers().add(getGroup(add.replace("@", "")));
+						g.addMember(getGroup(add.replace("@", "")));
 					} else {
-						g.getMembers().add(getUserOperations().getUser(add));
+						g.addMember(getUserOperations().getUser(add));
 					}
 						
 				}
 				
 				save();
 			}
-			System.out.println("adding " + groupName);
+
 		}
 		
 		public boolean isGroup(String groupName){
@@ -202,6 +201,29 @@ public class ACLOperationsDelegate {
 			}
 			return false;
 		}
+
+		public List<String> getGroupMembers(String groupName) {
+			List<String> l = new ArrayList<String>();
+			synchronized(lock) {
+				Group g = getGroup(groupName);
+				for(ACLItem i: g.getMembers()) {
+					if(i.isValid()) {
+						l.add(i.toString());
+					}
+				}
+			}
+			return l;
+		}
+
+		public void removeGroup(String groupName) {
+			synchronized(lock) {
+				Group g = getGroup(groupName);
+				acl.getACL().getGroups().remove(g);
+				save();
+			}
+		}
+		
+		
 		
 	}
 	
@@ -233,7 +255,7 @@ public class ACLOperationsDelegate {
 		public void addNewUser(String username, String password,
 				String email) {
 			synchronized(lock) {
-				User u = new User(username, UnixCrypt.crypt(password));
+				User u = acl.getACL().createNewUser(username, UnixCrypt.crypt(password));
 				u.setEmail(email);
 				acl.getACL().getUsers().add(u);
 				save();

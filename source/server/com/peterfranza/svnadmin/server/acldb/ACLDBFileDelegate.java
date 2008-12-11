@@ -150,13 +150,13 @@ public class ACLDBFileDelegate {
 					String[] grp = line.split("\\s*=\\s*");
 					String[] members = grp[1].split("\\s*,\\s*");
 
-					Group group = new Group();
+					Group group = acl.createNewGroup();
 						group.setName(grp[0]);
 						for (String member : members) {
 							if(member.trim().startsWith("@")) {
-								Group m = new Group();
+								Group m = acl.createNewGroup();
 								m.setName(member);
-								group.getMembers().add(m);
+								group.addMember(m);
 							} else {
 								User u = getUser(member);
 								if(u != null) {
@@ -208,9 +208,7 @@ public class ACLDBFileDelegate {
 			String line = reader.readLine();
 			while(line != null) {
 				String[] parts = line.split(":");
-				acl.getUsers().add(new User(
-						parts[0], 
-						parts[1]));
+				acl.getUsers().add(acl.createNewUser(parts[0], parts[1]));
 				line = reader.readLine();
 			}
 		} else {
@@ -278,25 +276,24 @@ public class ACLDBFileDelegate {
 	private String saveGroupsFile() {
 		StringBuffer buf = new StringBuffer();
 		if(acl.getGroups().size() > 0) {
-		buf.append("[groups]").append(System.getProperty("line.separator"));
-		for(Group g: acl.getGroups()) {
-			if(g.getMembers().size() > 0) {
+			buf.append("[groups]").append(System.getProperty("line.separator"));
+			for(Group g: acl.getGroups()) {
 				buf.append(g.getName()).append(" = ");
-				List<ACLItem> members = g.getMembers();
-				for (Iterator<ACLItem> iterator = members.iterator(); iterator.hasNext();) {
+				for (Iterator<ACLItem> iterator = g.getMembers().iterator(); iterator.hasNext();) {
 					ACLItem item = iterator.next();
-					buf.append(item.toString());
-					if(iterator.hasNext()) {
-						buf.append(", ");
+					if(item != null) {
+						buf.append(item.toString());
+						if(iterator.hasNext()) {
+							buf.append(", ");
+						}
 					}
 				}
 				buf.append(System.getProperty("line.separator"));
 			}
+
+			buf.append(System.getProperty("line.separator"));
 		}
-		
-		buf.append(System.getProperty("line.separator"));
-		}
-		
+
 		for (AccessRule accessRule : acl.getRules()) {
 			if(accessRule.getAllow_read().size() + accessRule.getAllow_write().size() > 0) {
 				buf.append("[proj:"+accessRule.getDirectory()+"]").append(System.getProperty("line.separator"));
@@ -309,7 +306,7 @@ public class ACLDBFileDelegate {
 				buf.append(System.getProperty("line.separator"));
 			}
 		}
-		
+
 		return buf.toString().trim();
 	}
 
