@@ -17,7 +17,7 @@ public class ChangePassword implements DataFeed {
 			
 			if(request.getParameter("targetuser").equals(request.getParameter("username")) ||
 					AdminServer.isAdmin(request.getParameter("username"))) {
-				ACLOperationsDelegate.getInstance().setPassword(request.getParameter("targetuser"), request.getParameter("newpassword"));
+				ACLOperationsDelegate.getInstance().getUserOperations().setPassword(request.getParameter("targetuser"), request.getParameter("newpassword"));
 				writer.println("ok");
 			} else {
 				writer.println("operation not allowed");

@@ -13,7 +13,7 @@ public class UpdateUser implements DataFeed {
 	public void respond(PrintWriter writer, HttpServletRequest request,
 			HttpServletResponse response) {
 		if(AdminServer.isAdmin(request.getParameter("username"))) {
-		ACLOperationsDelegate.getInstance().updateUser(request.getParameter("targetUser"),
+		ACLOperationsDelegate.getInstance().getUserOperations().updateUser(request.getParameter("targetUser"),
 				request.getParameter("targetEmail"),
 				request.getParameter("targetAdmin"),
 				request.getParameter("targetPasswd"));

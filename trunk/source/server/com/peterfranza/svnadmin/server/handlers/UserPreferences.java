@@ -15,7 +15,7 @@ public class UserPreferences implements DataFeed {
 	public void respond(PrintWriter writer, HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		User u = ACLOperationsDelegate.getInstance().getUser(request.getParameter("query"));
+		User u = ACLOperationsDelegate.getInstance().getUserOperations().getUser(request.getParameter("query"));
 		
 		response.setContentType("text/xml");
 		writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -36,7 +36,7 @@ public class UserPreferences implements DataFeed {
 		
 		writer.append("    </subscriptions>");
 		writer.append("    <groups>");
-		for (Iterator<String> iterator = ACLOperationsDelegate.getInstance().getGroupMembership(u.getUsername()).iterator(); iterator.hasNext();) {
+		for (Iterator<String> iterator = ACLOperationsDelegate.getInstance().getGroupOperations().getGroupMembership(u.getUsername()).iterator(); iterator.hasNext();) {
 			String group = iterator.next();
 			writer.append(group);
 			if(iterator.hasNext()) {

@@ -13,7 +13,7 @@ public class DeleteUser implements DataFeed {
 	public void respond(PrintWriter writer, HttpServletRequest request,
 			HttpServletResponse response) {
 		if(AdminServer.isAdmin(request.getParameter("username"))) {
-			ACLOperationsDelegate.getInstance().deleteUser(request.getParameter("targetUser"));
+			ACLOperationsDelegate.getInstance().getUserOperations().deleteUser(request.getParameter("targetUser"));
 			writer.append("User Deleted");
 		} else {
 			writer.append("Invalid Privledge For Operation");
