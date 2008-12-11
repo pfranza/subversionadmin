@@ -18,10 +18,14 @@ import com.peterfranza.svnadmin.server.acldb.ACLOperationsDelegate;
 import com.peterfranza.svnadmin.server.handlers.AddNewUser;
 import com.peterfranza.svnadmin.server.handlers.Authenticate;
 import com.peterfranza.svnadmin.server.handlers.ChangePassword;
+import com.peterfranza.svnadmin.server.handlers.CheckGroupName;
+import com.peterfranza.svnadmin.server.handlers.CreateGroup;
 import com.peterfranza.svnadmin.server.handlers.DataFeed;
 import com.peterfranza.svnadmin.server.handlers.DeleteUser;
+import com.peterfranza.svnadmin.server.handlers.ListGroupMembers;
 import com.peterfranza.svnadmin.server.handlers.ListGroups;
 import com.peterfranza.svnadmin.server.handlers.ListUsers;
+import com.peterfranza.svnadmin.server.handlers.UpdateGroup;
 import com.peterfranza.svnadmin.server.handlers.UpdateUser;
 import com.peterfranza.svnadmin.server.handlers.UserPreferences;
 
@@ -31,13 +35,20 @@ public class AdminServer {
 		private static final long serialVersionUID = 532606649367845419L;
 		{
 			put("/rest/auth", new Authenticate());
+			
 			put("/rest/listUsers", new ListUsers());
 			put("/rest/changepassword", new ChangePassword());
 			put("/rest/adduser", new AddNewUser());
 			put("/rest/userPrefs", new UserPreferences());
 			put("/rest/updateUser", new UpdateUser());
 			put("/rest/deleteUser", new DeleteUser());
+			
 			put("/rest/listGroups", new ListGroups());
+			put("/rest/listGroupMembership", new ListGroupMembers());
+			put("/rest/checkGroupName", new CheckGroupName());
+			put("/rest/createGroup", new CreateGroup());
+			put("/rest/updateGroup", new UpdateGroup());
+			
 		}
 	};
 

@@ -103,7 +103,9 @@ public class ACLOperationsDelegate {
 		public void modifyGroup(String groupName, List<String> addUsers,
 				List<String> removeUsers) {
 			synchronized(lock) {
+				System.out.println("fetch: " + groupName);
 				Group g = getGroup(groupName);
+				System.out.println("mod: " + g.getName());
 				for (Iterator<ACLItem> iterator = g.getMembers().iterator(); iterator.hasNext();) {
 					ACLItem item = (ACLItem) iterator.next();
 					if (item instanceof Group) {
@@ -120,15 +122,13 @@ public class ACLOperationsDelegate {
 				}
 				
 				for(String add: addUsers) {
-					Group grp = getGroup(add);
-					if(grp != null) {
-						g.getMembers().add(grp);
+					
+					if(add.startsWith("@")) {
+						g.getMembers().add(getGroup(add.replace("@", "")));
 					} else {
-						User u = getUserOperations().getUser(add);
-						if(u != null) {
-							g.getMembers().add(u);
-						}
-					}		
+						g.getMembers().add(getUserOperations().getUser(add));
+					}
+						
 				}
 				save();
 			}
@@ -143,13 +143,29 @@ public class ACLOperationsDelegate {
 			return null;
 		}
 		
-		public void createGroup(String groupName) {
-			Group g = new Group();
-			g.setName(groupName);
+		public void createGroup(final String groupName, List<String> addUsers) {
+
 			synchronized(lock) {
+				
+				Group g = new Group(){{
+					setName(groupName);					
+				}};
+				
 				acl.getACL().getGroups().add(g);
+				
+				for(String add: addUsers) {
+					
+					if(add.startsWith("@")) {
+						g.getMembers().add(getGroup(add.replace("@", "")));
+					} else {
+						g.getMembers().add(getUserOperations().getUser(add));
+					}
+						
+				}
+				
 				save();
 			}
+			System.out.println("adding " + groupName);
 		}
 		
 		public boolean isGroup(String groupName){
