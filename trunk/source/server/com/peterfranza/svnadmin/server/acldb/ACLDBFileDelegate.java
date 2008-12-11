@@ -223,11 +223,12 @@ public class ACLDBFileDelegate {
 		String group = saveGroupsFile();
 		String supplement = saveSupplementData();
 		
-//		System.out.println(buf);
-//		System.out.println("------------------------");
-//		System.out.println(group);
-//		System.out.println("------------------------");
-//		System.out.println(supplement);
+		System.out.println(buf);
+		System.out.println("------------------------");
+		System.out.println(group);
+		System.out.println("------------------------");
+		System.out.println(supplement);
+		
 		writeFile(buf, ApplicationProperties.getProperty("access_file"));
 		writeFile(group, ApplicationProperties.getProperty("svn_groups"));
 		writeFile(supplement, ApplicationProperties.getProperty("supplement_datafile"));
