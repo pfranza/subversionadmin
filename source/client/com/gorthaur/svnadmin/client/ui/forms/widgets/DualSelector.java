@@ -95,27 +95,8 @@ public class DualSelector extends HorizontalPanel {
 	}
 	
 	public void populate(String[] in, String[] out) {
-		this.origionalIn = in;
-		this.origionalOut = out;
-		
-		member.clear();
-		available.clear();
-		
-		try {
-			for(String s: in) {
-				member.addItem(s.trim());
-			}
-		} catch (Exception e) {}
-
-		try {
-			for(String s: out) {
-				available.addItem(s.trim());
-			}
-		} catch (Exception e) {}
-		
-		sort(member);
-		sort(available);
-		
+		populateIncluded(in);
+		populateExcluded(out);
 	}
 	
 	public List<String> getItemsToAdd() {
@@ -150,6 +131,35 @@ public class DualSelector extends HorizontalPanel {
 			}
 		}
 		return false;
+	}
+
+	public void reset() {
+		member.clear();
+		available.clear();
+	}
+
+	public void populateIncluded(String[] in) {
+		this.origionalIn = in;
+		member.clear();
+		try {
+			for(String s: in) {
+				member.addItem(s.trim());
+			}
+		} catch (Exception e) {}
+		sort(member);
+	}
+	
+	public void populateExcluded(String[] out) {
+		this.origionalOut = out;
+		available.clear();
+
+		try {
+			for(String s: out) {
+				available.addItem(s.trim());
+			}
+		} catch (Exception e) {}
+		
+		sort(available);
 	}
 	
 	
