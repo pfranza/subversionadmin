@@ -133,6 +133,7 @@ public class AdminServer {
 			System.out.println("Starting Server.");
 			new AdminServer(Integer.valueOf(ApplicationProperties
 					.getProperty("server_port")));
+			ACLOperationsDelegate.getInstance().getGroupOperations();
 		} else if(args.length == 2 && args[0].equals("--notify")) {
 			ChangeSetEmailer.sendChangeSetEmail(Long.valueOf(args[1]));
 		} else {

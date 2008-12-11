@@ -139,6 +139,7 @@ public class ACLDBFileDelegate {
 	}
 
 	private void populateGroups(String groupsFile) throws IOException {
+
 		BufferedReader reader = new BufferedReader(new StringReader(groupsFile));
 		String line = reader.readLine();
 		boolean inGroupsSection = false;
@@ -149,24 +150,34 @@ public class ACLDBFileDelegate {
 				if(inGroupsSection) {
 					String[] grp = line.split("\\s*=\\s*");
 
-					Group group = acl.createNewGroup();
+					Group group = getGroup(grp[0]) != null ? getGroup(grp[0]) : acl.createNewGroup();
 						group.setName(grp[0]);
+
 						if(grp.length > 1) {
 							for (String member : grp[1].split("\\s*,\\s*")) {
-								if(member.trim().startsWith("@")) {
-									Group m = acl.createNewGroup();
+								if(member.trim().startsWith("@")) {								
+									Group m = getGroup(member) != null ? getGroup(member) : acl.createNewGroup();
 									m.setName(member);
+																		
+									if(!m.isValid()) {
+										acl.getGroups().add(m);
+									}
+									
 									group.addMember(m);
+
 								} else {
 									User u = getUser(member);
 									if(u != null) {
-										group.getMembers().add(u);
+										group.addMember(u);
 									}
 								}
 							}
 						}
-					acl.getGroups().add(group);
-					
+						
+						if(!group.isValid()) {
+							acl.getGroups().add(group);
+						}
+						
 				}
 			}
 		
