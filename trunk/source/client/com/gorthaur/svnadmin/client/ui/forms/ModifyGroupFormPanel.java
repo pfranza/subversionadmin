@@ -138,6 +138,12 @@ public class ModifyGroupFormPanel extends Panel {
 	
 	public ModifyGroupFormPanel() {
 		
+		final FormPanel form = new FormPanel();
+		
+		final FieldSet set = new FieldSet();
+		set.setCollapsible(false);  
+		set.setAutoHeight(true);
+		
 		addListener(new PanelListenerAdapter() {
 
 			boolean done = false;
@@ -155,8 +161,10 @@ public class ModifyGroupFormPanel extends Panel {
 
 					groupsList.setStore(mStore);
 					mStore.load(0, 10);
+					set.add(groupsList);
+					set.doLayout();
 					done = true;
-					groupsList.autoSize();
+					
 				} else {
 					refreshDataStore();
 				}
@@ -168,7 +176,7 @@ public class ModifyGroupFormPanel extends Panel {
 		setBorder(false);
 		setPaddings(15);
 		
-		FormPanel form = new FormPanel();
+		
 
 		form.setTitle("Modify Group");  
 		form.setFrame(false);  
@@ -176,10 +184,8 @@ public class ModifyGroupFormPanel extends Panel {
 		form.setWidth(500);  
 		form.setLabelWidth(75);  
 		
-		FieldSet set = new FieldSet();
-		set.setCollapsible(false);  
-		set.setAutoHeight(true); 
-		set.add(groupsList);
+ 
+		
 		
 		form.add(set);
 		FieldSet set2 = new FieldSet("Members");

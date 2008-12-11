@@ -70,6 +70,10 @@ public class ModifyUserFormPanel extends Panel {
 	
 	public ModifyUserFormPanel() {
 
+		final FieldSet set = new FieldSet();
+		set.setCollapsible(false);  
+		set.setAutoHeight(true);
+		
 		addListener(new PanelListenerAdapter() {
 
 			boolean done = false;
@@ -91,8 +95,12 @@ public class ModifyUserFormPanel extends Panel {
 
 					usersList.setStore(mStore);
 					mStore.load(0, 10);
+					
+					set.add(usersList);
+					set.doLayout();
+					
 					done = true;
-					usersList.autoSize();
+
 				} else {
 					refreshDataStore();
 				}
@@ -111,11 +119,6 @@ public class ModifyUserFormPanel extends Panel {
 		form.setPaddings(5, 5, 5, 0);  
 		form.setWidth(500);  
 		form.setLabelWidth(75);  
-		
-		FieldSet set = new FieldSet();
-		set.setCollapsible(false);  
-		set.setAutoHeight(true); 
-		set.add(usersList);
 		
 		form.add(set);
 		form.add(userPrefs);
