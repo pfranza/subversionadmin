@@ -1,6 +1,8 @@
 package com.peterfranza.svnadmin.server.acldb;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import com.peterfranza.svnadmin.server.acldb.ACLDB.ACLItem;
@@ -56,6 +58,7 @@ public class ACLOperationsDelegate {
 		}
 		return null;
 	}
+	
 	public User getUser(String username) {
 			for(User u: acl.getACL().getUsers()) {
 				if(u.getUsername().equals(username)) {
@@ -177,6 +180,60 @@ public class ACLOperationsDelegate {
 			acl.getACL().getUsers().remove(u);
 			save();
 		}
+	}
+
+	public List<String> getGroupNames() {
+		List<String> l = new ArrayList<String>();
+		synchronized(lock) {
+			for(Group g: acl.getACL().getGroups()) {
+				l.add(g.getName());
+			}
+		}
+		Collections.sort(l);
+		return l;
+	}
+
+	public void modifyGroup(String groupName, List<String> addUsers,
+			List<String> removeUsers) {
+		synchronized(lock) {
+			Group g = getGroup(groupName);
+			for (Iterator<ACLItem> iterator = g.getMembers().iterator(); iterator.hasNext();) {
+				ACLItem item = (ACLItem) iterator.next();
+				if (item instanceof Group) {
+					Group group = (Group) item;
+					if(removeUsers.contains(group.getName())) {
+						iterator.remove();
+					}
+				} else {
+					User user = (User) item;
+					if(removeUsers.contains(user.getUsername())) {
+						iterator.remove();
+					}
+				}
+			}
+			
+			for(String add: addUsers) {
+				Group grp = getGroup(add);
+				if(grp != null) {
+					g.getMembers().add(grp);
+				} else {
+					User u = getUser(add);
+					if(u != null) {
+						g.getMembers().add(u);
+					}
+				}		
+			}
+			save();
+		}
+	}
+
+	private Group getGroup(String groupName) {
+		for(Group g: acl.getACL().getGroups()) {
+			if(g.getName().equals(groupName)) {
+				return g;
+			}
+		}
+		return null;
 	}
 	
 }

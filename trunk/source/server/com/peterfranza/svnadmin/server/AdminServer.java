@@ -20,6 +20,7 @@ import com.peterfranza.svnadmin.server.handlers.Authenticate;
 import com.peterfranza.svnadmin.server.handlers.ChangePassword;
 import com.peterfranza.svnadmin.server.handlers.DataFeed;
 import com.peterfranza.svnadmin.server.handlers.DeleteUser;
+import com.peterfranza.svnadmin.server.handlers.ListGroups;
 import com.peterfranza.svnadmin.server.handlers.ListUsers;
 import com.peterfranza.svnadmin.server.handlers.UpdateUser;
 import com.peterfranza.svnadmin.server.handlers.UserPreferences;
@@ -28,7 +29,6 @@ public class AdminServer {
 
 	private Map<String, DataFeed> feeds = new HashMap<String, DataFeed>() {
 		private static final long serialVersionUID = 532606649367845419L;
-
 		{
 			put("/rest/auth", new Authenticate());
 			put("/rest/listUsers", new ListUsers());
@@ -37,6 +37,7 @@ public class AdminServer {
 			put("/rest/userPrefs", new UserPreferences());
 			put("/rest/updateUser", new UpdateUser());
 			put("/rest/deleteUser", new DeleteUser());
+			put("/rest/listGroups", new ListGroups());
 		}
 	};
 
