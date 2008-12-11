@@ -129,7 +129,7 @@ public class ACLDB {
 		}
 		
 		public void addMember(ACLItem i) {
-			if(i.isValid()) {
+			if(i != null && i.isValid()) {
 				this.members.add(i);
 			}
 		}

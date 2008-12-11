@@ -46,6 +46,11 @@ public class AddGroupPanel extends Panel {
 		setValidator(new Validator() {
 			
 			public boolean validate(final String value) throws ValidationException {
+				
+				if(value.trim().length() < 2) {
+					return false;
+				}
+				
 				String rsp = responseMap.get(value);
 				if(rsp == null) {
 					populateMap(value);

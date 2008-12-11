@@ -148,19 +148,20 @@ public class ACLDBFileDelegate {
 			} else {
 				if(inGroupsSection) {
 					String[] grp = line.split("\\s*=\\s*");
-					String[] members = grp[1].split("\\s*,\\s*");
 
 					Group group = acl.createNewGroup();
 						group.setName(grp[0]);
-						for (String member : members) {
-							if(member.trim().startsWith("@")) {
-								Group m = acl.createNewGroup();
-								m.setName(member);
-								group.addMember(m);
-							} else {
-								User u = getUser(member);
-								if(u != null) {
-									group.getMembers().add(u);
+						if(grp.length > 1) {
+							for (String member : grp[1].split("\\s*,\\s*")) {
+								if(member.trim().startsWith("@")) {
+									Group m = acl.createNewGroup();
+									m.setName(member);
+									group.addMember(m);
+								} else {
+									User u = getUser(member);
+									if(u != null) {
+										group.getMembers().add(u);
+									}
 								}
 							}
 						}
