@@ -102,7 +102,7 @@ public class AdminServer {
 	}
 	
 	public static boolean authenticate(String username, String password) {
-		return ACLOperationsDelegate.getInstance().authenticate(username, password);
+		return ACLOperationsDelegate.getInstance().getUserOperations().authenticate(username, password);
 	}
 	
 	public static void outputError(Exception e, PrintWriter out) {
@@ -112,7 +112,7 @@ public class AdminServer {
 	}
 	
 	public static boolean isAdmin(String username) {	
-		return ACLOperationsDelegate.getInstance().isAdmin(username);
+		return ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(username);
 	}
 	
 	public static void main(String[] args) throws Exception {

@@ -18,7 +18,7 @@ public class ListUsers implements DataFeed {
 		
 		try {
 						
-			List<String> names = ACLOperationsDelegate.getInstance().getUsernames();	
+			List<String> names = ACLOperationsDelegate.getInstance().getUserOperations().getUsernames();	
 			
 			response.setContentType("text/xml");
 			writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -29,7 +29,7 @@ public class ListUsers implements DataFeed {
 			int limit = request.getParameter("limit") != null ? Integer.valueOf(request.getParameter("limit")) : 10;
 			
 			for (int i = start; i < start + limit && i < names.size(); i++ ) {
-				User u = ACLOperationsDelegate.getInstance().getUser(names.get(i));
+				User u = ACLOperationsDelegate.getInstance().getUserOperations().getUser(names.get(i));
 				writer.append("  <row>");
 				writer.append("    <name>"+u.getUsername()+"</name>");
 				writer.append("    <email>"+u.getEmail()+"</email>");
@@ -46,7 +46,7 @@ public class ListUsers implements DataFeed {
 				
 				writer.append("    </subscriptions>");
 				writer.append("    <groups>");
-				for (Iterator<String> iterator = ACLOperationsDelegate.getInstance().getGroupMembership(u.getUsername()).iterator(); iterator.hasNext();) {
+				for (Iterator<String> iterator = ACLOperationsDelegate.getInstance().getGroupOperations().getGroupMembership(u.getUsername()).iterator(); iterator.hasNext();) {
 					String group = iterator.next();
 					writer.append(group);
 					if(iterator.hasNext()) {

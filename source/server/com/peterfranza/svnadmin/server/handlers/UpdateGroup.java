@@ -14,7 +14,7 @@ public class UpdateGroup implements DataFeed {
 	public void respond(PrintWriter writer, HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		ACLOperationsDelegate.getInstance().modifyGroup(
+		ACLOperationsDelegate.getInstance().getGroupOperations().modifyGroup(
 				request.getParameter("groupName"),
 				splitUsernames(request.getParameter("addUsers")),
 				splitUsernames(request.getParameter("removeUsers"))

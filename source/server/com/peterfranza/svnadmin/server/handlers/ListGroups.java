@@ -13,7 +13,7 @@ public class ListGroups implements DataFeed {
 	public void respond(PrintWriter writer, HttpServletRequest request,
 			HttpServletResponse response) {
 		
-		List<String> names = ACLOperationsDelegate.getInstance().getGroupNames();	
+		List<String> names = ACLOperationsDelegate.getInstance().getGroupOperations().getGroupNames();	
 		
 		response.setContentType("text/xml");
 		writer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");

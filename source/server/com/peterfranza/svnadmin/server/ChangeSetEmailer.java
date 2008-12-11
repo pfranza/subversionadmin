@@ -29,7 +29,7 @@ public class ChangeSetEmailer {
 	}
 
 	private static String getFromAddress(String author,	String def) {
-		String email = ACLOperationsDelegate.getInstance().getEmailForUser(author);
+		String email = ACLOperationsDelegate.getInstance().getUserOperations().getEmailForUser(author);
 		return email != null ? email : def;
 	}
 
