@@ -38,7 +38,6 @@ public class LoginWindow extends Window {
 			
 			public void onClick(Button button, EventObject e) {
 				AuthenticationInterfaceAsync auth = GWT.create(AuthenticationInterface.class);
-
 				auth.authenticate(userdata.getUsername(), userdata.getPassword(), new AsyncCallback<Boolean>() {
 
 					public void onFailure(Throwable caught) {

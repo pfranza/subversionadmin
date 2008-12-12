@@ -10,13 +10,14 @@ import com.google.gwt.user.client.Window;
 import com.gorthaur.svnadmin.client.SvnAdministration;
 import com.gorthaur.svnadmin.client.ui.listeners.ClickListener;
 import com.gwtext.client.core.EventObject;
+import com.gwtext.client.data.DateFieldDef;
 import com.gwtext.client.data.FieldDef;
-import com.gwtext.client.data.HttpProxy;
+import com.gwtext.client.data.FloatFieldDef;
+import com.gwtext.client.data.MemoryProxy;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.RecordDef;
 import com.gwtext.client.data.Store;
 import com.gwtext.client.data.StringFieldDef;
-import com.gwtext.client.data.XmlReader;
 import com.gwtext.client.widgets.Button;
 import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.Panel;
@@ -80,22 +81,19 @@ public class ModifyUserFormPanel extends Panel {
 			
 			public void onShow(Component component) {
 				if(!done) {
-					mStore = new Store(
-							new HttpProxy(URL.encode("/rest/listUsers?username="+SvnAdministration.getInstance().getUsername()+
-									"&passwd=" + SvnAdministration.getInstance().getPassword())),
-									new XmlReader("row", new RecordDef(new FieldDef[] {
-											new StringFieldDef("name", "name"),
-											new StringFieldDef("email"),
-											new StringFieldDef("admin"),
-											new StringFieldDef("subscriptions"),
-											new StringFieldDef("group")
-									})){{
-										setTotalRecords("results");
-									}});
 
-					usersList.setStore(mStore);
-					mStore.load(0, 10);
-					
+				
+					MemoryProxy proxy = new ;  
+					RecordDef recordDef = new RecordDef(  
+							new FieldDef[]{  
+									new StringFieldDef("company"),  
+									new FloatFieldDef("price"),  
+									new FloatFieldDef("change"),  
+									new FloatFieldDef("pctChange"),  
+									new DateFieldDef("lastChanged", "n/j h:ia")  
+							}  
+					);  
+
 					set.add(usersList);
 					set.doLayout();
 					

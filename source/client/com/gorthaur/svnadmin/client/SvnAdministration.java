@@ -5,6 +5,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.gorthaur.svnadmin.client.rpcinterface.beans.Credentials;
 import com.gorthaur.svnadmin.client.ui.LoginWindow;
 import com.gorthaur.svnadmin.client.ui.MainPanel;
 import com.gwtext.client.widgets.Viewport;
@@ -94,5 +95,9 @@ public class SvnAdministration  implements EntryPoint {
 	
 	public String getPassword() {
 		return login.getPassword();
+	}
+
+	public Credentials getCredentials() {
+		return new Credentials(getUsername(), getPassword());
 	}
 }
