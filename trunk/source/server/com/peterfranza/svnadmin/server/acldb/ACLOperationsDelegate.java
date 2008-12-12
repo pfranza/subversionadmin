@@ -206,9 +206,11 @@ public class ACLOperationsDelegate {
 			List<String> l = new ArrayList<String>();
 			synchronized(lock) {
 				Group g = getGroup(groupName);
-				for(ACLItem i: g.getMembers()) {
-					if(i.isValid()) {
-						l.add(i.toString());
+				if(g != null) {
+					for(ACLItem i: g.getMembers()) {
+						if(i.isValid()) {
+							l.add(i.toString());
+						}
 					}
 				}
 			}

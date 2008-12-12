@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.mortbay.gwt.AsyncRemoteServiceServlet;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.Context;
@@ -20,56 +24,22 @@ import org.mortbay.resource.Resource;
 
 import com.peterfranza.svnadmin.server.acldb.ACLOperationsDelegate;
 import com.peterfranza.svnadmin.server.rpc.Authenticator;
+import com.peterfranza.svnadmin.server.rpc.GroupOperations;
+import com.peterfranza.svnadmin.server.rpc.UserOperations;
 
 public class AdminServer {
 
-//	private Map<String, DataFeed> feeds = new HashMap<String, DataFeed>() {
-//		private static final long serialVersionUID = 532606649367845419L;
-//		{
-//			put("/rest/auth", new Authenticate());
-//			
-//			put("/rest/listUsers", new ListUsers());
-//			put("/rest/changepassword", new ChangePassword());
-//			put("/rest/adduser", new AddNewUser());
-//			put("/rest/userPrefs", new UserPreferences());
-//			put("/rest/updateUser", new UpdateUser());
-//			put("/rest/deleteUser", new DeleteUser());
-//			
-//			put("/rest/listGroups", new ListGroups());
-//			put("/rest/listGroupMembership", new ListGroupMembers());
-//			put("/rest/checkGroupName", new CheckGroupName());
-//			put("/rest/createGroup", new CreateGroup());
-//			put("/rest/updateGroup", new UpdateGroup());
-//			put("/rest/deleteGroup", new DeleteGroup());
-//			
-//		}
-//	};
+	private Map<String, Class<? extends AsyncRemoteServiceServlet>> feeds = new HashMap<String, Class<? extends AsyncRemoteServiceServlet>>() {
+		private static final long serialVersionUID = 532606649367845419L;
+		{
+			put("/rpc/auth", Authenticator.class);
+			put("/rpc/user", UserOperations.class);
+			put("/rpc/group", GroupOperations.class);
+		}
+	};
 
 	public AdminServer(int port) throws Exception {
 		Server server = new Server(port);
-//		server.addHandler(new AbstractHandler() {
-//			public void handle(String target, HttpServletRequest request,
-//					HttpServletResponse response, int dispatch)
-//					throws IOException, ServletException {
-//				if (target.startsWith("/rest") ) {
-//					if(authenticate(request.getParameter("username"), request.getParameter("passwd"))) {
-//						DataFeed feed = feeds.get(target);
-//						if (feed != null) {
-//							response.setStatus(HttpServletResponse.SC_OK);
-//							feed.respond(response.getWriter(), request, response);
-//							((Request) request).setHandled(true);
-//						}
-//					} else {
-//						response.setContentType("text/html");
-//						response.getWriter().println("Access Denied");
-//						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-//						((Request) request).setHandled(true);
-//					}
-//				}
-//			}
-//		});
-//		
-
 		
 		ServletHandler handler=new ServletHandler();
 		handler.addServletWithMapping(new ServletHolder(), "/");
@@ -137,22 +107,16 @@ public class AdminServer {
 			}
 		}), "/*");
 
-		
-		
-		root.addServlet(Authenticator.class, "/rpc/auth");
-	
-		
+
+		for(Entry<String, Class<? extends AsyncRemoteServiceServlet>> e: feeds.entrySet()) {
+			root.addServlet(e.getValue(), e.getKey());
+		}
+			
 		server.start();
 		server.join();
 	}
 	
 
-	
-
-	public static boolean authenticate(String username, String password) {
-		return ACLOperationsDelegate.getInstance().getUserOperations().authenticate(username, password);
-	}
-	
 	public static void outputError(Exception e, PrintWriter out) {
 		for(StackTraceElement ste: e.getStackTrace()) {
 			out.println(ste.toString());

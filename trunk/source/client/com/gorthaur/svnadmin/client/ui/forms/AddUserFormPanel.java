@@ -1,17 +1,17 @@
 package com.gorthaur.svnadmin.client.ui.forms;
 
 
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gorthaur.svnadmin.client.SvnAdministration;
+import com.gorthaur.svnadmin.client.rpcinterface.UserOperationsInterface;
+import com.gorthaur.svnadmin.client.rpcinterface.UserOperationsInterfaceAsync;
 import com.gorthaur.svnadmin.client.ui.listeners.ClickListener;
 import com.gwtext.client.core.EventObject;
 import com.gwtext.client.widgets.Button;
+import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.Panel;
+import com.gwtext.client.widgets.event.PanelListenerAdapter;
 import com.gwtext.client.widgets.form.Field;
 import com.gwtext.client.widgets.form.FieldSet;
 import com.gwtext.client.widgets.form.FormPanel;
@@ -96,6 +96,14 @@ public class AddUserFormPanel extends Panel {
 	
 	public AddUserFormPanel() {
 
+		addListener(new PanelListenerAdapter() {
+			@Override
+			public void onShow(Component component) {
+				clearForm();
+				super.onShow(component);
+			}
+		});
+		
 		setBorder(false);
 		setWidth(500);
 		setPaddings(15);
@@ -135,34 +143,27 @@ public class AddUserFormPanel extends Panel {
 		
 		submit.addListener(new ClickListener() {
 			public void onClick(Button button, EventObject e) {
-				RequestBuilder rb = new RequestBuilder(RequestBuilder.GET, URL.encode("/rest/adduser?username="+
-						SvnAdministration.getInstance().getUsername()+
-						"&passwd="+SvnAdministration.getInstance().getPassword()+
-						"&newUsername="+username.getText()+
-						"&newPassword="+password.getText()+
-						"&newEmail="+email.getText()
-						));
-				try {
-					rb.sendRequest("", new RequestCallback() {
 
-						public void onError(Request request, Throwable exception) {
-							com.google.gwt.user.client.Window.alert("Error Processing Form");
-						}
+				UserOperationsInterfaceAsync user = GWT.create(UserOperationsInterface.class);
+				user.createNewUser(SvnAdministration.getInstance().getCredentials(), 
+						username.getText(), password.getText(), email.getText(), 
+						new AsyncCallback<String>() {
 
-						public void onResponseReceived(Request request,
-								Response response) {
-							if(response.getText().trim().equalsIgnoreCase("ok")) {
-								com.google.gwt.user.client.Window.alert("User Added");
-								clearForm();
-							} else {
-								com.google.gwt.user.client.Window.alert("Access Denied");
+							public void onFailure(Throwable caught) {
+								com.google.gwt.user.client.Window.alert(caught.getMessage());
 							}
-						}
-						
-					});
-				} catch (RequestException e1) {
-					com.google.gwt.user.client.Window.alert("Error: " + e1.getMessage());
-				}
+
+							public void onSuccess(String result) {
+								if(result.trim().equalsIgnoreCase("ok")) {
+									com.google.gwt.user.client.Window.alert("User Added");
+									clearForm();
+								} else {
+									com.google.gwt.user.client.Window.alert(result);
+								}
+							}
+					
+				});
+				
 			}
 		});
 		

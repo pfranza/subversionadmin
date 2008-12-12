@@ -1,30 +1,17 @@
 package com.gorthaur.svnadmin.client.ui.forms;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gorthaur.svnadmin.client.SvnAdministration;
+import com.gorthaur.svnadmin.client.rpcinterface.GroupOperationsInterface;
+import com.gorthaur.svnadmin.client.rpcinterface.GroupOperationsInterfaceAsync;
 import com.gorthaur.svnadmin.client.ui.forms.widgets.DualSelector;
 import com.gorthaur.svnadmin.client.ui.listeners.ClickListener;
 import com.gwtext.client.core.EventObject;
-import com.gwtext.client.data.FieldDef;
-import com.gwtext.client.data.HttpProxy;
-import com.gwtext.client.data.Record;
-import com.gwtext.client.data.RecordDef;
-import com.gwtext.client.data.Store;
-import com.gwtext.client.data.StringFieldDef;
-import com.gwtext.client.data.XmlReader;
-import com.gwtext.client.data.event.StoreListenerAdapter;
 import com.gwtext.client.widgets.Button;
 import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.Panel;
@@ -51,18 +38,7 @@ public class AddGroupPanel extends Panel {
 					return false;
 				}
 				
-				String rsp = responseMap.get(value);
-				if(rsp == null) {
-					populateMap(value);
-				} else {
-					if(rsp.equalsIgnoreCase("ok")) {
-						return true;
-					} else {
-						groupName.setInvalidText(rsp);
-					}
-				}		
-				
-				return false;
+				return !existingNames.contains(value);
 			}
 			
 		});
@@ -71,7 +47,7 @@ public class AddGroupPanel extends Panel {
 			
 			@Override
 			public void onChange(Field field, Object newVal, Object oldVal) {
-				populateMap(newVal.toString());
+				populateMap();
 				super.onChange(field, newVal, oldVal);
 			}
 			
@@ -91,30 +67,23 @@ public class AddGroupPanel extends Panel {
 		
 	}
 	
-	private final Map<String, String> responseMap = new HashMap<String, String>();
+	private final List<String> existingNames = new ArrayList<String>();
 	
-	private void populateMap(final String value) {
-		RequestBuilder rb = new RequestBuilder(RequestBuilder.GET, URL.encode("/rest/checkGroupName?username="+
-				SvnAdministration.getInstance().getUsername()+
-				"&passwd=" + SvnAdministration.getInstance().getPassword() +
-				"&groupName=" + value.trim()));
-		try {
-			rb.sendRequest("", new RequestCallback() {
+	private void populateMap() {
+		
+		GroupOperationsInterfaceAsync group = GWT.create(GroupOperationsInterface.class);
+		group.listGroups(SvnAdministration.getInstance().getCredentials(), new AsyncCallback<List<String>>() {
 
-				public void onError(Request request, Throwable exception) {
-					groupName.isValid(false);
-					groupName.setInvalidText("Error Validating Field");
-				}
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
+			}
 
-				public void onResponseReceived(Request request,
-						Response response) {
-					responseMap.put(value, response.getText());
-				}
-				
-			});
-		} catch (RequestException e) {
-			Window.alert("Error: " + e.getMessage());
-		}
+			public void onSuccess(List<String> result) {
+				existingNames.clear();
+				existingNames.addAll(result);
+			}
+			
+		});
 	}
 	
 	};
@@ -183,95 +152,48 @@ public class AddGroupPanel extends Panel {
 	}
 
 	private void resetForm() {
-		groupName.setValue(getDefaultGroupName());
+		groupName.setValue("");
 		selector.reset();
 		setButtonDisabled(true);
 
-		createInclusionStore().load();
-		createExclusionStore().load();
-	}
+		GroupOperationsInterfaceAsync group = GWT.create(GroupOperationsInterface.class);
+		group.listGroupNonMembers(SvnAdministration.getInstance().getCredentials(), groupName.getValueAsString(), new AsyncCallback<List<String>>() {
 
-	private Store createExclusionStore() {
-		return new Store(
-				new HttpProxy(URL.encode(getFeedUrl())),
-						new XmlReader("excname", new RecordDef(new FieldDef[] {
-								new StringFieldDef("name", "name")
-						}))) {{
-							addStoreListener(new StoreListenerAdapter() {
-								@Override
-								public void onLoad(Store store, Record[] records) {
-									List<String> exc = new ArrayList<String>();
-									for(Record r: records) {
-										exc.add(r.getAsString("name"));
-									}
-
-									selector.populateExcluded(exc.toArray(new String[exc.size()]));
-									super.onLoad(store, records);
-								}
-							});
-						}};
-	}
-
-	private Store createInclusionStore() {
-		return new Store(
-				new HttpProxy(URL.encode(getFeedUrl())),
-						new XmlReader("incname", new RecordDef(new FieldDef[] {
-								new StringFieldDef("name", "name")
-						}))) {{
-							addStoreListener(new StoreListenerAdapter() {
-								@Override
-								public void onLoad(Store store, Record[] records) {
-									List<String> exc = new ArrayList<String>();
-									for(Record r: records) {
-										exc.add(r.getAsString("name"));
-									}
-
-									selector.populateIncluded(exc.toArray(new String[exc.size()]));
-									super.onLoad(store, records);
-								}
-							});
-						}};
-	}
-	
-	private String getFeedUrl() {
-		return "/rest/listGroupMembership?username="+SvnAdministration.getInstance().getUsername()+
-		"&passwd=" + SvnAdministration.getInstance().getPassword();
-	}
-	
-	protected String getDefaultGroupName() {
-		return "";
-	}
-
-	protected void submitForm() {
-		
-		StringBuffer b = new StringBuffer();
-		for (Iterator<String> iterator = selector.getItemsToAdd().iterator(); iterator.hasNext();) {
-			String string = iterator.next();
-			b.append(string);
-			if(iterator.hasNext()) {
-				b.append(",");
+			public void onFailure(Throwable caught) {
+				Window.alert(caught.getMessage());
 			}
-		}
+
+			public void onSuccess(List<String> result) {
+				selector.reset();
+				selector.populateExcluded(result.toArray(new String[result.size()]));
+			}
+			
+		});
 		
-		RequestBuilder rb = new RequestBuilder(RequestBuilder.GET, URL.encode("/rest/createGroup?username="+SvnAdministration.getInstance().getUsername()+
-				"&passwd=" + SvnAdministration.getInstance().getPassword()+
-				"&groupName=" + groupName.getText() +
-				"&members=" + b.toString()));
-		try {
-			rb.sendRequest("", new RequestCallback() {
+	}
 
-				public void onError(Request request, Throwable exception) {
-					Window.alert("Error: " + exception.getMessage());
-				}
+	private void submitForm() {
+	
+		
+		GroupOperationsInterfaceAsync group = GWT.create(GroupOperationsInterface.class);
+		group.createGroup(SvnAdministration.getInstance().getCredentials(), 
+				groupName.getText(), selector.getItemsToAdd(), new AsyncCallback<String>() {
 
-				public void onResponseReceived(Request request, Response response) {
-					resetForm();
-				}
-				
-			});
-		} catch (RequestException e) {
-			Window.alert("Error: " + e.getMessage());
-		}
+					public void onFailure(Throwable caught) {
+						Window.alert("Error: " + caught.getMessage());
+					}
+
+					public void onSuccess(String result) {
+						// TODO Auto-generated method stub
+						if(result.equalsIgnoreCase("ok")) {
+							resetForm();
+						} else {
+							Window.alert(result);
+						}
+					}
+			
+		});
+		
 		setButtonDisabled(true);
 		
 	}
