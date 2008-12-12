@@ -7,7 +7,7 @@
 		<delete dir="temp" failonerror="no"/>
 		<mkdir dir="temp/web_classes"/>
 		
-		<javac srcdir="source/client" destdir="temp/web_classes">
+		<javac srcdir="source/client:source/interface" destdir="temp/web_classes"  >
 			<classpath>
 			      <fileset dir="lib">
 			        <include name="**/*.jar"/>
@@ -20,6 +20,7 @@
 		
 		<copy todir="temp/web_classes">
 			<fileset dir="source/client"/>
+			<fileset dir="source/interface"/>
 		</copy>
 				
 		<java classname="com.google.gwt.dev.GWTCompiler" 
@@ -53,11 +54,14 @@
 		<delete dir="classes" failonerror="no"/>
 		<mkdir dir="classes"/>
 	
-		<javac srcdir="source/server" destdir="classes">
+		<javac srcdir="source/server:source/interface" destdir="classes" debug="true">
 			<classpath>
 			      <fileset dir="lib">
 			        <include name="**/*.jar"/>
 			      </fileset>
+			    <fileset dir="${gwt.home}">
+                    <include name="**/*.jar"/>
+                </fileset>
 			</classpath>
 		</javac>
 		
@@ -75,13 +79,16 @@
 			<fileset dir="lib">
 			    <include name="**/*.jar"/>
 			</fileset>
+			<fileset dir="${gwt.home}">
+                    <include name="**/*.jar"/>
+            </fileset>
             </lib>
         	
         </one-jar>
 	</target>
 	
 	<target name="launch" depends="dist">
-	  <java jar="SvnAdmin.jar" fork="true"/>
+	  <java jar="SvnAdmin.jar" fork="true" maxmemory="256m"/>
 	</target>
 	
 </project>

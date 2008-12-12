@@ -3,92 +3,116 @@ package com.peterfranza.svnadmin.server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.MalformedURLException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.handler.AbstractHandler;
+import org.mortbay.jetty.servlet.Context;
+import org.mortbay.jetty.servlet.ServletHandler;
+import org.mortbay.jetty.servlet.ServletHolder;
+import org.mortbay.resource.FileResource;
+import org.mortbay.resource.Resource;
 
 import com.peterfranza.svnadmin.server.acldb.ACLOperationsDelegate;
-import com.peterfranza.svnadmin.server.handlers.AddNewUser;
-import com.peterfranza.svnadmin.server.handlers.Authenticate;
-import com.peterfranza.svnadmin.server.handlers.ChangePassword;
-import com.peterfranza.svnadmin.server.handlers.CheckGroupName;
-import com.peterfranza.svnadmin.server.handlers.CreateGroup;
-import com.peterfranza.svnadmin.server.handlers.DataFeed;
-import com.peterfranza.svnadmin.server.handlers.DeleteGroup;
-import com.peterfranza.svnadmin.server.handlers.DeleteUser;
-import com.peterfranza.svnadmin.server.handlers.ListGroupMembers;
-import com.peterfranza.svnadmin.server.handlers.ListGroups;
-import com.peterfranza.svnadmin.server.handlers.ListUsers;
-import com.peterfranza.svnadmin.server.handlers.UpdateGroup;
-import com.peterfranza.svnadmin.server.handlers.UpdateUser;
-import com.peterfranza.svnadmin.server.handlers.UserPreferences;
+import com.peterfranza.svnadmin.server.rpc.Authenticator;
 
 public class AdminServer {
 
-	private Map<String, DataFeed> feeds = new HashMap<String, DataFeed>() {
-		private static final long serialVersionUID = 532606649367845419L;
-		{
-			put("/rest/auth", new Authenticate());
-			
-			put("/rest/listUsers", new ListUsers());
-			put("/rest/changepassword", new ChangePassword());
-			put("/rest/adduser", new AddNewUser());
-			put("/rest/userPrefs", new UserPreferences());
-			put("/rest/updateUser", new UpdateUser());
-			put("/rest/deleteUser", new DeleteUser());
-			
-			put("/rest/listGroups", new ListGroups());
-			put("/rest/listGroupMembership", new ListGroupMembers());
-			put("/rest/checkGroupName", new CheckGroupName());
-			put("/rest/createGroup", new CreateGroup());
-			put("/rest/updateGroup", new UpdateGroup());
-			put("/rest/deleteGroup", new DeleteGroup());
-			
-		}
-	};
+//	private Map<String, DataFeed> feeds = new HashMap<String, DataFeed>() {
+//		private static final long serialVersionUID = 532606649367845419L;
+//		{
+//			put("/rest/auth", new Authenticate());
+//			
+//			put("/rest/listUsers", new ListUsers());
+//			put("/rest/changepassword", new ChangePassword());
+//			put("/rest/adduser", new AddNewUser());
+//			put("/rest/userPrefs", new UserPreferences());
+//			put("/rest/updateUser", new UpdateUser());
+//			put("/rest/deleteUser", new DeleteUser());
+//			
+//			put("/rest/listGroups", new ListGroups());
+//			put("/rest/listGroupMembership", new ListGroupMembers());
+//			put("/rest/checkGroupName", new CheckGroupName());
+//			put("/rest/createGroup", new CreateGroup());
+//			put("/rest/updateGroup", new UpdateGroup());
+//			put("/rest/deleteGroup", new DeleteGroup());
+//			
+//		}
+//	};
 
 	public AdminServer(int port) throws Exception {
 		Server server = new Server(port);
-		server.addHandler(new AbstractHandler() {
-			public void handle(String target, HttpServletRequest request,
-					HttpServletResponse response, int dispatch)
-					throws IOException, ServletException {
-				if (target.startsWith("/rest") ) {
-					if(authenticate(request.getParameter("username"), request.getParameter("passwd"))) {
-						DataFeed feed = feeds.get(target);
-						if (feed != null) {
-							response.setStatus(HttpServletResponse.SC_OK);
-							feed.respond(response.getWriter(), request, response);
-							((Request) request).setHandled(true);
-						}
-					} else {
-						response.setContentType("text/html");
-						response.getWriter().println("Access Denied");
-						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-						((Request) request).setHandled(true);
-					}
-				}
-			}
-		});
-		
-		server.addHandler(new AbstractHandler() {
+//		server.addHandler(new AbstractHandler() {
+//			public void handle(String target, HttpServletRequest request,
+//					HttpServletResponse response, int dispatch)
+//					throws IOException, ServletException {
+//				if (target.startsWith("/rest") ) {
+//					if(authenticate(request.getParameter("username"), request.getParameter("passwd"))) {
+//						DataFeed feed = feeds.get(target);
+//						if (feed != null) {
+//							response.setStatus(HttpServletResponse.SC_OK);
+//							feed.respond(response.getWriter(), request, response);
+//							((Request) request).setHandled(true);
+//						}
+//					} else {
+//						response.setContentType("text/html");
+//						response.getWriter().println("Access Denied");
+//						response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+//						((Request) request).setHandled(true);
+//					}
+//				}
+//			}
+//		});
+//		
 
-			public void handle(String target, HttpServletRequest request,
-					HttpServletResponse response, int dispatch) throws IOException,
-					ServletException {
+		
+		ServletHandler handler=new ServletHandler();
+		handler.addServletWithMapping(new ServletHolder(), "/");
+
+		Context root = new Context(server,"/",Context.SESSIONS){
+
+			@Override
+			public Resource getResource(String res)
+					throws MalformedURLException {
+				
+				Resource r =  super.getResource(res);
+				if(r == null) {
+					try {
+						r = new FileResource(AdminServer.class.getResource("/com.gorthaur.svnadmin.SvnAdministration" + res));
+					} catch (Exception e) {
+						e.printStackTrace();
+					} 
+				}
+				return r;
+			}
+		};
+		
+		root.addServlet(new ServletHolder(new HttpServlet() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 7286815973900226146L;
+
+			@Override
+			protected void doGet(HttpServletRequest request,
+					HttpServletResponse response) throws ServletException,
+					IOException {
+				
+				String target = request.getPathInfo();
+				
 				
 				if(target.equals("/")) {
 					target = "/SvnAdministration.html";
 				}
+			
 
 				String str = "/com.gorthaur.svnadmin.SvnAdministration" + target;
+
 			    InputStream fis  = AdminServer.class.getResourceAsStream(str);
 				    if(fis != null) {
 				    	response.setStatus(HttpServletResponse.SC_OK);
@@ -105,15 +129,26 @@ public class AdminServer {
 				    		e.printStackTrace();
 				    	}
 				    	((Request) request).setHandled(true);
+				    } else {
+				    	System.out.println("can't find " + str);
 				    }
-
+				    
+				
 			}
-			
-		});
+		}), "/*");
 
+		
+		
+		root.addServlet(Authenticator.class, "/rpc/auth");
+	
+		
 		server.start();
+		server.join();
 	}
 	
+
+	
+
 	public static boolean authenticate(String username, String password) {
 		return ACLOperationsDelegate.getInstance().getUserOperations().authenticate(username, password);
 	}

@@ -3,12 +3,10 @@ package com.gorthaur.svnadmin.client.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.gorthaur.svnadmin.client.rpcinterface.AuthenticationInterface;
+import com.gorthaur.svnadmin.client.rpcinterface.AuthenticationInterfaceAsync;
 import com.gorthaur.svnadmin.client.ui.listeners.ClickListener;
 import com.gwtext.client.core.EventObject;
 import com.gwtext.client.widgets.Button;
@@ -39,31 +37,25 @@ public class LoginWindow extends Window {
 		loginButton.addListener(new ClickListener() {
 			
 			public void onClick(Button button, EventObject e) {
-				RequestBuilder rb = new RequestBuilder(RequestBuilder.GET, 
-						URL.encode("/rest/auth?username="+userdata.getUsername()+"&passwd="+userdata.getPassword()));
-				try {
-					rb.sendRequest("", new RequestCallback() {
+				AuthenticationInterfaceAsync auth = GWT.create(AuthenticationInterface.class);
 
-						public void onError(Request request, Throwable exception) {
-							com.google.gwt.user.client.Window.alert("Error Processing Login");
-						}
+				auth.authenticate(userdata.getUsername(), userdata.getPassword(), new AsyncCallback<Boolean>() {
 
-						public void onResponseReceived(Request request,
-								Response response) {
-							if(response.getText().trim().equalsIgnoreCase("ok")) {
-								for(LoginWindowListener l: listeners) {
-									l.loginSuccess();
-								}
-							} else {
-								com.google.gwt.user.client.Window.alert("Access Denied");
+					public void onFailure(Throwable caught) {
+						com.google.gwt.user.client.Window.alert(caught.getMessage());
+					}
+
+					public void onSuccess(Boolean result) {
+						if(result.booleanValue()) {
+							for(LoginWindowListener l: listeners) {
+								l.loginSuccess();
 							}
+						} else {
+							com.google.gwt.user.client.Window.alert("Access Denied");
 						}
-						
-					});
-				} catch (RequestException e1) {
-					com.google.gwt.user.client.Window.alert("Error: " + e1.getMessage());
-				}
-
+					}
+					
+				});
 			}		
 		});
 		
@@ -84,5 +76,6 @@ public class LoginWindow extends Window {
 	public String getPassword() {
 		return userdata.getPassword();
 	}
+
 	
 }
