@@ -1,23 +1,19 @@
 package com.gorthaur.svnadmin.client.ui.forms;
 
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
+import java.util.List;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gorthaur.svnadmin.client.SvnAdministration;
+import com.gorthaur.svnadmin.client.rpcinterface.UserOperationsInterface;
+import com.gorthaur.svnadmin.client.rpcinterface.UserOperationsInterfaceAsync;
+import com.gorthaur.svnadmin.client.rpcinterface.beans.UserInfo;
 import com.gorthaur.svnadmin.client.ui.listeners.ClickListener;
 import com.gwtext.client.core.EventObject;
-import com.gwtext.client.data.DateFieldDef;
-import com.gwtext.client.data.FieldDef;
-import com.gwtext.client.data.FloatFieldDef;
-import com.gwtext.client.data.MemoryProxy;
 import com.gwtext.client.data.Record;
-import com.gwtext.client.data.RecordDef;
+import com.gwtext.client.data.SimpleStore;
 import com.gwtext.client.data.Store;
-import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.widgets.Button;
 import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.Panel;
@@ -55,14 +51,42 @@ public class ModifyUserFormPanel extends Panel {
 
 		public void doRefresh() {
 			refreshDataStore();
-		}		
+		}	
+		
 	});
 
 	private void refreshDataStore() {
 		try {
 			usersList.clearValue();
-			mStore.reload();
 			usersList.reset();
+			
+			UserOperationsInterfaceAsync user = GWT.create(UserOperationsInterface.class);
+			user.getAllUsers(SvnAdministration.getInstance().getCredentials(), new AsyncCallback<List<UserInfo>>() {
+
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());
+				}
+
+				public void onSuccess(List<UserInfo> result) {
+					
+					Object[][] data = new Object[result.size()][5];
+					for(int i = 0; i < result.size(); i++) {
+						UserInfo u = result.get(i);
+						data[i] = new Object[] {
+								u.getName(),
+								u.getEmail(),
+								Boolean.toString(u.isAdmin()),
+								"",
+								""
+						};					
+					}
+					populateStore(data);
+					
+				}
+				
+			});
+			
+
 		} catch (Exception e) {
 			Window.alert("doRefresh: " + e.getMessage());
 		}
@@ -80,28 +104,13 @@ public class ModifyUserFormPanel extends Panel {
 			boolean done = false;
 			
 			public void onShow(Component component) {
-				if(!done) {
-
-				
-					MemoryProxy proxy = new ;  
-					RecordDef recordDef = new RecordDef(  
-							new FieldDef[]{  
-									new StringFieldDef("company"),  
-									new FloatFieldDef("price"),  
-									new FloatFieldDef("change"),  
-									new FloatFieldDef("pctChange"),  
-									new DateFieldDef("lastChanged", "n/j h:ia")  
-							}  
-					);  
-
+				if(!done) {					
 					set.add(usersList);
 					set.doLayout();
 					
 					done = true;
-
-				} else {
+				} 
 					refreshDataStore();
-				}
 				
 				super.onShow(component);
 			}
@@ -131,6 +140,15 @@ public class ModifyUserFormPanel extends Panel {
 			}
 		});
 
+	}
+	
+	private void populateStore(Object[][] data) {
+
+		mStore = new SimpleStore(new String[]{"name", "email", "admin", "subscriptions", "group"},
+				data); 
+		
+		usersList.setStore(mStore);
+		mStore.load();
 	}
 	
 	private static class UserPreferencesPanel extends FieldSet {
@@ -182,33 +200,30 @@ public class ModifyUserFormPanel extends Panel {
 			addListener(new ClickListener() {
 
 				public void onClick(Button button, EventObject e) {
-					RequestBuilder rb = new RequestBuilder(RequestBuilder.GET, URL.encode("/rest/updateUser?username="+SvnAdministration.getInstance().getUsername()+
-									"&passwd=" + SvnAdministration.getInstance().getPassword()+
-									"&targetUser=" + name.getValueAsString() +
-									"&targetEmail=" + email.getValueAsString() +
-									"&targetAdmin=" + Boolean.toString(isAdmin.getValue())+
-									"&targetPasswd=" + password.getValueAsString()
-									
-					));
-					
-					try {
-						rb.sendRequest("", new RequestCallback() {
 
-							public void onError(Request request, Throwable exception) {
-								Window.alert("Error: " + exception.getMessage());
+					UserOperationsInterfaceAsync user = GWT
+								.create(UserOperationsInterface.class);
+						user.updateUser(SvnAdministration.getInstance()
+								.getCredentials(), new UserInfo(name
+								.getValueAsString(), email.getValueAsString(),
+								isAdmin.getValue()) {
+							private static final long serialVersionUID = -7619127437319717230L;
+							{
+								setNewPassword(password.getValueAsString());
+							}
+						}, new AsyncCallback<Void>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
 							}
 
-							public void onResponseReceived(Request request,
-									Response response) {
-								Window.alert(response.getText());
-								reset();
+							@Override
+							public void onSuccess(Void result) {
 								listener.doRefresh();
+								reset();
 							}
-							
+
 						});
-					} catch (RequestException e1) {
-						Window.alert("Error: " + e1.getMessage());
-					}
 					
 				}
 			
@@ -218,32 +233,28 @@ public class ModifyUserFormPanel extends Panel {
 			addListener(new ClickListener() {
 
 				public void onClick(Button button, EventObject e) {
-					if(Window.confirm("Continue deleting user " + name.getValueAsString() + "?")) {
-						RequestBuilder rb = new RequestBuilder(RequestBuilder.GET, URL.encode("/rest/deleteUser?username="+SvnAdministration.getInstance().getUsername()+
-								"&passwd=" + SvnAdministration.getInstance().getPassword()+
-								"&targetUser=" + name.getValueAsString()
-								
-				));
-				
-				try {
-					rb.sendRequest("", new RequestCallback() {
+					if (Window.confirm("Continue deleting user "
+								+ name.getValueAsString() + "?")) {
 
-						public void onError(Request request, Throwable exception) {
-							Window.alert("Error: " + exception.getMessage());
-						}
+							UserOperationsInterfaceAsync user = GWT
+									.create(UserOperationsInterface.class);
+							user.deleteUser(SvnAdministration.getInstance()
+									.getCredentials(), name.getValueAsString(),
+									new AsyncCallback<Void>() {
 
-						public void onResponseReceived(Request request,
-								Response response) {
-							Window.alert(response.getText());
-							reset();
-							listener.doRefresh();
+										@Override
+										public void onFailure(Throwable caught) {
+										}
+
+										@Override
+										public void onSuccess(Void result) {
+											listener.doRefresh();
+											reset();
+										}
+
+									});
+
 						}
-						
-					});
-				} catch (RequestException e1) {
-					Window.alert("Error: " + e1.getMessage());
-				}
-					}
 				}
 				
 			});
