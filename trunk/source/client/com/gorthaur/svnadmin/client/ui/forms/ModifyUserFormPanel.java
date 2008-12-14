@@ -213,11 +213,9 @@ public class ModifyUserFormPanel extends Panel {
 							}
 						}, new AsyncCallback<Void>() {
 
-							@Override
 							public void onFailure(Throwable caught) {
 							}
 
-							@Override
 							public void onSuccess(Void result) {
 								listener.doRefresh();
 								reset();
@@ -242,11 +240,9 @@ public class ModifyUserFormPanel extends Panel {
 									.getCredentials(), name.getValueAsString(),
 									new AsyncCallback<Void>() {
 
-										@Override
 										public void onFailure(Throwable caught) {
 										}
 
-										@Override
 										public void onSuccess(Void result) {
 											listener.doRefresh();
 											reset();
