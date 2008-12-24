@@ -324,6 +324,19 @@ public class ACLOperationsDelegate {
 			return false;
 		}
 
+		public List<String> getSubscriptions(String username) {
+			synchronized(lock) {
+				User u = getUser(username);
+				if(u != null) {
+					List<String> s = new ArrayList<String>();
+					for(Subscription sub: u.getSubscriptions()) {
+						s.add(sub.getPath());
+					}
+					return s;
+				}
+			}
+			return null;
+		}
 
 
 	}

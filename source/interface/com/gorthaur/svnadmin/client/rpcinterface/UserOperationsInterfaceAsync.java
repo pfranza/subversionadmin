@@ -14,8 +14,13 @@ public interface UserOperationsInterfaceAsync {
 	void isUser(Credentials requestor, String username, AsyncCallback<Boolean> result);
 	
 	void getAllUsers(Credentials requestor, AsyncCallback<List<UserInfo>> response);
-	
-	void updateUser(Credentials requestor, UserInfo info, AsyncCallback<Void> response);
-	
+
 	void deleteUser(Credentials requestor, String username, AsyncCallback<Void> response);
+	
+	void updateEmailAddress(Credentials requestor, String username, String newEmail, AsyncCallback<Void> response);
+	void updatePassword(Credentials requestor, String username, String newPassword, AsyncCallback<Void> response);
+	void updateIsAdmin(Credentials requestor, String username, boolean isAdmin, AsyncCallback<Void> response);
+	
+	void getSubscriptions(Credentials requestor, String username, AsyncCallback<List<String>> response);
+	void getAllProjects(Credentials requestor, AsyncCallback<List<String>> response);
 }

@@ -9,14 +9,10 @@ import java.util.Set;
 
 import org.tmatesoft.svn.core.SVNLogEntry;
 import org.tmatesoft.svn.core.SVNLogEntryPath;
-import org.tmatesoft.svn.core.SVNURL;
-import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.io.SVNRepository;
-import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
-import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 public class ChangeMiner {
 
@@ -43,14 +39,7 @@ public class ChangeMiner {
 
 		SVNRepository repository = null;
 		try {
-			repository = SVNRepositoryFactory.create(SVNURL
-					.parseURIEncoded(repos));
-
-			ISVNAuthenticationManager authManager = SVNWCUtil
-					.createDefaultAuthenticationManager(username, password);
-
-			repository.setAuthenticationManager(authManager);
-
+			repository = SVNAgent.getRepository(repos, username, password);
 			Collection<?> logEntries = repository.log(new String[] { "" },
 					null, startRevision, endRevision, true, true);
 
@@ -61,6 +50,8 @@ public class ChangeMiner {
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if(repository != null) { repository.closeSession(); }
 		}
 		return null;
 	}

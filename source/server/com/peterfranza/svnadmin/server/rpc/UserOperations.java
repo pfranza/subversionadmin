@@ -8,6 +8,8 @@ import org.mortbay.gwt.AsyncRemoteServiceServlet;
 import com.gorthaur.svnadmin.client.rpcinterface.UserOperationsInterface;
 import com.gorthaur.svnadmin.client.rpcinterface.beans.Credentials;
 import com.gorthaur.svnadmin.client.rpcinterface.beans.UserInfo;
+import com.peterfranza.svnadmin.server.ApplicationProperties;
+import com.peterfranza.svnadmin.server.RepositoryListing;
 import com.peterfranza.svnadmin.server.acldb.ACLOperationsDelegate;
 import com.peterfranza.svnadmin.server.acldb.ACLDB.User;
 
@@ -43,24 +45,70 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 				l.add(new UserInfo(user.getUsername(), user.getEmail(), user.isAdmin()));
 			}
 			return l;
-		} 
-		throw new RuntimeException("Insufficient Access");
+		} else {
+			throw new RuntimeException("Insufficient Access");
+		}
 	}
 
 	@Override
 	public void deleteUser(Credentials requestor, String username) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
 			ACLOperationsDelegate.getInstance().getUserOperations().deleteUser(username);
-		} 
+		} else {
+			throw new RuntimeException("Insufficient Access");
+		}
+	}
+
+	@Override
+	public void updateEmailAddress(Credentials requestor, String username,
+			String newEmail) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
+			User u = ACLOperationsDelegate.getInstance().getUserOperations().getUser(username);
+			ACLOperationsDelegate.getInstance().getUserOperations().updateUser(u.getUsername(), newEmail, Boolean.toString(u.isAdmin()), u.getPassword());
+		} else {
+			throw new RuntimeException("Insufficient Access");
+		}
+	}
+
+	@Override
+	public void updateIsAdmin(Credentials requestor, String username,
+			boolean isAdmin) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
+			User u = ACLOperationsDelegate.getInstance().getUserOperations().getUser(username);
+			ACLOperationsDelegate.getInstance().getUserOperations().updateUser(u.getUsername(), u.getEmail(), Boolean.toString(isAdmin), u.getPassword());
+		} else {
+			throw new RuntimeException("Insufficient Access");
+		}
+	}
+
+	@Override
+	public void updatePassword(Credentials requestor, String username,
+			String newPassword) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
+			ACLOperationsDelegate.getInstance().getUserOperations().setPassword(username, newPassword);
+		}  else {
+			throw new RuntimeException("Insufficient Access");
+		}
+	}
+
+	@Override
+	public List<String> getAllProjects(Credentials requestor) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
+			return RepositoryListing.getProjectPaths(ApplicationProperties
+					.getProperty("repository_url"), ApplicationProperties
+					.getProperty("repository_username"), ApplicationProperties
+					.getProperty("repository_password"));
+		}
 		throw new RuntimeException("Insufficient Access");
 	}
 
 	@Override
-	public void updateUser(Credentials requestor, UserInfo info) {
+	public List<String> getSubscriptions(Credentials requestor, String username) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
-			ACLOperationsDelegate.getInstance().getUserOperations().updateUser(info.getName(), info.getEmail(), Boolean.toString(info.isAdmin()), info.getNewPassword());
+			return ACLOperationsDelegate.getInstance().getUserOperations().getSubscriptions(username);
 		} 
 		throw new RuntimeException("Insufficient Access");
 	}
+
 
 }
