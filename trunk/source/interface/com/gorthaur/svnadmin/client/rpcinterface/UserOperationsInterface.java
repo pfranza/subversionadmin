@@ -13,6 +13,12 @@ public interface UserOperationsInterface extends RemoteService {
 	String createNewUser(Credentials requestor, String username, String password, String email);
 	boolean isUser(Credentials requestor, String username);
 	List<UserInfo> getAllUsers(Credentials requestor);
-	void updateUser(Credentials requestor, UserInfo info);
 	void deleteUser(Credentials requestor, String username);
+	
+	void updateEmailAddress(Credentials requestor, String username, String newEmail);
+	void updatePassword(Credentials requestor, String username, String newPassword);
+	void updateIsAdmin(Credentials requestor, String username, boolean isAdmin);
+	
+	List<String> getSubscriptions(Credentials requestor, String username);
+	List<String> getAllProjects(Credentials requestor);
 }

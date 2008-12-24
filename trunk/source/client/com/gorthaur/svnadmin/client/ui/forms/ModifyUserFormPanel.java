@@ -9,7 +9,6 @@ import com.gorthaur.svnadmin.client.SvnAdministration;
 import com.gorthaur.svnadmin.client.rpcinterface.UserOperationsInterface;
 import com.gorthaur.svnadmin.client.rpcinterface.UserOperationsInterfaceAsync;
 import com.gorthaur.svnadmin.client.rpcinterface.beans.UserInfo;
-import com.gorthaur.svnadmin.client.ui.listeners.ClickListener;
 import com.gwtext.client.core.EventObject;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.SimpleStore;
@@ -17,15 +16,19 @@ import com.gwtext.client.data.Store;
 import com.gwtext.client.widgets.Button;
 import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.Panel;
+import com.gwtext.client.widgets.event.ButtonListenerAdapter;
 import com.gwtext.client.widgets.event.PanelListenerAdapter;
 import com.gwtext.client.widgets.form.Checkbox;
 import com.gwtext.client.widgets.form.ComboBox;
+import com.gwtext.client.widgets.form.Field;
 import com.gwtext.client.widgets.form.FieldSet;
 import com.gwtext.client.widgets.form.FormPanel;
 import com.gwtext.client.widgets.form.TextField;
 import com.gwtext.client.widgets.form.ValidationException;
 import com.gwtext.client.widgets.form.Validator;
+import com.gwtext.client.widgets.form.event.CheckboxListenerAdapter;
 import com.gwtext.client.widgets.form.event.ComboBoxListenerAdapter;
+import com.gwtext.client.widgets.form.event.FieldListenerAdapter;
 
 public class ModifyUserFormPanel extends Panel {
 
@@ -47,13 +50,34 @@ public class ModifyUserFormPanel extends Panel {
 		
 	}};
 	
-	private UserPreferencesPanel userPrefs = new UserPreferencesPanel(new UserPreferencesPanelListener() {
+	
+	private final ChangeEmailPanel emailPanel = new ChangeEmailPanel();
+	private final ChangePasswordPanel passwordPanel = new ChangePasswordPanel();
+	private final ChangeAdminPanel adminPanel = new ChangeAdminPanel();
+	
+	
+	private final Button deleteUser = new Button("Delete User") {{
+		addListener(new ButtonListenerAdapter() {
+			@Override
+			public void onClick(Button button, EventObject e) {
+				UserOperationsInterfaceAsync user = GWT.create(UserOperationsInterface.class);
+				user.deleteUser(SvnAdministration.getInstance().getCredentials(), usersList.getValue(), voidCallback);
+				refreshDataStore();
+				super.onClick(button, e);
+			}
+		});
+	}};
+	private final AsyncCallback<Void> voidCallback = new AsyncCallback<Void>() {
 
-		public void doRefresh() {
-			refreshDataStore();
-		}	
+		public void onFailure(Throwable caught) {
+			Window.alert("Error: " + caught.getMessage());
+		}
+
+		public void onSuccess(Void result) {
+			Window.alert("Saved");
+		}
 		
-	});
+	};
 
 	private void refreshDataStore() {
 		try {
@@ -128,14 +152,19 @@ public class ModifyUserFormPanel extends Panel {
 		form.setLabelWidth(75);  
 		
 		form.add(set);
-		form.add(userPrefs);
-
+		form.add(emailPanel);
+		form.add(passwordPanel);
+		form.add(adminPanel);
+		
+		form.addButton(deleteUser);
+		
 		add(form);
 		
 		usersList.addListener(new ComboBoxListenerAdapter() {
 			@Override
 			public void onSelect(ComboBox comboBox, Record record, int index) {
-				userPrefs.loadSettings(record);
+				emailPanel.loadSettings(record);
+				adminPanel.loadSettings(record);
 				super.onSelect(comboBox, record, index);
 			}
 		});
@@ -151,148 +180,162 @@ public class ModifyUserFormPanel extends Panel {
 		mStore.load();
 	}
 	
-	private static class UserPreferencesPanel extends FieldSet {
+	private class ChangePasswordPanel extends FieldSet {
 		
-		private TextField name = new TextField("User", "name") {{
-			setReadOnly(true);
+		private TextField password = new TextField("Password", "password") {{
+			setValidator(new Validator() {
+
+				public boolean validate(String value)
+						throws ValidationException {
+			
+					return value.length() > 2;
+				}
+				
+			});
+			setPassword(true);
+		}};
+		
+		private TextField password_again = new TextField("Password Again", "password") {{
+			setValidator(new Validator() {
+
+				public boolean validate(String value)
+						throws ValidationException {
+			
+					return value.equals(password.getValueAsString());
+				}
+				
+			});
+			setPassword(true);
+			addListener(new FieldListenerAdapter() {
+				@Override
+				public void onValid(Field field) {
+					save.setDisabled(false);
+					super.onValid(field);
+				}
+				
+				@Override
+				public void onInvalid(Field field, String msg) {
+					save.setDisabled(true);
+					super.onInvalid(field, msg);
+				}
+			});
+		}};
+		
+		private Button save = new Button("Change Password") {{
+			addListener(new ButtonListenerAdapter() {
+				@Override
+				public void onClick(Button button, EventObject e) {
+					UserOperationsInterfaceAsync user = GWT.create(UserOperationsInterface.class);
+					user.updatePassword(SvnAdministration.getInstance().getCredentials(), 
+							usersList.getValue(), password.getValueAsString(), voidCallback);
+					refreshDataStore();
+					super.onClick(button, e);
+				}
+			});
 			setDisabled(true);
 		}};
 		
+		public ChangePasswordPanel() {
+			setTitle("Password");
+			add(password);
+			add(password_again);
+			addButton(save);
+		}
+		
+	}
+	
+	private class ChangeEmailPanel extends FieldSet {
+	
 		private TextField email = new TextField("Email", "email") {{
 			setValidator(new Validator() {
 				public boolean validate(String value) throws ValidationException {
 					return value.trim().length() > 0 && value.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
 				}		
 			});
-		}};
-		
-		private TextField password = new TextField("Password", "password", 210){{
-			setAllowBlank(true);
-			setInvalidText("Invalid Password");
-			setMaxLength(8);
-			setPassword(true);
-			setValidator(new Validator() {
-				public boolean validate(String value) throws ValidationException {
-					return (value.trim().length() > 2 && value.trim().length() < 9) || value.trim().length() == 0;
-				}
-			});
 			
-		}};
-		private TextField password_again = new TextField("Password Again", "password_again", 210){{
-			setAllowBlank(true);
-			setInvalidText("Passwords don't match.");
-			setMaxLength(8);
-			setPassword(true);
-			setValidator(new Validator() {
-				public boolean validate(String value) throws ValidationException {
-					return value.equals(password.getText());
-				}
-			});
-					
-		}};
-		
-		private Checkbox isAdmin = new Checkbox("Administrator", "isadmin") {{
-			setValue(false);
-		}};
-		
-		
-		private Button save = new Button("Save Changes"){{
-			addListener(new ClickListener() {
-
-				public void onClick(Button button, EventObject e) {
-
-					UserOperationsInterfaceAsync user = GWT
-								.create(UserOperationsInterface.class);
-						user.updateUser(SvnAdministration.getInstance()
-								.getCredentials(), new UserInfo(name
-								.getValueAsString(), email.getValueAsString(),
-								isAdmin.getValue()) {
-							private static final long serialVersionUID = -7619127437319717230L;
-							{
-								setNewPassword(password.getValueAsString());
-							}
-						}, new AsyncCallback<Void>() {
-
-							public void onFailure(Throwable caught) {
-							}
-
-							public void onSuccess(Void result) {
-								listener.doRefresh();
-								reset();
-							}
-
-						});
-					
-				}
-			
-			});
-		}};
-		private Button delete = new Button("Delete User"){{
-			addListener(new ClickListener() {
-
-				public void onClick(Button button, EventObject e) {
-					if (Window.confirm("Continue deleting user "
-								+ name.getValueAsString() + "?")) {
-
-							UserOperationsInterfaceAsync user = GWT
-									.create(UserOperationsInterface.class);
-							user.deleteUser(SvnAdministration.getInstance()
-									.getCredentials(), name.getValueAsString(),
-									new AsyncCallback<Void>() {
-
-										public void onFailure(Throwable caught) {
-										}
-
-										public void onSuccess(Void result) {
-											listener.doRefresh();
-											reset();
-										}
-
-									});
-
-						}
+			addListener(new FieldListenerAdapter() {
+				@Override
+				public void onValid(Field field) {
+					save.setDisabled(false);
+					super.onValid(field);
 				}
 				
+				@Override
+				public void onInvalid(Field field, String msg) {
+					save.setDisabled(true);
+					super.onInvalid(field, msg);
+				}
 			});
+			
 		}};
-
-		private UserPreferencesPanelListener listener;
 		
-		public UserPreferencesPanel(UserPreferencesPanelListener listener) {
-			add(name);
+		private Button save = new Button("Save Changes") {{
+			setDisabled(true);
+			
+			addListener(new ButtonListenerAdapter() {
+				@Override
+				public void onClick(Button button, EventObject e) {
+					
+					UserOperationsInterfaceAsync user = GWT.create(UserOperationsInterface.class);
+					user.updateEmailAddress(SvnAdministration.getInstance().getCredentials(),
+							usersList.getValue(), email.getValueAsString(), voidCallback);
+					refreshDataStore();
+					super.onClick(button, e);
+				}
+			});
+			
+		}};
+		
+		public ChangeEmailPanel() {
+			setTitle("Email");
 			add(email);
-			add(isAdmin);
-			
-			FieldSet pwset = new FieldSet("Leave Blank To Keep Unchanged");
-			pwset.add(password);
-			pwset.add(password_again);
-			add(pwset);			
-			
-			addButton(delete);
 			addButton(save);
-			this.listener = listener;
 		}
-		
+
 		public void loadSettings(Record record) {
-			name.setValue(record.getAsString("name"));
 			email.setValue(record.getAsString("email"));
-			isAdmin.setValue(Boolean.valueOf(record.getAsString("admin")));		
-		}
-		
-		private void reset() {
-			name.setValue("");
-			email.setValue("");
-			isAdmin.setValue(false);
-			password.setValue("");
-			password_again.setValue("");
 		}
 		
 	}
 	
+	private class ChangeAdminPanel extends FieldSet {
+		private Checkbox isAdmin = new Checkbox("Is Administrator", "isadmin") {{
+			setValue(false);
+			addListener(new CheckboxListenerAdapter() {
+				@Override
+				public void onChange(Field field, Object newVal, Object oldVal) {
+					save.setDisabled(false);
+					super.onChange(field, newVal, oldVal);
+				}
+			});
+		}};
+		
+		private Button save = new Button("Save Changes") {{
+			setDisabled(true);
+			
+			addListener(new ButtonListenerAdapter() {
+				@Override
+				public void onClick(Button button, EventObject e) {
+					
+					UserOperationsInterfaceAsync user = GWT.create(UserOperationsInterface.class);
+					user.updateIsAdmin(SvnAdministration.getInstance().getCredentials(),
+							usersList.getValue(), isAdmin.getValue(), voidCallback);
+					refreshDataStore();
+					super.onClick(button, e);
+				}
+			});
+			
+		}};
+		
+		public ChangeAdminPanel() {
+			setTitle("Admin");
+			add(isAdmin);
+			addButton(save);
+		}
 
-	
-	private interface UserPreferencesPanelListener {
-		void doRefresh();
+		public void loadSettings(Record record) {
+			isAdmin.setValue(Boolean.valueOf(record.getAsString("admin")));
+		}
 	}
 	
 }
