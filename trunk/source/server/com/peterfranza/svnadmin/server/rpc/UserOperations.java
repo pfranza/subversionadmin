@@ -1,6 +1,7 @@
 package com.peterfranza.svnadmin.server.rpc;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.mortbay.gwt.AsyncRemoteServiceServlet;
@@ -11,6 +12,8 @@ import com.gorthaur.svnadmin.client.rpcinterface.beans.UserInfo;
 import com.peterfranza.svnadmin.server.ApplicationProperties;
 import com.peterfranza.svnadmin.server.RepositoryListing;
 import com.peterfranza.svnadmin.server.acldb.ACLOperationsDelegate;
+import com.peterfranza.svnadmin.server.acldb.ACLDB.Group;
+import com.peterfranza.svnadmin.server.acldb.ACLDB.Subscription;
 import com.peterfranza.svnadmin.server.acldb.ACLDB.User;
 
 public class UserOperations extends AsyncRemoteServiceServlet implements UserOperationsInterface {
@@ -42,12 +45,36 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 			List<UserInfo> l = new ArrayList<UserInfo>();
 			for(String uname: ACLOperationsDelegate.getInstance().getUserOperations().getUsernames()){
 				User user = ACLOperationsDelegate.getInstance().getUserOperations().getUser(uname);
-				l.add(new UserInfo(user.getUsername(), user.getEmail(), user.isAdmin()));
+				l.add(new UserInfo(user.getUsername(), user.getEmail(), user.isAdmin(), asCSV(user.getSubscriptions()), asGroupCSV(user.getGroups())));
 			}
 			return l;
 		} else {
 			throw new RuntimeException("Insufficient Access");
 		}
+	}
+
+	private String asGroupCSV(List<Group> groups) {
+		StringBuffer b = new StringBuffer();
+		for (Iterator<Group> iterator = groups.iterator(); iterator.hasNext();) {
+			Group group = iterator.next();
+			b.append(group.getName());
+			if(iterator.hasNext()) {
+				b.append(",");
+			}
+		}
+		return b.toString();
+	}
+
+	private String asCSV(List<Subscription> subscriptions) {
+		StringBuffer b = new StringBuffer();
+		for (Iterator<Subscription> iterator = subscriptions.iterator(); iterator.hasNext();) {
+			Subscription subscription = iterator.next();
+			b.append(subscription.getPath());
+			if(iterator.hasNext()) {
+				b.append(",");
+			}
+		}
+		return b.toString();
 	}
 
 	@Override
@@ -108,6 +135,49 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 			return ACLOperationsDelegate.getInstance().getUserOperations().getSubscriptions(username);
 		} 
 		throw new RuntimeException("Insufficient Access");
+	}
+
+	@Override
+	public void joinGroup(Credentials requestor, String username,
+			String groupName) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
+			ArrayList<String> list = new ArrayList<String>();
+				list.add(username);
+			ACLOperationsDelegate.getInstance().getGroupOperations().modifyGroup(groupName, list, new ArrayList<String>());
+ 		} else {
+ 			throw new RuntimeException("Insufficient Access");
+ 		}
+		
+	}
+
+	@Override
+	public void leaveGroup(Credentials requestor, String username,
+			String groupName) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
+			ArrayList<String> list = new ArrayList<String>();
+				list.add(username);
+			ACLOperationsDelegate.getInstance().getGroupOperations().modifyGroup(groupName, new ArrayList<String>(), list);
+		} else {
+			throw new RuntimeException("Insufficient Access");
+		}
+	}
+
+	@Override
+	public void addSubscription(Credentials requestor, String username, String subscription) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
+			ACLOperationsDelegate.getInstance().getUserOperations().addSubscription(username, subscription);
+		} else {
+			throw new RuntimeException("Insufficient Access");
+		}
+	}
+
+	@Override
+	public void removeSubscription(Credentials requestor, String username, String subscription) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
+			ACLOperationsDelegate.getInstance().getUserOperations().removeSubscription(username, subscription);
+		} else {
+			throw new RuntimeException("Insufficient Access");
+		}
 	}
 
 

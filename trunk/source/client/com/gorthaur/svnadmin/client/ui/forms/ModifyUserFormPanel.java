@@ -6,9 +6,12 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gorthaur.svnadmin.client.SvnAdministration;
+import com.gorthaur.svnadmin.client.rpcinterface.GroupOperationsInterface;
+import com.gorthaur.svnadmin.client.rpcinterface.GroupOperationsInterfaceAsync;
 import com.gorthaur.svnadmin.client.rpcinterface.UserOperationsInterface;
 import com.gorthaur.svnadmin.client.rpcinterface.UserOperationsInterfaceAsync;
 import com.gorthaur.svnadmin.client.rpcinterface.beans.UserInfo;
+import com.gorthaur.svnadmin.client.ui.forms.widgets.DualSelector;
 import com.gwtext.client.core.EventObject;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.SimpleStore;
@@ -54,7 +57,8 @@ public class ModifyUserFormPanel extends Panel {
 	private final ChangeEmailPanel emailPanel = new ChangeEmailPanel();
 	private final ChangePasswordPanel passwordPanel = new ChangePasswordPanel();
 	private final ChangeAdminPanel adminPanel = new ChangeAdminPanel();
-	
+	private final ChangeGroupMembersipPanel membersipPanel = new ChangeGroupMembersipPanel();
+	private final ChangeSubscriptionPanel subscriptionPanel = new ChangeSubscriptionPanel();
 	
 	private final Button deleteUser = new Button("Delete User") {{
 		addListener(new ButtonListenerAdapter() {
@@ -100,8 +104,8 @@ public class ModifyUserFormPanel extends Panel {
 								u.getName(),
 								u.getEmail(),
 								Boolean.toString(u.isAdmin()),
-								"",
-								""
+								u.getSubscriptionsCSVString(),
+								u.getGroupMembershipCSVString()
 						};					
 					}
 					populateStore(data);
@@ -155,16 +159,21 @@ public class ModifyUserFormPanel extends Panel {
 		form.add(emailPanel);
 		form.add(passwordPanel);
 		form.add(adminPanel);
+		form.add(membersipPanel);
+		form.add(subscriptionPanel);
 		
 		form.addButton(deleteUser);
 		
 		add(form);
+		setAutoScroll(true);
 		
 		usersList.addListener(new ComboBoxListenerAdapter() {
 			@Override
 			public void onSelect(ComboBox comboBox, Record record, int index) {
 				emailPanel.loadSettings(record);
 				adminPanel.loadSettings(record);
+				membersipPanel.loadSettings(record);
+				subscriptionPanel.loadSettings(record);
 				super.onSelect(comboBox, record, index);
 			}
 		});
@@ -221,7 +230,7 @@ public class ModifyUserFormPanel extends Panel {
 			});
 		}};
 		
-		private Button save = new Button("Change Password") {{
+		private Button save = new Button("Save") {{
 			addListener(new ButtonListenerAdapter() {
 				@Override
 				public void onClick(Button button, EventObject e) {
@@ -237,6 +246,7 @@ public class ModifyUserFormPanel extends Panel {
 		
 		public ChangePasswordPanel() {
 			setTitle("Password");
+			setCollapsible(true);
 			add(password);
 			add(password_again);
 			addButton(save);
@@ -269,7 +279,7 @@ public class ModifyUserFormPanel extends Panel {
 			
 		}};
 		
-		private Button save = new Button("Save Changes") {{
+		private Button save = new Button("Save") {{
 			setDisabled(true);
 			
 			addListener(new ButtonListenerAdapter() {
@@ -288,6 +298,7 @@ public class ModifyUserFormPanel extends Panel {
 		
 		public ChangeEmailPanel() {
 			setTitle("Email");
+			setCollapsible(true);
 			add(email);
 			addButton(save);
 		}
@@ -310,7 +321,7 @@ public class ModifyUserFormPanel extends Panel {
 			});
 		}};
 		
-		private Button save = new Button("Save Changes") {{
+		private Button save = new Button("Save") {{
 			setDisabled(true);
 			
 			addListener(new ButtonListenerAdapter() {
@@ -329,6 +340,7 @@ public class ModifyUserFormPanel extends Panel {
 		
 		public ChangeAdminPanel() {
 			setTitle("Admin");
+			setCollapsible(true);
 			add(isAdmin);
 			addButton(save);
 		}
@@ -336,6 +348,118 @@ public class ModifyUserFormPanel extends Panel {
 		public void loadSettings(Record record) {
 			isAdmin.setValue(Boolean.valueOf(record.getAsString("admin")));
 		}
+	}
+	
+	private class ChangeGroupMembersipPanel extends FieldSet {
+		private DualSelector selector = new DualSelector();
+		
+		
+		private Button save = new Button("Save") {{
+//			setDisabled(true);
+			
+			addListener(new ButtonListenerAdapter() {
+				@Override
+				public void onClick(Button button, EventObject e) {
+					
+					UserOperationsInterfaceAsync user = GWT.create(UserOperationsInterface.class);
+					for(String s: selector.getItemsToAdd()) {
+						user.joinGroup(SvnAdministration.getInstance().getCredentials(), usersList.getValue(), s, voidCallback);
+					}
+					for(String r: selector.getItemsToRemove()) {
+						user.leaveGroup(SvnAdministration.getInstance().getCredentials(), usersList.getValue(), r, voidCallback);
+					}
+
+					refreshDataStore();
+					super.onClick(button, e);
+				}
+			});
+			
+		}};
+		
+		public ChangeGroupMembersipPanel() {
+			setTitle("Group Membership");
+			setCollapsible(true);
+			add(selector);
+			addButton(save);
+		}
+		
+		public void loadSettings(Record record) {
+			selector.reset();
+			final String[] inc = record.getAsString("group").split(",");
+			selector.populateIncluded(inc);
+
+			GroupOperationsInterfaceAsync groups = GWT.create(GroupOperationsInterface.class);
+			
+			groups.listGroups(SvnAdministration.getInstance().getCredentials(), new AsyncCallback<List<String>>() {
+
+				public void onFailure(Throwable caught) {}
+
+				public void onSuccess(List<String> result) {
+					for(String i: inc) {
+						result.remove(i);
+					}
+					selector.populateExcluded(result.toArray(new String[result.size()]));
+				}
+				
+			});
+
+		}
+			
+		
+	}
+	
+	private class ChangeSubscriptionPanel extends FieldSet {
+		private DualSelector selector = new DualSelector();
+		
+		
+		private Button save = new Button("Save") {{
+
+			addListener(new ButtonListenerAdapter() {
+				@Override
+				public void onClick(Button button, EventObject e) {
+					
+					UserOperationsInterfaceAsync user = GWT.create(UserOperationsInterface.class);
+					for(String s: selector.getItemsToAdd()) {
+						user.addSubscription(SvnAdministration.getInstance().getCredentials(), usersList.getValue(), s, voidCallback);
+					}
+					for(String r: selector.getItemsToRemove()) {
+						user.removeSubscription(SvnAdministration.getInstance().getCredentials(), usersList.getValue(), r, voidCallback);
+					}
+
+					refreshDataStore();
+					super.onClick(button, e);
+				}
+			});
+			
+		}};
+		
+		public ChangeSubscriptionPanel() {
+			setTitle("Subscriptions");
+			setCollapsible(true);
+			add(selector);
+			addButton(save);
+		}
+		
+		public void loadSettings(Record record) {
+			selector.reset();
+			final String[] inc = record.getAsString("subscriptions").split(",");
+			selector.populateIncluded(inc);
+			UserOperationsInterfaceAsync user = GWT.create(UserOperationsInterface.class);
+			user.getAllProjects(SvnAdministration.getInstance().getCredentials(), new AsyncCallback<List<String>>() {
+
+				public void onFailure(Throwable caught) {}
+
+				public void onSuccess(List<String> result) {
+					for(String i: inc) {
+						result.remove(i);
+					}
+					selector.populateExcluded(result.toArray(new String[result.size()]));
+				}
+				
+			});
+		}
+			
+		
 	}
 	
 }

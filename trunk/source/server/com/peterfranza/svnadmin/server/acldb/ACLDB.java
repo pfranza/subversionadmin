@@ -81,12 +81,22 @@ public class ACLDB {
 		public boolean isValid() {
 			return ACLDB.this.users.contains(this);
 		}
+
+		public List<Group> getGroups() {
+			List<Group> l = new ArrayList<Group>();
+			for(Group g: groups) {
+				if(g.members.contains(ACLDB.User.this)) {
+					l.add(g);
+				}
+			}
+			return l;
+		}
 		
 		
 		
 	}
 	
-	protected class Group extends ACLItem {
+	public class Group extends ACLItem {
 		private String name;
 		private List<ACLItem> members = new ArrayList<ACLItem>();
 		private List<Subscription> subscriptions = new ArrayList<Subscription>();
