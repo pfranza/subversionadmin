@@ -339,6 +339,36 @@ public class ACLOperationsDelegate {
 		}
 
 
+		public void addSubscription(String username, final String subscription) {
+			synchronized(lock) {
+				User u = getUser(username);
+				if(u != null) {
+					u.getSubscriptions().add(new ACLDB.Subscription(){{
+						setPath(subscription);
+					}});
+					save();
+				}
+			}
+		}
+
+
+		public void removeSubscription(String username, String subscription) {
+			synchronized(lock) {
+				User u = getUser(username);
+				if(u != null) {
+					for (Iterator<Subscription> iterator = u.getSubscriptions().iterator(); iterator
+							.hasNext();) {
+						Subscription s = iterator.next();
+						if(s.getPath().equalsIgnoreCase(subscription)) {
+							iterator.remove();
+						}
+					}
+					save();
+				}
+			}
+		}
+
+
 	}
 	
 }

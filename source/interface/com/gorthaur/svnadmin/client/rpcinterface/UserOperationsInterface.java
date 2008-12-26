@@ -21,4 +21,13 @@ public interface UserOperationsInterface extends RemoteService {
 	
 	List<String> getSubscriptions(Credentials requestor, String username);
 	List<String> getAllProjects(Credentials requestor);
+	
+
+	void joinGroup(Credentials credentials, String username, String groupName);
+	void leaveGroup(Credentials credentials, String username, String groupName);
+
+	void addSubscription(Credentials credentials, String value, String s);
+
+	void removeSubscription(Credentials credentials, String value, String r);
+	
 }

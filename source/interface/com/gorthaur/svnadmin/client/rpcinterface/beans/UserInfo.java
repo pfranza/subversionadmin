@@ -16,14 +16,20 @@ public class UserInfo implements IsSerializable, Serializable{
 	private boolean isAdmin;
 
 	private String password = null;
+
+	private String subscriptions;
+
+	private String groups;
 	
 	public UserInfo() {}
 
-	public UserInfo(String name, String email, boolean isAdmin) {
+	public UserInfo(String name, String email, boolean isAdmin, String subscriptions, String groups) {
 		super();
 		this.name = name;
 		this.email = email;
 		this.isAdmin = isAdmin;
+		this.subscriptions = subscriptions;
+		this.groups = groups;
 	}
 
 	public final String getName() {
@@ -56,6 +62,14 @@ public class UserInfo implements IsSerializable, Serializable{
 	
 	public final String getNewPassword() {
 		return password;
+	}
+
+	public String getSubscriptionsCSVString() {
+		return subscriptions;
+	}
+
+	public String getGroupMembershipCSVString() {
+		return groups;
 	}
 	
 	

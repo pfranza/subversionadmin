@@ -30,7 +30,7 @@ public class ActionPanel extends Panel {
 			setPaddings(15);
 			add(addUser);
 			add(modUser);
-			add(manageSubscriptions);
+//			add(manageSubscriptions);
 		}
 		
 	}
@@ -48,7 +48,7 @@ public class ActionPanel extends Panel {
 			setPaddings(15);
 			add(add);
 			add(mod);	
-			add(manageSubscriptions);
+//			add(manageSubscriptions);
 		}
 		
 	}
@@ -102,10 +102,10 @@ public class ActionPanel extends Panel {
 			
 			add(addUserForm);
 			add(modifyUserForm);
-			add(new Label("Manage Subscriptions"));
+//			add(new Label("Manage Subscriptions"));
 			add(addGroupForm);
 			add(modifyGroupForm);
-			add(new Label("5"));
+//			add(new Label("5"));
 			add(new Label("6"));
 			add(new Label("7"));
 			

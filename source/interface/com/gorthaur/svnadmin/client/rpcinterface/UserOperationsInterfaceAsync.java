@@ -23,4 +23,13 @@ public interface UserOperationsInterfaceAsync {
 	
 	void getSubscriptions(Credentials requestor, String username, AsyncCallback<List<String>> response);
 	void getAllProjects(Credentials requestor, AsyncCallback<List<String>> response);
+
+	void joinGroup(Credentials credentials, String username, String groupName, AsyncCallback<Void> response);
+	void leaveGroup(Credentials credentials, String username, String groupName, AsyncCallback<Void> response);
+
+	void addSubscription(Credentials credentials, String value, String s,
+			AsyncCallback<Void> voidCallback);
+
+	void removeSubscription(Credentials credentials, String value, String r,
+			AsyncCallback<Void> voidCallback);
 }
