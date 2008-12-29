@@ -33,7 +33,7 @@ public class RepositoryListing {
 		Collection entries = repository.getDir( path, -1 , null , (Collection) null );
 		
 		if(isProject(entries)) {
-			s.add(path);
+			s.add("/" + path);
 		}
 		
 		Iterator iterator = entries.iterator( );

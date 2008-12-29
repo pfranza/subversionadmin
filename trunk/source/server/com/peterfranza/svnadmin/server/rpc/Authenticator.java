@@ -10,7 +10,7 @@ public class Authenticator extends AsyncRemoteServiceServlet  implements Authent
 	private static final long serialVersionUID = -8920303489482728570L;
 
 	public boolean authenticate(String username, String password) {
-		return ACLOperationsDelegate.getInstance().getUserOperations().authenticate(username, password);
+		return ACLOperationsDelegate.getInstance().getUserOperations().authenticate(username, password) && isAdmin(username);
 	}
 
 	public boolean isAdmin(String username) {

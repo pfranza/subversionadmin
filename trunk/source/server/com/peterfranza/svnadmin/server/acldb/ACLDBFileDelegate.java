@@ -89,6 +89,8 @@ public class ACLDBFileDelegate {
 				if(line.contains(":")) {
 					int colon = line.indexOf(":") + 1;
 					directory = line.substring(colon, line.indexOf(']', colon));
+				} else {
+					directory = line.replaceAll("\\[", "").replaceAll("\\]", "");
 				}
 			} else {
 				if(notGroupsSection) {
@@ -156,7 +158,7 @@ public class ACLDBFileDelegate {
 						if(grp.length > 1) {
 							for (String member : grp[1].split("\\s*,\\s*")) {
 								if(member.trim().startsWith("@")) {								
-									Group m = getGroup(member) != null ? getGroup(member) : acl.createNewGroup();
+									Group m = getGroup(member.replaceAll("@", "")) != null ? getGroup(member.replaceAll("@", "")) : acl.createNewGroup();
 									m.setName(member);
 																		
 									if(!m.isValid()) {
@@ -219,8 +221,10 @@ public class ACLDBFileDelegate {
 			BufferedReader reader = new BufferedReader(new FileReader(f));
 			String line = reader.readLine();
 			while(line != null) {
-				String[] parts = line.split(":");
-				acl.getUsers().add(acl.createNewUser(parts[0], parts[1]));
+				if(!line.startsWith("#") && line.trim().length() > 0) {
+					String[] parts = line.split(":");
+					acl.getUsers().add(acl.createNewUser(parts[0], parts[1]));
+				}
 				line = reader.readLine();
 			}
 		} else {
@@ -308,7 +312,7 @@ public class ACLDBFileDelegate {
 
 		for (AccessRule accessRule : acl.getRules()) {
 			if(accessRule.getAllow_read().size() + accessRule.getAllow_write().size() > 0) {
-				buf.append("[proj:"+accessRule.getDirectory()+"]").append(System.getProperty("line.separator"));
+				buf.append("["+accessRule.getDirectory()+"]").append(System.getProperty("line.separator"));
 				for(ACLItem i: accessRule.getAllow_write()) {
 					buf.append(i.toString()).append(" = rw").append(System.getProperty("line.separator"));
 				}
