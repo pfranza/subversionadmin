@@ -22,7 +22,6 @@ public class ActionPanel extends Panel {
 		
 		private Hyperlink addUser = new Hyperlink("Add User", "0"); 
 		private Hyperlink modUser = new Hyperlink("Modify User", "1");
-		private Hyperlink manageSubscriptions = new Hyperlink("Manage Subscriptions", "2");
 		
 		public UserAdminMenu() {
 			super("Users");
@@ -30,17 +29,14 @@ public class ActionPanel extends Panel {
 			setPaddings(15);
 			add(addUser);
 			add(modUser);
-//			add(manageSubscriptions);
 		}
 		
 	}
 	
 	private class GroupAdminMenu extends Panel {
 		
-		private Hyperlink add = new Hyperlink("Add Group", "3"); 
-		private Hyperlink mod = new Hyperlink("Modify Group", "4");
-		private Hyperlink manageSubscriptions = new Hyperlink("Manage Subscriptions", "5");
-
+		private Hyperlink add = new Hyperlink("Add Group", "2"); 
+		private Hyperlink mod = new Hyperlink("Modify Group", "3");
 		
 		public GroupAdminMenu() {
 			super("Groups");
@@ -48,7 +44,19 @@ public class ActionPanel extends Panel {
 			setPaddings(15);
 			add(add);
 			add(mod);	
-//			add(manageSubscriptions);
+		}
+		
+	}
+	
+	private class AccessRulesMenu extends Panel {
+		
+		private Hyperlink mod = new Hyperlink("Change Rules", "4");
+		
+		public AccessRulesMenu() {
+			super("Access Rules");
+			setLayout(new VerticalLayout(10));
+			setPaddings(15);
+			add(mod);	
 		}
 		
 	}
@@ -56,8 +64,8 @@ public class ActionPanel extends Panel {
 	
 	private class InformationMenu extends Panel {
 		
-		private Hyperlink stats = new Hyperlink("Statistics", "6"); 
-		private Hyperlink backups = new Hyperlink("Backups", "7");
+		private Hyperlink stats = new Hyperlink("Statistics", "5"); 
+		private Hyperlink backups = new Hyperlink("Backups", "6");
 		
 		public InformationMenu() {
 			super("Server Info");
@@ -76,6 +84,7 @@ public class ActionPanel extends Panel {
 
 			add(new UserAdminMenu());
 			add(new GroupAdminMenu());
+			add(new AccessRulesMenu());
 			add(new InformationMenu());
 		}
 	}
@@ -102,12 +111,13 @@ public class ActionPanel extends Panel {
 			
 			add(addUserForm);
 			add(modifyUserForm);
-//			add(new Label("Manage Subscriptions"));
+
 			add(addGroupForm);
 			add(modifyGroupForm);
-//			add(new Label("5"));
+			
+			add(new Label("4"));
+			add(new Label("5"));
 			add(new Label("6"));
-			add(new Label("7"));
 			
 			
 		}

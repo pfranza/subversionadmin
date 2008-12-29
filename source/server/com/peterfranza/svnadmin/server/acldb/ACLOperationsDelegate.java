@@ -269,14 +269,11 @@ public class ACLOperationsDelegate {
 		}
 
 		public void updateUser(String username, String email,
-				String admin, String password) {
+				String admin) {
 			synchronized(lock) {			
 				User u = getUser(username);
 				u.setEmail(email);
 				u.setAdmin(Boolean.valueOf(admin));
-				if(password != null && password.length() > 1) {
-					u.setPassword(UnixCrypt.crypt(password));
-				}
 				save();
 			}
 		}

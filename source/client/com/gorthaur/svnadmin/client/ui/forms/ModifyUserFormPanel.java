@@ -109,7 +109,7 @@ public class ModifyUserFormPanel extends Panel {
 						};					
 					}
 					populateStore(data);
-					
+					loadData(null);
 				}
 				
 			});
@@ -170,14 +170,11 @@ public class ModifyUserFormPanel extends Panel {
 		usersList.addListener(new ComboBoxListenerAdapter() {
 			@Override
 			public void onSelect(ComboBox comboBox, Record record, int index) {
-				emailPanel.loadSettings(record);
-				adminPanel.loadSettings(record);
-				membersipPanel.loadSettings(record);
-				subscriptionPanel.loadSettings(record);
+				loadData(record);
 				super.onSelect(comboBox, record, index);
 			}
 		});
-
+		loadData(null);
 	}
 	
 	private void populateStore(Object[][] data) {
@@ -189,6 +186,15 @@ public class ModifyUserFormPanel extends Panel {
 		mStore.load();
 	}
 	
+	private void loadData(Record record) {
+		emailPanel.loadSettings(record);
+		passwordPanel.loadSettings(record);
+		adminPanel.loadSettings(record);
+		membersipPanel.loadSettings(record);
+		subscriptionPanel.loadSettings(record);
+		deleteUser.setDisabled(record == null);
+	}
+
 	private class ChangePasswordPanel extends FieldSet {
 		
 		private TextField password = new TextField("Password", "password") {{
@@ -251,6 +257,15 @@ public class ModifyUserFormPanel extends Panel {
 			add(password_again);
 			addButton(save);
 		}
+
+		public void loadSettings(Record record) {
+			save.setDisabled(!(password_again.isValid() && password.isValid()) || record == null);
+			password.setValue("");
+			password_again.setValue("");
+			password.setDisabled(record == null);
+			password_again.setDisabled(record == null);
+		}
+		
 		
 	}
 	
@@ -259,7 +274,7 @@ public class ModifyUserFormPanel extends Panel {
 		private TextField email = new TextField("Email", "email") {{
 			setValidator(new Validator() {
 				public boolean validate(String value) throws ValidationException {
-					return value.trim().length() > 0 && value.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
+					return value.trim().length() > 3 && value.matches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
 				}		
 			});
 			
@@ -304,7 +319,9 @@ public class ModifyUserFormPanel extends Panel {
 		}
 
 		public void loadSettings(Record record) {
-			email.setValue(record.getAsString("email"));
+			email.setValue(record != null ? record.getAsString("email") : "");
+			save.setDisabled(!email.isValid() || record == null);
+			email.setDisabled(record == null);
 		}
 		
 	}
@@ -346,7 +363,9 @@ public class ModifyUserFormPanel extends Panel {
 		}
 
 		public void loadSettings(Record record) {
-			isAdmin.setValue(Boolean.valueOf(record.getAsString("admin")));
+			isAdmin.setValue(record != null ? Boolean.valueOf(record.getAsString("admin")) : false);
+			save.setDisabled(record == null);
+			isAdmin.setDisabled(record == null);
 		}
 	}
 	
@@ -379,29 +398,33 @@ public class ModifyUserFormPanel extends Panel {
 		public ChangeGroupMembersipPanel() {
 			setTitle("Group Membership");
 			setCollapsible(true);
+			setCollapsed(true);
 			add(selector);
 			addButton(save);
 		}
 		
 		public void loadSettings(Record record) {
 			selector.reset();
-			final String[] inc = record.getAsString("group").split(",");
-			selector.populateIncluded(inc);
+			if(record != null) {
+				final String[] inc = record.getAsString("group").split(",");
+				selector.populateIncluded(inc);
 
-			GroupOperationsInterfaceAsync groups = GWT.create(GroupOperationsInterface.class);
-			
-			groups.listGroups(SvnAdministration.getInstance().getCredentials(), new AsyncCallback<List<String>>() {
+				GroupOperationsInterfaceAsync groups = GWT.create(GroupOperationsInterface.class);
 
-				public void onFailure(Throwable caught) {}
+				groups.listGroups(SvnAdministration.getInstance().getCredentials(), new AsyncCallback<List<String>>() {
 
-				public void onSuccess(List<String> result) {
-					for(String i: inc) {
-						result.remove(i);
+					public void onFailure(Throwable caught) {}
+
+					public void onSuccess(List<String> result) {
+						for(String i: inc) {
+							result.remove(i);
+						}
+						selector.populateExcluded(result.toArray(new String[result.size()]));
 					}
-					selector.populateExcluded(result.toArray(new String[result.size()]));
-				}
-				
-			});
+
+				});
+			}
+			save.setDisabled(record == null);
 
 		}
 			
@@ -436,27 +459,31 @@ public class ModifyUserFormPanel extends Panel {
 		public ChangeSubscriptionPanel() {
 			setTitle("Subscriptions");
 			setCollapsible(true);
+			setCollapsed(true);
 			add(selector);
 			addButton(save);
 		}
 		
 		public void loadSettings(Record record) {
 			selector.reset();
-			final String[] inc = record.getAsString("subscriptions").split(",");
-			selector.populateIncluded(inc);
-			UserOperationsInterfaceAsync user = GWT.create(UserOperationsInterface.class);
-			user.getAllProjects(SvnAdministration.getInstance().getCredentials(), new AsyncCallback<List<String>>() {
+			if(record != null) {
+				final String[] inc = record.getAsString("subscriptions").split(",");
+				selector.populateIncluded(inc);
+				UserOperationsInterfaceAsync user = GWT.create(UserOperationsInterface.class);
+				user.getAllProjects(SvnAdministration.getInstance().getCredentials(), new AsyncCallback<List<String>>() {
 
-				public void onFailure(Throwable caught) {}
+					public void onFailure(Throwable caught) {}
 
-				public void onSuccess(List<String> result) {
-					for(String i: inc) {
-						result.remove(i);
+					public void onSuccess(List<String> result) {
+						for(String i: inc) {
+							result.remove(i);
+						}
+						selector.populateExcluded(result.toArray(new String[result.size()]));
 					}
-					selector.populateExcluded(result.toArray(new String[result.size()]));
-				}
-				
-			});
+
+				});
+			}
+			save.setDisabled(record == null);
 		}
 			
 		

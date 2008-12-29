@@ -170,7 +170,6 @@ public class ACLDB {
 			this.allow_write = allow_write;
 		}
 		
-		
 	}
 	
 	public static class Subscription {

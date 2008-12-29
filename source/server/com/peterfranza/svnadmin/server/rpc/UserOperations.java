@@ -88,7 +88,7 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 			String newEmail) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
 			User u = ACLOperationsDelegate.getInstance().getUserOperations().getUser(username);
-			ACLOperationsDelegate.getInstance().getUserOperations().updateUser(u.getUsername(), newEmail, Boolean.toString(u.isAdmin()), u.getPassword());
+			ACLOperationsDelegate.getInstance().getUserOperations().updateUser(u.getUsername(), newEmail, Boolean.toString(u.isAdmin()));
 		} else {
 			throw new RuntimeException("Insufficient Access");
 		}
@@ -98,7 +98,7 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 			boolean isAdmin) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
 			User u = ACLOperationsDelegate.getInstance().getUserOperations().getUser(username);
-			ACLOperationsDelegate.getInstance().getUserOperations().updateUser(u.getUsername(), u.getEmail(), Boolean.toString(isAdmin), u.getPassword());
+			ACLOperationsDelegate.getInstance().getUserOperations().updateUser(u.getUsername(), u.getEmail(), Boolean.toString(isAdmin));
 		} else {
 			throw new RuntimeException("Insufficient Access");
 		}
