@@ -1,7 +1,8 @@
 [groups]
-team1 = pfranza, test
-team2 = test, pfranza
+dev=pfranza
+support=
+everybody = @dev,@support
 
-[proj:/]
-@team1 = rw
-pfranza = rw
+[/]
+@everybody = r
+@dev = rw
