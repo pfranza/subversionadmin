@@ -39,7 +39,6 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		return ACLOperationsDelegate.getInstance().getUserOperations().getUser(username) != null;
 	}
 
-	@Override
 	public List<UserInfo> getAllUsers(Credentials requestor) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
 			List<UserInfo> l = new ArrayList<UserInfo>();
@@ -77,7 +76,6 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		return b.toString();
 	}
 
-	@Override
 	public void deleteUser(Credentials requestor, String username) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
 			ACLOperationsDelegate.getInstance().getUserOperations().deleteUser(username);
@@ -86,7 +84,6 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		}
 	}
 
-	@Override
 	public void updateEmailAddress(Credentials requestor, String username,
 			String newEmail) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
@@ -97,7 +94,6 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		}
 	}
 
-	@Override
 	public void updateIsAdmin(Credentials requestor, String username,
 			boolean isAdmin) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
@@ -108,7 +104,6 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		}
 	}
 
-	@Override
 	public void updatePassword(Credentials requestor, String username,
 			String newPassword) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
@@ -118,7 +113,6 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		}
 	}
 
-	@Override
 	public List<String> getAllProjects(Credentials requestor) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
 			return RepositoryListing.getProjectPaths(ApplicationProperties
@@ -129,7 +123,6 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		throw new RuntimeException("Insufficient Access");
 	}
 
-	@Override
 	public List<String> getSubscriptions(Credentials requestor, String username) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
 			return ACLOperationsDelegate.getInstance().getUserOperations().getSubscriptions(username);
@@ -137,7 +130,6 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		throw new RuntimeException("Insufficient Access");
 	}
 
-	@Override
 	public void joinGroup(Credentials requestor, String username,
 			String groupName) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
@@ -150,7 +142,6 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		
 	}
 
-	@Override
 	public void leaveGroup(Credentials requestor, String username,
 			String groupName) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
@@ -162,7 +153,6 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		}
 	}
 
-	@Override
 	public void addSubscription(Credentials requestor, String username, String subscription) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
 			ACLOperationsDelegate.getInstance().getUserOperations().addSubscription(username, subscription);
@@ -171,7 +161,6 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		}
 	}
 
-	@Override
 	public void removeSubscription(Credentials requestor, String username, String subscription) {
 		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
 			ACLOperationsDelegate.getInstance().getUserOperations().removeSubscription(username, subscription);
