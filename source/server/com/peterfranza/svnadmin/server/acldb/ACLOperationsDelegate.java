@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.peterfranza.svnadmin.server.acldb.ACLDB.ACLItem;
+import com.peterfranza.svnadmin.server.acldb.ACLDB.AccessRule;
 import com.peterfranza.svnadmin.server.acldb.ACLDB.Group;
 import com.peterfranza.svnadmin.server.acldb.ACLDB.Subscription;
 import com.peterfranza.svnadmin.server.acldb.ACLDB.User;
@@ -39,6 +40,9 @@ public class ACLOperationsDelegate {
 		return groupOps;
 	}
 
+	public List<AccessRule> getRules() {
+		return acl.getACL().getRules(); 
+	}
 	
 	public List<String> getAddressesSubscribedTo(List<String> changes) {
 		List<String> addresses = new ArrayList<String>();

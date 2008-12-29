@@ -16,7 +16,7 @@ public class ChangeSetEmailer {
 					.getProperty("repository_username"), ApplicationProperties
 					.getProperty("repository_password"), revisionNumber);
 
-			String subject = "svn commit: " + set.getMessage();
+			String subject = "SVN Commit: (" + set.getRevision() + ")" + set.getMessage();
 			MailSender.sendMail(ApplicationProperties
 					.getProperty("smtp_server"), getFromAddress(set.getAuthor(), ApplicationProperties
 					.getProperty("default_from_email")), getToAddresses(
