@@ -59,6 +59,35 @@ public class GroupOperations extends AsyncRemoteServiceServlet implements GroupO
 		} 
 		throw new RuntimeException("Insufficiant Access");
 	}
+
+	public void deleteGroup(Credentials requestor, String groupName) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(requestor.getUsername())) {
+			ACLOperationsDelegate.getInstance().getGroupOperations().removeGroup(groupName);
+		} else {
+			throw new RuntimeException("Insufficiant Access");
+		}	
+	}
+
+	public void addMember(Credentials credentials, String groupName, String member) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(credentials.getUsername())) {
+			List<String> l = new ArrayList<String>();
+			l.add(groupName);
+			ACLOperationsDelegate.getInstance().getGroupOperations().modifyGroup(groupName, l, new ArrayList<String>());
+		} else {
+			throw new RuntimeException("Insufficiant Access");
+		}
+	}
+
+	public void removeMember(Credentials credentials, String groupName,
+			String member) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(credentials.getUsername())) {
+			List<String> l = new ArrayList<String>();
+			l.add(groupName);
+			ACLOperationsDelegate.getInstance().getGroupOperations().modifyGroup(groupName, new ArrayList<String>(), l);
+		} else {
+			throw new RuntimeException("Insufficiant Access");
+		}
+	}
 	
 	
 

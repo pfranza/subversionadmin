@@ -1,26 +1,18 @@
 package com.gorthaur.svnadmin.client.ui.forms;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gorthaur.svnadmin.client.SvnAdministration;
+import com.gorthaur.svnadmin.client.rpcinterface.GroupOperationsInterface;
+import com.gorthaur.svnadmin.client.rpcinterface.GroupOperationsInterfaceAsync;
 import com.gorthaur.svnadmin.client.ui.forms.widgets.DualSelector;
-import com.gwtext.client.data.FieldDef;
-import com.gwtext.client.data.HttpProxy;
 import com.gwtext.client.data.Record;
-import com.gwtext.client.data.RecordDef;
+import com.gwtext.client.data.SimpleStore;
 import com.gwtext.client.data.Store;
-import com.gwtext.client.data.StringFieldDef;
-import com.gwtext.client.data.XmlReader;
-import com.gwtext.client.data.event.StoreListenerAdapter;
 import com.gwtext.client.widgets.Button;
 import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.Panel;
@@ -57,45 +49,35 @@ public class ModifyGroupFormPanel extends Panel {
 		addListener(new ButtonListenerAdapter() {
 			public void onClick(Button button, com.gwtext.client.core.EventObject e) {
 				
-				StringBuffer b = new StringBuffer();
+				GroupOperationsInterfaceAsync groups = GWT.create(GroupOperationsInterface.class);
 				for (Iterator<String> iterator = selector.getItemsToAdd().iterator(); iterator.hasNext();) {
 					String string = iterator.next();
-					b.append(string);
-					if(iterator.hasNext()) {
-						b.append(",");
-					}
-				}
-				
-				StringBuffer c = new StringBuffer();
-				for (Iterator<String> iterator = selector.getItemsToRemove().iterator(); iterator.hasNext();) {
-					String string = iterator.next();
-					c.append(string);
-					if(iterator.hasNext()) {
-						c.append(",");
-					}
-				}
-				
-				RequestBuilder rb = new RequestBuilder(RequestBuilder.GET, URL.encode("/rest/updateGroup?username="+SvnAdministration.getInstance().getUsername()+
-						"&passwd=" + SvnAdministration.getInstance().getPassword()+
-						"&groupName=" + groupsList.getValue() +
-						"&addUsers=" + b.toString() + 
-						"&removeUsers=" + c.toString()));
-				try {
-					rb.sendRequest("", new RequestCallback() {
+					groups.addMember(SvnAdministration.getInstance().getCredentials(), groupsList.getValue(), string, new AsyncCallback<List<Void>>() {
 
-						public void onError(Request request, Throwable exception) {
-							Window.alert("Error: " + exception.getMessage());
+						public void onFailure(Throwable caught) {
+							Window.alert(caught.getMessage());
 						}
 
-						public void onResponseReceived(Request request, Response response) {
-							resetForm();
-						}
+						public void onSuccess(List<Void> result) {}
 						
 					});
-				} catch (RequestException ex) {
-					Window.alert("Error: " + ex.getMessage());
 				}
 				
+				for (Iterator<String> iterator = selector.getItemsToRemove().iterator(); iterator.hasNext();) {
+					String string = iterator.next();
+					groups.removeMember(SvnAdministration.getInstance().getCredentials(), groupsList.getValue(), string, new AsyncCallback<List<Void>>() {
+
+						public void onFailure(Throwable caught) {
+							Window.alert(caught.getMessage());
+						}
+
+						public void onSuccess(List<Void> result) {}
+						
+					});
+				}
+				
+				
+				resetForm();
 			};
 		});
 	}};
@@ -103,24 +85,18 @@ public class ModifyGroupFormPanel extends Panel {
 		addListener(new ButtonListenerAdapter() {
 			public void onClick(Button button, com.gwtext.client.core.EventObject e) {
 				
-				RequestBuilder rb = new RequestBuilder(RequestBuilder.GET, URL.encode("/rest/deleteGroup?username="+SvnAdministration.getInstance().getUsername()+
-						"&passwd=" + SvnAdministration.getInstance().getPassword()+
-						"&groupName=" + groupsList.getValue()));
-				try {
-					rb.sendRequest("", new RequestCallback() {
+				GroupOperationsInterfaceAsync groups = GWT.create(GroupOperationsInterface.class);
+				groups.deleteGroup(SvnAdministration.getInstance().getCredentials(), groupsList.getValue(), new AsyncCallback<List<Void>>() {
 
-						public void onError(Request request, Throwable exception) {
-							Window.alert("Error: " + exception.getMessage());
-						}
+					public void onFailure(Throwable caught) {
+						Window.alert(caught.getMessage());
+					}
 
-						public void onResponseReceived(Request request, Response response) {
-							resetForm();
-						}
-						
-					});
-				} catch (RequestException ex) {
-					Window.alert("Error: " + ex.getMessage());
-				}
+					public void onSuccess(List<Void> result) {
+						resetForm();
+					}
+					
+				});
 			};
 		});
 	}};
@@ -128,14 +104,79 @@ public class ModifyGroupFormPanel extends Panel {
 	private void refreshDataStore() {
 		try {
 			groupsList.clearValue();
-			mStore.reload();
 			groupsList.reset();
+			
+			GroupOperationsInterfaceAsync groups = GWT.create(GroupOperationsInterface.class);
+			groups.listGroups(SvnAdministration.getInstance().getCredentials(), new AsyncCallback<List<String>>() {
+
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());
+				}
+
+				public void onSuccess(List<String> result) {
+					
+					Object[][] data = new Object[result.size()][5];
+					for(int i = 0; i < result.size(); i++) {
+						String u = result.get(i);
+						data[i] = new Object[] {
+								u
+						};					
+					}
+					populateStore(data);
+					loadData(null);
+				}
+				
+			});
+			
+
 		} catch (Exception e) {
 			Window.alert("doRefresh: " + e.getMessage());
 		}
 	}
 	
 	
+	protected void loadData(Record object) {
+		if(object != null) {
+			GroupOperationsInterfaceAsync groups = GWT.create(GroupOperationsInterface.class);
+			groups.listGroupMembers(SvnAdministration.getInstance().getCredentials(), object.getAsString("name"),
+					new AsyncCallback<List<String>>() {
+
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());
+				}
+
+				public void onSuccess(List<String> result) {
+					selector.populateIncluded(result.toArray(new String[result.size()]));
+				}
+
+			});
+
+			groups.listGroupNonMembers(SvnAdministration.getInstance().getCredentials(), object.getAsString("name"),
+					new AsyncCallback<List<String>>() {
+
+				public void onFailure(Throwable caught) {
+					Window.alert(caught.getMessage());
+				}
+
+				public void onSuccess(List<String> result) {
+					selector.populateIncluded(result.toArray(new String[result.size()]));
+				}
+
+			});
+		}
+		save.setDisabled( object == null );
+	}
+
+
+	protected void populateStore(Object[][] data) {
+		mStore = new SimpleStore(new String[]{"name"},
+				data); 
+		
+		groupsList.setStore(mStore);
+		mStore.load();
+	}
+
+
 	public ModifyGroupFormPanel() {
 		
 		final FormPanel form = new FormPanel();
@@ -149,25 +190,13 @@ public class ModifyGroupFormPanel extends Panel {
 			boolean done = false;
 			
 			public void onShow(Component component) {
-				if(!done) {
-					mStore = new Store(
-							new HttpProxy(URL.encode("/rest/listGroups?username="+SvnAdministration.getInstance().getUsername()+
-									"&passwd=" + SvnAdministration.getInstance().getPassword())),
-									new XmlReader("row", new RecordDef(new FieldDef[] {
-											new StringFieldDef("name", "name")
-									})){{
-										setTotalRecords("results");
-									}});
-
-					groupsList.setStore(mStore);
-					mStore.load(0, 10);
+				if(!done) {					
 					set.add(groupsList);
 					set.doLayout();
-					done = true;
 					
-				} else {
+					done = true;
+				} 
 					refreshDataStore();
-				}
 				
 				super.onShow(component);
 			}
@@ -183,9 +212,7 @@ public class ModifyGroupFormPanel extends Panel {
 		form.setPaddings(5, 5, 5, 0);  
 		form.setWidth(500);  
 		form.setLabelWidth(75);  
-		
- 
-		
+				
 		
 		form.add(set);
 		FieldSet set2 = new FieldSet("Members");
@@ -196,69 +223,23 @@ public class ModifyGroupFormPanel extends Panel {
 		form.addButton(save);
 		
 		add(form);
-		
+
 		groupsList.addListener(new ComboBoxListenerAdapter() {
 			@Override
 			public void onSelect(ComboBox comboBox, Record record, int index) {
-				createInclusionStore(getFeedUrl() + "&groupName=" + record.getAsString("name")).load();
-				createExclusionStore(getFeedUrl() + "&groupName=" + record.getAsString("name")).load();						
+				loadData(record);
 				super.onSelect(comboBox, record, index);
 			}
 		});
+		loadData(null);
 
 	}
 	
-	private String getFeedUrl() {
-		return "/rest/listGroupMembership?username="+SvnAdministration.getInstance().getUsername()+
-		"&passwd=" + SvnAdministration.getInstance().getPassword();
-	}
-	
-	private Store createExclusionStore(String feed) {
-		return new Store(
-				new HttpProxy(URL.encode(feed)),
-						new XmlReader("excname", new RecordDef(new FieldDef[] {
-								new StringFieldDef("name", "name")
-						}))) {{
-							addStoreListener(new StoreListenerAdapter() {
-								@Override
-								public void onLoad(Store store, Record[] records) {
-									List<String> exc = new ArrayList<String>();
-									for(Record r: records) {
-										exc.add(r.getAsString("name"));
-									}
 
-									selector.populateExcluded(exc.toArray(new String[exc.size()]));
-									super.onLoad(store, records);
-								}
-							});
-						}};
-	}
-
-	private Store createInclusionStore(String feed) {
-		return new Store(
-				new HttpProxy(URL.encode(feed)),
-						new XmlReader("incname", new RecordDef(new FieldDef[] {
-								new StringFieldDef("name", "name")
-						}))) {{
-							addStoreListener(new StoreListenerAdapter() {
-								@Override
-								public void onLoad(Store store, Record[] records) {
-									List<String> exc = new ArrayList<String>();
-									for(Record r: records) {
-										exc.add(r.getAsString("name"));
-									}
-
-									selector.populateIncluded(exc.toArray(new String[exc.size()]));
-									super.onLoad(store, records);
-								}
-							});
-						}};
-	}
 
 	private void resetForm() {
 		refreshDataStore();
-		selector.reset();
-		
+		selector.reset();		
 	}
 	
 }
