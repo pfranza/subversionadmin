@@ -44,6 +44,53 @@ public class ACLOperationsDelegate {
 		return acl.getACL().getRules(); 
 	}
 	
+	public boolean canRead(String project, String groupName) {
+		AccessRule rule = getRule(project);
+		System.out.println("Here " + rule);
+		if(rule == null) return false;
+		
+		for(ACLItem i: rule.getAllow_read()) {
+			if(i instanceof Group) {
+				if(((Group)i).getName().equalsIgnoreCase(groupName)) {
+					return true;
+				}
+			}
+		}
+		
+		for(ACLItem i: rule.getAllow_write()) {
+			if(i instanceof Group) {
+				if(((Group)i).getName().equalsIgnoreCase(groupName)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean canWrite(String project, String groupName) {
+		AccessRule rule = getRule(project);
+		if(rule == null) return false;
+		for(ACLItem i: rule.getAllow_write()) {
+			if(i instanceof Group) {
+				if(((Group)i).getName().equalsIgnoreCase(groupName)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	private AccessRule getRule(String project) {
+		for(AccessRule r: getRules()) {
+			if(r.getDirectory().equalsIgnoreCase(project)) {
+				return r;
+			}
+		}
+		return null;
+	}
+
 	public List<String> getAddressesSubscribedTo(List<String> changes) {
 		List<String> addresses = new ArrayList<String>();
 		synchronized(lock) {
@@ -140,7 +187,7 @@ public class ACLOperationsDelegate {
 
 		private Group getGroup(String groupName) {
 			for(Group g: acl.getACL().getGroups()) {
-				if(g.getName().equals(groupName)) {
+				if(g.getName().equals(groupName.replaceAll("@", ""))) {
 					return g;
 				}
 			}
@@ -370,6 +417,32 @@ public class ACLOperationsDelegate {
 		}
 
 
+	}
+
+	public void setAccess(String project, String groupName, boolean canRead,
+			boolean canWrite) {
+		AccessRule rule = getRule(project);
+		if(rule == null) {
+			rule = new AccessRule();
+			rule.setDirectory(project);
+			acl.getACL().getRules().add(rule);
+		}
+		
+		Group group = getGroupOperations().getGroup(groupName);
+		rule.getAllow_read().remove(group);
+		rule.getAllow_write().remove(group);
+		
+		if(canWrite) {
+			rule.getAllow_write().add(group);
+		} else if(canRead) {
+			rule.getAllow_read().add(group);
+		}
+		
+		if(rule.getAllow_read().size() + rule.getAllow_write().size() == 0) {
+			acl.getACL().getRules().remove(rule);
+		}
+		
+		save();
 	}
 	
 }

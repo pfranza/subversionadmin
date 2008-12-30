@@ -32,4 +32,11 @@ public interface UserOperationsInterfaceAsync {
 
 	void removeSubscription(Credentials credentials, String value, String r,
 			AsyncCallback<Void> voidCallback);
+
+	void canRead(Credentials credentials, String project, String name, AsyncCallback<Boolean> callback);
+	void canWrite(Credentials credentials, String project, String name, AsyncCallback<Boolean> callback);
+
+	void setAccessPermissions(Credentials credentials, String value,
+			String groupName, boolean value2, boolean value3,
+			AsyncCallback<Void> asyncCallback);
 }
