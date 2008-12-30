@@ -1,5 +1,7 @@
 package com.peterfranza.svnadmin.server;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -23,6 +25,7 @@ import org.mortbay.resource.FileResource;
 import org.mortbay.resource.Resource;
 
 import com.peterfranza.svnadmin.server.acldb.ACLOperationsDelegate;
+import com.peterfranza.svnadmin.server.rpc.AdminOperations;
 import com.peterfranza.svnadmin.server.rpc.Authenticator;
 import com.peterfranza.svnadmin.server.rpc.GroupOperations;
 import com.peterfranza.svnadmin.server.rpc.UserOperations;
@@ -35,6 +38,7 @@ public class AdminServer {
 			put("/rpc/auth", Authenticator.class);
 			put("/rpc/user", UserOperations.class);
 			put("/rpc/group", GroupOperations.class);
+			put("/rpc/admin", AdminOperations.class);
 		}
 	};
 
@@ -61,6 +65,45 @@ public class AdminServer {
 				return r;
 			}
 		};
+		root.addServlet(new ServletHolder(new HttpServlet() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 3668249982363221393L;
+
+			@Override
+			protected void doGet(HttpServletRequest req,
+					HttpServletResponse response) throws ServletException,
+					IOException {
+				String username = req.getParameter("username");
+				
+				if(isAdmin(username)){
+					String filename = req.getPathInfo().replaceAll("/", "");
+
+					File backup = BackupListings.getFile(filename);
+					if(backup.exists()) {
+						response.setStatus(HttpServletResponse.SC_OK);
+						response.setContentType("binary/octet-stream");
+						try {
+							FileInputStream fis = new FileInputStream(backup);
+							byte[] buf = new byte[1024];
+							int i = 0;
+							while ((i = fis.read(buf)) != -1) {
+								response.getOutputStream().write(buf, 0, i);
+							}
+						} catch(Exception e) {
+							System.out.println(filename);
+							e.printStackTrace();
+						}
+
+					}
+				} else {
+					super.doGet(req, response);
+				}
+
+			}
+		}), "/backups/*");
+		
 		
 		root.addServlet(new ServletHolder(new HttpServlet() {
 			/**

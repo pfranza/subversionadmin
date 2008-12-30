@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.gorthaur.svnadmin.client.ui.forms.AddGroupPanel;
 import com.gorthaur.svnadmin.client.ui.forms.AddUserFormPanel;
+import com.gorthaur.svnadmin.client.ui.forms.BackupsDownloadForm;
 import com.gorthaur.svnadmin.client.ui.forms.ModifyGroupFormPanel;
 import com.gorthaur.svnadmin.client.ui.forms.ModifyUserFormPanel;
 import com.gwtext.client.core.RegionPosition;
@@ -97,6 +98,7 @@ public class ActionPanel extends Panel {
 		private ModifyUserFormPanel modifyUserForm = new ModifyUserFormPanel();
 		private AddGroupPanel addGroupForm = new AddGroupPanel();
 		private ModifyGroupFormPanel modifyGroupForm = new ModifyGroupFormPanel();
+		private BackupsDownloadForm backups = new BackupsDownloadForm();
 		
 		public ContentPanel() {
 			setLayout(layout);
@@ -117,7 +119,7 @@ public class ActionPanel extends Panel {
 			
 			add(new Label("4"));
 			add(new Label("5"));
-			add(new Label("6"));
+			add(backups);
 			
 			
 		}
