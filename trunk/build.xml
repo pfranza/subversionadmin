@@ -71,7 +71,7 @@
 		<taskdef name="one-jar" classname="com.simontuffs.onejar.ant.OneJarTask" 
 			classpath="lib/one-jar-ant-task-0.96.jar" onerror="report"/>
 		
-        <one-jar destfile="deploy/bin/SvnAdmin.jar" manifest="lib/SvnAdmin.mf">
+        <one-jar destfile="SvnAdmin.jar" manifest="lib/SvnAdmin.mf">
             <main>
                 <fileset dir="classes"/>
             </main>
@@ -88,7 +88,7 @@
 	</target>
 	
 	<target name="launch" depends="dist">
-	  <java jar="deploy/bin/SvnAdmin.jar" fork="true" maxmemory="256m"/>
+	  <java jar="SvnAdmin.jar" fork="true" maxmemory="256m"/>
 	</target>
 	
 </project>
