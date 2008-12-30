@@ -159,7 +159,7 @@ public class ModifyGroupFormPanel extends Panel {
 				}
 
 				public void onSuccess(List<String> result) {
-					selector.populateIncluded(result.toArray(new String[result.size()]));
+					selector.populateExcluded(result.toArray(new String[result.size()]));
 				}
 
 			});
