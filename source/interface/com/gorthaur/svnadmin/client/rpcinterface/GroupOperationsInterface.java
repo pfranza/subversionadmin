@@ -14,5 +14,7 @@ public interface GroupOperationsInterface extends RemoteService {
 	List<String> listGroups(Credentials requestor);
 	List<String> listGroupMembers(Credentials requestor, String groupName);
 	List<String> listGroupNonMembers(Credentials requestor, String groupName);
-	
+	void deleteGroup(Credentials requestor, String groupName);
+	void addMember(Credentials credentials, String value, String member);
+	void removeMember(Credentials credentials, String value, String member);
 }

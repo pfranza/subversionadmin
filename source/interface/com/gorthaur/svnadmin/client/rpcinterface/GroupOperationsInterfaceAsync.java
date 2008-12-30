@@ -14,4 +14,9 @@ public interface GroupOperationsInterfaceAsync {
 	void listGroupMembers(Credentials requestor, String groupName, AsyncCallback<List<String>> result);
 	void listGroupNonMembers(Credentials requestor, String groupName, AsyncCallback<List<String>> result);
 	
+	void deleteGroup(Credentials requestor, String groupName, AsyncCallback<List<Void>> result);
+	void addMember(Credentials credentials, String value, String string,
+			AsyncCallback<List<Void>> asyncCallback);
+	void removeMember(Credentials credentials, String value, String string,
+			AsyncCallback<List<Void>> asyncCallback);
 }
