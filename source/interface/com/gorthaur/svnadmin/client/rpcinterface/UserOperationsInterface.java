@@ -30,4 +30,10 @@ public interface UserOperationsInterface extends RemoteService {
 
 	void removeSubscription(Credentials credentials, String value, String r);
 	
+	boolean canRead(Credentials credentials, String project, String name);
+	boolean canWrite(Credentials credentials, String project, String name);
+	
+	void setAccessPermissions(Credentials credentials, String project,
+			String groupName, boolean canRead, boolean canWrite);
+	
 }

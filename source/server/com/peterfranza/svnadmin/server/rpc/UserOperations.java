@@ -169,5 +169,30 @@ public class UserOperations extends AsyncRemoteServiceServlet implements UserOpe
 		}
 	}
 
+	public boolean canRead(Credentials credentials, String project, String groupName) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(credentials.getUsername())) {
+			return ACLOperationsDelegate.getInstance().canRead(project, groupName);
+		} else {
+			throw new RuntimeException("Insufficient Access");
+		}
+	}
+
+	public boolean canWrite(Credentials credentials, String project, String groupName) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(credentials.getUsername())) {
+			return ACLOperationsDelegate.getInstance().canWrite(project, groupName);
+		} else {
+			throw new RuntimeException("Insufficient Access");
+		}
+	}
+
+	public void setAccessPermissions(Credentials credentials, String project,
+			String groupName, boolean canRead, boolean canWrite) {
+		if(ACLOperationsDelegate.getInstance().getUserOperations().isAdmin(credentials.getUsername())) {
+			ACLOperationsDelegate.getInstance().setAccess(project, groupName, canRead, canWrite);
+		} else {
+			throw new RuntimeException("Insufficient Access");
+		}
+	}
+
 
 }
