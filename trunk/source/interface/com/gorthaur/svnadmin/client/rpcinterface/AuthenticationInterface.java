@@ -9,4 +9,7 @@ public interface AuthenticationInterface extends RemoteService {
 	boolean authenticate(String username, String password);
 	boolean isAdmin(String username);
 	
+	boolean authenticateBasic(String username, String password);
+	String changePasswordBasic(String username, String oldPassword, String newPassword);
+	
 }
