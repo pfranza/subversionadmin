@@ -34,7 +34,7 @@ public class ChangeAccessRulesPanel extends Panel {
 		setFieldLabel("Select Project");   
 		setMode(ComboBox.REMOTE);  
 		setTriggerAction(ComboBox.ALL);  
-		setEmptyText("Select Username");  
+		setEmptyText("Select Project");  
 		setLoadingText("Searching...");  
 		setTypeAhead(true);  
 		setSelectOnFocus(true);  
@@ -80,6 +80,7 @@ public class ChangeAccessRulesPanel extends Panel {
 						
 		form.add(set);
 		form.add(permsset);
+		setAutoScroll(true);
 		add(form);
 		usersList.addListener(new ComboBoxListenerAdapter() {
 			@Override

@@ -135,7 +135,7 @@ public class AddGroupPanel extends Panel {
 		
 		form.addButton(reset);
 		form.addButton(add);
-		
+		setAutoScroll(true);
 		add(form);
 		
 		addListener(new PanelListenerAdapter() {
