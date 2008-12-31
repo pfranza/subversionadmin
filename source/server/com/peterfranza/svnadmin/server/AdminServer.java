@@ -116,9 +116,10 @@ public class AdminServer {
 					IOException {
 				String username = request.getParameter("username");
 				String target = request.getPathInfo();
+				System.out.println("REQ: " + target);
 				if(isAdmin(username)){
 					try {
-						if(target.equalsIgnoreCase("diskUsage")) {
+						if(target.equalsIgnoreCase("/diskUsage")) {
 							response.setStatus(HttpServletResponse.SC_OK);
 							response.setContentType("image/jpeg");
 							Graphs.getDiskFreeJpg(response.getOutputStream());

@@ -9,12 +9,15 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+import SigarUtils.SigarFactory;
+
 public class Graphs {
 	
 	
 
 	public static void getDiskFreeJpg(OutputStream out) throws Exception {
-		Sigar sigar = new Sigar();
+
+		Sigar sigar = SigarFactory.getInstance();
 		DefaultCategoryDataset pieDataset = new DefaultCategoryDataset();
 		
 		for(FileSystem system: sigar.getFileSystemList()) {
