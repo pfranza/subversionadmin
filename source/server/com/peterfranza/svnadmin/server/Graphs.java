@@ -21,13 +21,15 @@ public class Graphs {
 		DefaultCategoryDataset pieDataset = new DefaultCategoryDataset();
 		
 		for(FileSystem system: sigar.getFileSystemList()) {
-			System.out.println(system.getDevName());
-			System.out.println(sigar.getFileSystemUsage(system.getDevName()).getUsePercent());
-			
-			pieDataset.addValue(sigar.getFileSystemUsage(system.getDevName()).getAvail(), 
-					system.getDevName(), "F");
-			pieDataset.addValue(sigar.getFileSystemUsage(system.getDevName()).getUsed(), 
-					system.getDevName(), "U");
+			if(system.getType() == FileSystem.TYPE_LOCAL_DISK) {
+				System.out.println(system.getDevName());
+//				String path = system.getDevName();
+
+				pieDataset.addValue(sigar.getFileSystemUsage(system.getDevName()).getAvail(), 
+						system.getDevName(), "F");
+				pieDataset.addValue(sigar.getFileSystemUsage(system.getDevName()).getUsed(), 
+						system.getDevName(), "U");
+			}
 			
 		}
 		
