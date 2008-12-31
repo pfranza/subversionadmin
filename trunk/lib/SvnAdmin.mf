@@ -1,2 +1,3 @@
 Main-Class: com.simontuffs.onejar.Boot
+One-Jar-Expand: expand
 One-Jar-Main-Class: com.peterfranza.svnadmin.server.AdminServer
