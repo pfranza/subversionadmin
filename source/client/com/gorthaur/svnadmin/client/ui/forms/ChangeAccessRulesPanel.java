@@ -81,6 +81,7 @@ public class ChangeAccessRulesPanel extends Panel {
 		form.add(set);
 		form.add(permsset);
 		setAutoScroll(true);
+		setPaddings(15);
 		add(form);
 		usersList.addListener(new ComboBoxListenerAdapter() {
 			@Override
