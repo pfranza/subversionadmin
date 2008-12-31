@@ -144,16 +144,16 @@ public class ChangeAccessRulesPanel extends Panel {
 				public void onFailure(Throwable caught) {}
 
 				public void onSuccess(List<String> result) {
-					for(final String project: result) {
-						final PermWidget widget = new PermWidget(project, false, false);
-						user.canRead(SvnAdministration.getInstance().getCredentials(), project, usersList.getValue(), new AsyncCallback<Boolean>() {
+					for(final String group: result) {
+						final PermWidget widget = new PermWidget(group, false, false);
+						user.canRead(SvnAdministration.getInstance().getCredentials(), usersList.getValue(), group, new AsyncCallback<Boolean>() {
 							public void onFailure(Throwable caught) {}
 
 							public void onSuccess(Boolean result) {
 								widget.canRead.setValue(result);
 							}
 						});
-						user.canWrite(SvnAdministration.getInstance().getCredentials(), project, usersList.getValue(), new AsyncCallback<Boolean>() {
+						user.canWrite(SvnAdministration.getInstance().getCredentials(), usersList.getValue(), group, new AsyncCallback<Boolean>() {
 							public void onFailure(Throwable caught) {}
 
 							public void onSuccess(Boolean result) {
