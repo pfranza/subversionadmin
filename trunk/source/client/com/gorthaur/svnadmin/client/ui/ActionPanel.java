@@ -3,13 +3,13 @@ package com.gorthaur.svnadmin.client.ui;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Label;
 import com.gorthaur.svnadmin.client.ui.forms.AddGroupPanel;
 import com.gorthaur.svnadmin.client.ui.forms.AddUserFormPanel;
 import com.gorthaur.svnadmin.client.ui.forms.BackupsDownloadForm;
 import com.gorthaur.svnadmin.client.ui.forms.ChangeAccessRulesPanel;
 import com.gorthaur.svnadmin.client.ui.forms.ModifyGroupFormPanel;
 import com.gorthaur.svnadmin.client.ui.forms.ModifyUserFormPanel;
+import com.gorthaur.svnadmin.client.ui.forms.StatisticsPanel;
 import com.gwtext.client.core.RegionPosition;
 import com.gwtext.client.widgets.Panel;
 import com.gwtext.client.widgets.layout.AccordionLayout;
@@ -101,6 +101,7 @@ public class ActionPanel extends Panel {
 		private ModifyGroupFormPanel modifyGroupForm = new ModifyGroupFormPanel();
 		private BackupsDownloadForm backups = new BackupsDownloadForm();
 		private ChangeAccessRulesPanel rules = new ChangeAccessRulesPanel();
+		private StatisticsPanel stats = new StatisticsPanel();
 		
 		public ContentPanel() {
 			setLayout(layout);
@@ -120,10 +121,9 @@ public class ActionPanel extends Panel {
 			add(modifyGroupForm);
 			
 			add(rules);
-			add(new Label("5"));
+			add(stats);
 			add(backups);
-			
-			
+					
 		}
 		
 	}

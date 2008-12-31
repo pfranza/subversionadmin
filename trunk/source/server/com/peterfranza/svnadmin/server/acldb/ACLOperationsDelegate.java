@@ -46,7 +46,6 @@ public class ACLOperationsDelegate {
 	
 	public boolean canRead(String project, String groupName) {
 		AccessRule rule = getRule(project);
-		System.out.println("Here " + project + "  " + rule);
 		if(rule == null) return false;
 		
 		for(ACLItem i: rule.getAllow_read()) {
