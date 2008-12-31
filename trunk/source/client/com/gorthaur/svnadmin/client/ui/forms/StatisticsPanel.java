@@ -39,6 +39,7 @@ public class StatisticsPanel extends Panel {
 						
 		form.add(set);
 		setAutoScroll(true);
+		setPaddings(15);
 		add(form);
 
 
