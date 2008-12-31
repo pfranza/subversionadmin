@@ -33,4 +33,8 @@ public class LoginPanel extends FieldSet {
 		return password.getText().trim();
 	}
 	
+	public void clearPassword() {
+		password.setValue("");
+	}
+	
 }

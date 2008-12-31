@@ -175,6 +175,7 @@ public class LoginWindow extends Window {
 
 							public void onSuccess(String result) {
 								com.google.gwt.user.client.Window.alert(result);
+								userdata.clearPassword();
 								w.setVisible(false);
 							}
 					
