@@ -38,7 +38,7 @@ public class StatisticsPanel extends Panel {
 		form.setLabelWidth(75);  
 						
 		form.add(set);
-
+		setAutoScroll(true);
 		add(form);
 
 

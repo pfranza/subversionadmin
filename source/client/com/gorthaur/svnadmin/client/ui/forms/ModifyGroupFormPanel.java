@@ -221,7 +221,7 @@ public class ModifyGroupFormPanel extends Panel {
 
 		form.addButton(delete);
 		form.addButton(save);
-		
+		setAutoScroll(true);
 		add(form);
 
 		groupsList.addListener(new ComboBoxListenerAdapter() {

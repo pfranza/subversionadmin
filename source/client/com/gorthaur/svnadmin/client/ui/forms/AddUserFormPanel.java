@@ -166,7 +166,7 @@ public class AddUserFormPanel extends Panel {
 				
 			}
 		});
-		
+		setAutoScroll(true);
 		add(form);
 		clearForm();
 		

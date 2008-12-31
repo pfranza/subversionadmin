@@ -57,7 +57,7 @@ public class BackupsDownloadForm extends Panel{
 		form.setWidth(450);  
 		form.setLabelWidth(75); 
 		form.add(links);
-		
+		setAutoScroll(true);
 		add(form);
 		
 	}
