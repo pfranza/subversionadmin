@@ -81,8 +81,14 @@
 			</fileset>
 			<fileset dir="${gwt.home}">
                     <include name="**/*.jar"/>
+                    <exclude name="gwt-dev-*" />
+                    <exclude name="gwt-benchmark-*" />
+                    <exclude name="gwt-user-*" />
             </fileset>
             </lib>
+            <binlib>
+                <fileset dir="native" includes="**/*" />
+            </binlib>
         	
         </one-jar>
 	</target>
