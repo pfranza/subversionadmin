@@ -34,15 +34,17 @@ public class RepositoryListing {
 		
 		if(isProject(entries)) {
 			s.add("/" + path);
-		}
+		} else {
 		
-		Iterator iterator = entries.iterator( );
-		while ( iterator.hasNext( ) ) {
-			SVNDirEntry entry = ( SVNDirEntry ) iterator.next( );	
-			if ( entry.getKind() == SVNNodeKind.DIR ) {
-				s.addAll(listEntries( repository, ( path.equals( "" ) ) ? entry.getName( ) : path + "/" + entry.getName( ) ));
+			Iterator iterator = entries.iterator( );
+			while ( iterator.hasNext( ) ) {
+				SVNDirEntry entry = ( SVNDirEntry ) iterator.next( );	
+				if ( entry.getKind() == SVNNodeKind.DIR ) {
+					s.addAll(listEntries( repository, ( path.equals( "" ) ) ? entry.getName( ) : path + "/" + entry.getName( ) ));
+				}
 			}
 		}
+		
 		return s;
 	}
 
@@ -62,6 +64,10 @@ public class RepositoryListing {
 			}
 		}
 		return hasTrunk && hasTags && hasBranches;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(getProjectPaths("https://192.168.100.23/svn", "pfranza", "143lar"));
 	}
 	
 }
