@@ -313,12 +313,17 @@ public class ACLDBFileDelegate {
 		for (AccessRule accessRule : acl.getRules()) {
 			if(accessRule.getAllow_read().size() + accessRule.getAllow_write().size() > 0) {
 				buf.append("["+accessRule.getDirectory()+"]").append(System.getProperty("line.separator"));
+				if(accessRule.getDirectory().trim().equalsIgnoreCase("/")) {
+					buf.append("*").append(" = r").append(System.getProperty("line.separator"));
+				}
 				for(ACLItem i: accessRule.getAllow_write()) {
 					buf.append(i.toString()).append(" = rw").append(System.getProperty("line.separator"));
 				}
 				for(ACLItem i: accessRule.getAllow_read()) {
 					buf.append(i.toString()).append(" = r").append(System.getProperty("line.separator"));
 				}
+
+				
 				buf.append(System.getProperty("line.separator"));
 			}
 		}
