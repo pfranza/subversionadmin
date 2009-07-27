@@ -66,14 +66,13 @@ public class ActionPanel extends Panel {
 	
 	private class InformationMenu extends Panel {
 		
-		private Hyperlink stats = new Hyperlink("Statistics", "5"); 
-		private Hyperlink backups = new Hyperlink("Backups", "6");
+		
+		private Hyperlink backups = new Hyperlink("Backups", "5");
 		
 		public InformationMenu() {
 			super("Server Info");
 			setLayout(new VerticalLayout(10));
 			setPaddings(15); 
-			add(stats);
 			add(backups);
 		}
 	}
