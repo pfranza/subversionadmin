@@ -4,48 +4,52 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 
 public class DualSelector extends HorizontalPanel {
 	
-	private ListBox member = new ListBox() {{
-		setMultipleSelect(true);
+	private ListBox member = new ListBox(true) {{
 		setSize("200px", "200px");
 	}};
 	
-	private ListBox available = new ListBox() {{
-		setMultipleSelect(true);
+	private ListBox available = new ListBox(true) {{
 		setSize("200px", "200px");
 	}};
 
-	private Button left = new Button("<<") {{
-		addClickListener(new ClickListener() {
+	private Button left = new Button("<<") {
 
-			public void onClick(Widget sender) {
-				int i = -1;
-				boolean flag = false;
-				while( (i = available.getSelectedIndex()) != -1) {
-					member.addItem(available.getItemText(i));
-					available.removeItem(i);
-					flag = true;
+		{
+			addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					int i = -1;
+					boolean flag = false;
+					while( (i = available.getSelectedIndex()) != -1) {
+						member.addItem(available.getItemText(i));
+						available.removeItem(i);
+						flag = true;
+					}
+					if(flag) {
+						sort(member);
+					}
 				}
-				if(flag) {
-					sort(member);
-				}
-			}
-			
-		});	
-	}};
+			});
+		}
+	};
+	
+	
 	private Button right = new Button(">>"){{
-		addClickListener(new ClickListener() {
+		addClickHandler(new ClickHandler() {
 
-			public void onClick(Widget sender) {
+			@Override
+			public void onClick(ClickEvent event) {
 				int i = -1;
 				boolean flag = false;
 				while( (i = member.getSelectedIndex()) != -1) {

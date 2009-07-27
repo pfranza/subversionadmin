@@ -1,6 +1,6 @@
 <project basedir="." name="JLVCDT"  default="dist">
 	
-	<property name="gwt.home" location="C:/gwt-windows-1.5.0/"/>
+	<property name="gwt.home" location="buildTools/gwt"/>
 	
 	<target name="compile_client">
 	
@@ -23,7 +23,7 @@
 			<fileset dir="source/interface"/>
 		</copy>
 				
-		<java classname="com.google.gwt.dev.GWTCompiler" 
+		<java classname="com.google.gwt.dev.Compiler" 
 			fork="true" maxmemory="256m">
 			<classpath>
 			    <fileset dir="lib">
@@ -35,7 +35,7 @@
 				<pathelement location="temp/web_classes"/>
 			</classpath>
 			
-				<arg value="-out"/>
+				<arg value="-war"/>
 				<arg value="www"/>
 				<arg value="com.gorthaur.svnadmin.SvnAdministration"/>
 			

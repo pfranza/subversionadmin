@@ -1,9 +1,10 @@
 package com.gorthaur.svnadmin.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.gorthaur.svnadmin.client.rpcinterface.beans.Credentials;
 import com.gorthaur.svnadmin.client.ui.LoginWindow;
@@ -72,17 +73,16 @@ public class SvnAdministration  implements EntryPoint {
 		mainPanel.removeFromParent();
 		new Viewport(mainPanel);
 		displayLogin();
-		Window.addWindowResizeListener(new WindowResizeListener() {
-
-			public void onWindowResized(int width, int height) {
-				mainPanel.setSize(width, height);
+		Window.addResizeHandler(new ResizeHandler() {
+			
+			@Override
+			public void onResize(ResizeEvent event) {
+				mainPanel.setSize(event.getWidth(), event.getHeight());
 				if(login.isVisible()) {
 					login.center();
 				}
 			}
-			
 		});
-		
 	}
 	
 	public static SvnAdministration getInstance() {
