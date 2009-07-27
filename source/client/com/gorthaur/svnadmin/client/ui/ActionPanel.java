@@ -1,7 +1,8 @@
 package com.gorthaur.svnadmin.client.ui;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.gorthaur.svnadmin.client.ui.forms.AddGroupPanel;
 import com.gorthaur.svnadmin.client.ui.forms.AddUserFormPanel;
@@ -9,7 +10,6 @@ import com.gorthaur.svnadmin.client.ui.forms.BackupsDownloadForm;
 import com.gorthaur.svnadmin.client.ui.forms.ChangeAccessRulesPanel;
 import com.gorthaur.svnadmin.client.ui.forms.ModifyGroupFormPanel;
 import com.gorthaur.svnadmin.client.ui.forms.ModifyUserFormPanel;
-import com.gorthaur.svnadmin.client.ui.forms.StatisticsPanel;
 import com.gwtext.client.core.RegionPosition;
 import com.gwtext.client.widgets.Panel;
 import com.gwtext.client.widgets.layout.AccordionLayout;
@@ -101,13 +101,18 @@ public class ActionPanel extends Panel {
 		private ModifyGroupFormPanel modifyGroupForm = new ModifyGroupFormPanel();
 		private BackupsDownloadForm backups = new BackupsDownloadForm();
 		private ChangeAccessRulesPanel rules = new ChangeAccessRulesPanel();
-		private StatisticsPanel stats = new StatisticsPanel();
+		
 		
 		public ContentPanel() {
 			setLayout(layout);
 			History.newItem("");
-			History.addHistoryListener(new HistoryListener() {
-				public void onHistoryChanged(String historyToken) {
+
+			
+			History.addValueChangeHandler(new ValueChangeHandler<String>() {
+				
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					String historyToken = event.getValue();
 					if(historyToken.trim().length() > 0) {
 						setActiveItem(Integer.valueOf(historyToken));
 					}
@@ -121,7 +126,7 @@ public class ActionPanel extends Panel {
 			add(modifyGroupForm);
 			
 			add(rules);
-			add(stats);
+			
 			add(backups);
 					
 		}

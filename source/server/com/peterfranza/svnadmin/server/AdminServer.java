@@ -104,36 +104,7 @@ public class AdminServer {
 			}
 		}), "/backups/*");
 		
-		root.addServlet(new ServletHolder(new HttpServlet() {
-			/**
-			 * 
-			 */
-			private static final long serialVersionUID = 3668249982363221393L;
 
-			@Override
-			protected void doGet(HttpServletRequest request,
-					HttpServletResponse response) throws ServletException,
-					IOException {
-				String username = request.getParameter("username");
-				String target = request.getPathInfo();
-				System.out.println("REQ: " + target);
-				if(isAdmin(username)){
-					try {
-						if(target.equalsIgnoreCase("/diskUsage")) {
-							response.setStatus(HttpServletResponse.SC_OK);
-							response.setContentType("image/jpeg");
-							Graphs.getDiskFreeJpg(response.getOutputStream());
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-						
-				} else {
-					super.doGet(request, response);
-				}
-
-			}
-		}), "/images/*");
 		
 		
 		root.addServlet(new ServletHolder(new HttpServlet() {
