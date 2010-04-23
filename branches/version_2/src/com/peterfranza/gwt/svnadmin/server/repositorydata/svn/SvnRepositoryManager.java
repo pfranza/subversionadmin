@@ -1,4 +1,4 @@
-package com.peterfranza.gwt.svnadmin.server.repositorydata;
+package com.peterfranza.gwt.svnadmin.server.repositorydata.svn;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
@@ -21,7 +23,8 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
-import com.peterfranza.gwt.svnadmin.server.ServerInjectorFactory;
+import com.peterfranza.gwt.svnadmin.server.repositorydata.Project;
+import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
 
 public class SvnRepositoryManager implements RepositoryManager {
 
@@ -55,26 +58,48 @@ public class SvnRepositoryManager implements RepositoryManager {
 	
 	@Override
 	public void addProject(Project project) {
-		// TODO Auto-generated method stub
-
+		Session session = sessionProvider.get();
+		Transaction tx = session.beginTransaction();
+		try {
+			session.saveOrUpdate(project);
+		} finally {
+			tx.commit();
+		}
 	}
 
 	@Override
 	public Project getProjectForName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = sessionProvider.get();
+		Transaction tx = session.beginTransaction();
+		try {
+		return (Project) session.createCriteria(SvnProjectBean.class)
+			.add(Restrictions.eq("name", name)).uniqueResult();
+		} finally {
+			tx.commit();
+		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<Project> getProjects() {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = sessionProvider.get();
+		Transaction tx = session.beginTransaction();
+		try {
+		return session.createCriteria(SvnProjectBean.class).list();
+		} finally {
+			tx.commit();
+		}
 	}
 
 	@Override
 	public void scanForProjects() {
 		try {
 			List<String> paths = getProjectPaths();
+			for(String p: paths) {
+				if(!isProject(p)) {
+					addProject(new SvnProjectBean(p));
+				}
+			}
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -106,13 +131,13 @@ public class SvnRepositoryManager implements RepositoryManager {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static Collection<? extends String> listEntries( SVNRepository repository, String path ) throws SVNException {
+	private Collection<? extends String> listEntries( SVNRepository repository, String path ) throws SVNException {
 		List<String> s = new ArrayList<String>();
 		Collection entries = repository.getDir( path, -1 , null , (Collection) null );
 		System.out.println("     searching " + path);
 		if(isProject(entries)) {
 			s.add("/" + path);
-		} else if(isManualProject(path)) {
+		} else if(isProject(path)) {
 			s.add("/" + path);
 		} else {		
 			Iterator iterator = entries.iterator( );
@@ -128,9 +153,15 @@ public class SvnRepositoryManager implements RepositoryManager {
 	}
 
 
-	private static boolean isManualProject(String path) {
-		// TODO Auto-generated method stub
-		return false;
+	private boolean isProject(String path) {
+		Session session = sessionProvider.get();
+		Transaction tx = session.beginTransaction();
+		try {
+		return session.createCriteria(SvnProjectBean.class)
+			.add(Restrictions.eq("path", path)).list().size() > 0;
+		} finally {
+			tx.commit();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -150,9 +181,13 @@ public class SvnRepositoryManager implements RepositoryManager {
 		return hasTrunk && hasTags && hasBranches;
 	}
 	
-	public static void main(String[] args) {
-		SvnRepositoryManager o = new ServerInjectorFactory().getInjector().getInstance(SvnRepositoryManager.class);
-		o.scanForProjects();
-	}
+//	public static void main(String[] args) {
+//		RepositoryManager o = new ServerInjectorFactory().getInjector().getInstance(RepositoryManager.class);
+//		o.addProject(new SvnProjectBean("documents"));
+//		o.scanForProjects();
+//		for(Project p: o.getProjects()) {
+//			System.out.println(":: " + p.getName() + "["+p.getPath()+"]");
+//		}
+//	}
 	
 }
