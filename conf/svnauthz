@@ -1,8 +1,0 @@
-[groups]
-dev=pfranza
-support=
-everybody = @dev,@support
-
-[/]
-@everybody = r
-@dev = rw
