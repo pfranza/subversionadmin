@@ -100,6 +100,17 @@ public class SvnRepositoryManager implements RepositoryManager {
 					addProject(new SvnProjectBean(p));
 				}
 			}
+			for(Project p: getProjects()) {
+				if(!paths.contains(p.getPath())) {
+					Session session = sessionProvider.get();
+					Transaction tx = session.beginTransaction();
+					try {
+						session.delete(p);
+					} finally {
+						tx.commit();
+					}
+				}
+			}
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}
