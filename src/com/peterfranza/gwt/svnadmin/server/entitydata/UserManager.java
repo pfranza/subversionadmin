@@ -1,4 +1,4 @@
-package com.peterfranza.gwt.svnadmin.server.entitydata.userdata;
+package com.peterfranza.gwt.svnadmin.server.entitydata;
 
 import java.util.Collection;
 

@@ -3,7 +3,7 @@ package com.peterfranza.gwt.svnadmin.server.mailer;
 import java.util.Collection;
 
 import com.google.inject.ImplementedBy;
-import com.peterfranza.gwt.svnadmin.server.entitydata.userdata.User;
+import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 
 @ImplementedBy(DefaultMailSender.class)
 public interface MailSender{
