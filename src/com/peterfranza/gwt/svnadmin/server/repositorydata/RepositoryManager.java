@@ -9,4 +9,6 @@ public interface RepositoryManager {
 	void scanForProjects();
 	void addProject(Project project);
 	
+	ChangeSet getSummary(long revisionNumber);
+	
 }
