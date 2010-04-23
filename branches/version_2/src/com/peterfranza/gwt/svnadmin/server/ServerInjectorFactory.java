@@ -27,8 +27,8 @@ public class ServerInjectorFactory {
 			protected void configure() {
 				bind(String.class).annotatedWith(Names.named("DatabaseName")).toInstance("TestDB");
 				bind(String.class).annotatedWith(Names.named("repositoryUrl")).toInstance("http://svn/svn/");
-				bind(String.class).annotatedWith(Names.named("repositoryUsername")).toInstance("xxx");
-				bind(String.class).annotatedWith(Names.named("repositoryPassword")).toInstance("xxx");
+				bind(String.class).annotatedWith(Names.named("repositoryUsername")).toInstance("hudson");
+				bind(String.class).annotatedWith(Names.named("repositoryPassword")).toInstance("ib.hudson");
 				bind(PersistanceSubConfiguration.class).to(InMemoryDatabaseParams.class);
 				bind(Session.class).toProvider(HibernateSessionFactory.class);
 			}
