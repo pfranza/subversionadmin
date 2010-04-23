@@ -5,6 +5,6 @@ import java.util.Collection;
 
 public interface Group extends Entity{
 
-	Collection<Entity> getMembers();
+	Collection<? extends Entity> getMembers();
 	
 }

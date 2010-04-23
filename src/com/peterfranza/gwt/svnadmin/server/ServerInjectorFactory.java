@@ -14,6 +14,8 @@ import com.google.inject.name.Names;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
 import com.peterfranza.gwt.svnadmin.server.datastore.PersistanceSubConfiguration;
+import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalGroupModule;
+import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalUserModule;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.svn.SvnManagementModule;
 
 public class ServerInjectorFactory {
@@ -22,6 +24,8 @@ public class ServerInjectorFactory {
 	
 	{
 		modules.add(new SvnManagementModule());
+		modules.add(new LocalUserModule());
+		modules.add(new LocalGroupModule());
 		modules.add(new AbstractModule() {
 			@Override
 			protected void configure() {
