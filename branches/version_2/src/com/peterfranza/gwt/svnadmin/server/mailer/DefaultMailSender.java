@@ -14,7 +14,7 @@ import javax.mail.internet.MimeMessage;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import com.peterfranza.gwt.svnadmin.server.entitydata.userdata.User;
+import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 
 public class DefaultMailSender implements MailSender{
 

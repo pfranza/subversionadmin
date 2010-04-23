@@ -1,6 +1,5 @@
-package com.peterfranza.gwt.svnadmin.server.entitydata.userdata;
+package com.peterfranza.gwt.svnadmin.server.entitydata;
 
-import com.peterfranza.gwt.svnadmin.server.entitydata.Entity;
 
 public interface User  extends Entity{
 
