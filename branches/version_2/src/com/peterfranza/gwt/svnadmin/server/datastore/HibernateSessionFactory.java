@@ -1,40 +1,32 @@
 package com.peterfranza.gwt.svnadmin.server.datastore;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 
-import com.google.inject.Binding;
 import com.google.inject.Inject;
-import com.google.inject.Injector;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
-import com.peterfranza.gwt.svnadmin.server.datastore.AbstractHibernateBeanModule.HibernateBeanHolder;
 
 @Singleton
 public class HibernateSessionFactory implements Provider<Session> {
 
 	private final PersistanceSubConfiguration configurator;
 	private SessionFactory sessionFactory;
-	private Injector injector;
+	private HibernateBeanRegistry reg;
 
 	@Inject
 	public HibernateSessionFactory(
 			PersistanceSubConfiguration configurator,
-			Injector injector) {	
+			HibernateBeanRegistry reg) {	
 		this.configurator = configurator;
-		this.injector = injector;		
+		this.reg = reg;		
 	}
 
 	private synchronized SessionFactory getFactory() {	
 		if(sessionFactory == null) {
 			AnnotationConfiguration config = new AnnotationConfiguration();
-			for(Class<?> cls: getAllHibernateClasses()) {
+			for(Class<?> cls: reg.getBeans()) {
 				config.addAnnotatedClass(cls);
 				System.out.println("Binding Bean: " + cls);
 			}
@@ -43,17 +35,6 @@ public class HibernateSessionFactory implements Provider<Session> {
 			sessionFactory = config.buildSessionFactory();
 		}
 		return sessionFactory;
-	}
-
-	@SuppressWarnings("unchecked")
-	private Collection<Class<?>> getAllHibernateClasses() {
-		Collection<Class<?>> c = new ArrayList<Class<?>>();
-		 List<Binding<HibernateBeanHolder>> l = injector.findBindingsByType( TypeLiteral
-	                .get(HibernateBeanHolder.class ));
-		 for(Binding<HibernateBeanHolder> b: l) {
-			c.add(b.getProvider().get().getHibernateBeanClass()); 
-		 }
-		 return c;
 	}
 
 	@Override
