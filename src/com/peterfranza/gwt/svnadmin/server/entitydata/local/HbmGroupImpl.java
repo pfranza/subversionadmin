@@ -1,6 +1,7 @@
 package com.peterfranza.gwt.svnadmin.server.entitydata.local;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.GeneratedValue;
@@ -22,10 +23,10 @@ public class HbmGroupImpl implements Serializable, Group {
 	private long id;
 	
 	private String name;
-	private Collection<? extends Entity> members;
 	
-	@Override
-	public Collection<? extends Entity> getMembers() {
+	private ArrayList<String> members = new ArrayList<String>();
+	
+	public Collection<String> getStringMembers() {
 		return members;
 	}
 
@@ -33,9 +34,30 @@ public class HbmGroupImpl implements Serializable, Group {
 	public String getName() {
 		return name;
 	}
-	
-	public long getId() {
-		return id;
+
+	public void setName(String groupName) {
+		this.name = groupName;
+	}
+
+	public void removeMember(Entity entity) {
+		if(entity instanceof Group) {
+			members.remove("@" + entity.getName());
+		} else {
+			members.remove(entity.getName());
+		}
+	}
+
+	public void addMember(Entity entity) {
+		if(entity instanceof Group) {
+			members.add("@" + entity.getName());
+		} else {
+			members.add(entity.getName());
+		}
+	}
+
+	@Override
+	public Collection<Entity> getMembers() {
+		throw new RuntimeException("Fail Needs Override");
 	}
 
 }
