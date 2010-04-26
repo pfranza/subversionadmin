@@ -11,6 +11,5 @@ public interface User  extends Entity{
 	void setPassword(String password);
 	void setEmailAddress(String emailAddress);
 	void setAdministrator(boolean isAdministrator);
-	void save();
 	
 }
