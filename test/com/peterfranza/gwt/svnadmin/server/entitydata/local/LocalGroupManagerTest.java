@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import junit.framework.TestCase;
 
-import com.peterfranza.gwt.svnadmin.server.MockRepositoryManager;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateBeanRegistry;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
@@ -13,6 +12,7 @@ import com.peterfranza.gwt.svnadmin.server.entitydata.Entity;
 import com.peterfranza.gwt.svnadmin.server.entitydata.Group;
 import com.peterfranza.gwt.svnadmin.server.entitydata.GroupManager;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
+import com.peterfranza.gwt.svnadmin.server.repositorydata.ProjectDataWriter;
 import com.peterfranza.gwt.svnadmin.server.util.NoCrypt;
 import com.peterfranza.gwt.svnadmin.server.util.NullWriter;
 
@@ -38,7 +38,10 @@ public class LocalGroupManagerTest extends TestCase {
 		
 		userManager = new LocalUserManager(new NoCrypt(), hbm, new NullWriter());
 		
-		groupManager = new LocalGroupManager(hbm, userManager, new NullWriter(), new MockRepositoryManager());
+		groupManager = new LocalGroupManager(hbm, userManager, new ProjectDataWriter() {
+			@Override
+			public void saveData() {}
+		});
 	}
 	
 	public void testCreateGroup() throws Exception {
@@ -68,6 +71,7 @@ public class LocalGroupManagerTest extends TestCase {
 		groupManager.createGroup("testGroup");
 		assertEquals(0, groupManager.getGroup("testGroup").getMembers().size());
 		userManager.createUser("testUser");
+		assertEquals(1, userManager.getUsers().size());
 		userManager.setAdministrator("testUser", true);
 		groupManager.addMemberToGroup("testGroup", createSimpleUser("testUser"));
 		assertEquals(1, groupManager.getGroup("testGroup").getMembers().size());

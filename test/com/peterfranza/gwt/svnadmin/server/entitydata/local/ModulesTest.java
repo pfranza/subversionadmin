@@ -13,6 +13,7 @@ import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
 import com.peterfranza.gwt.svnadmin.server.datastore.PersistanceSubConfiguration;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
+import com.peterfranza.gwt.svnadmin.server.repositorydata.ProjectDataWriter;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
 import com.peterfranza.gwt.svnadmin.server.util.ConfigFileWriter;
 import com.peterfranza.gwt.svnadmin.server.util.NullWriter;
@@ -31,6 +32,10 @@ public class ModulesTest extends TestCase {
 				bind(ConfigFileWriter.class).annotatedWith(Names.named("authorsFile")).toInstance(new NullWriter());
 				
 				bind(RepositoryManager.class).toInstance(new MockRepositoryManager());
+				bind(ProjectDataWriter.class).toInstance(new ProjectDataWriter() {			
+					@Override
+					public void saveData() {}
+				});
 				
 			}
 		});

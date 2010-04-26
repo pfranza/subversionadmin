@@ -12,55 +12,62 @@ import org.tmatesoft.svn.core.SVNException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.peterfranza.gwt.svnadmin.server.entitydata.Entity;
+import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.Project;
+import com.peterfranza.gwt.svnadmin.server.repositorydata.ProjectDataWriter;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
 
 public class SvnRepositoryManager implements RepositoryManager {
 
 	private Provider<Session> sessionProvider;
 	private ProjectScanner scanner;
+	private ProjectDataWriter dataWriter;
 
 	@Inject
 	public SvnRepositoryManager(
 			ProjectScanner scanner,
-			Provider<Session> sessionProvider) throws SVNException {
+			Provider<Session> sessionProvider,
+			ProjectDataWriter dataWriter) throws SVNException {
 		this.sessionProvider = sessionProvider;
 		this.scanner = scanner;
+		this.dataWriter = dataWriter;
 	}
 	
 	@Override
-	public void addProject(Project project) {
-		Session session = sessionProvider.get();
-		Transaction tx = session.beginTransaction();
-		try {
-			session.saveOrUpdate(project);
-		} finally {
-			tx.commit();
-		}
+	public void addProject(final String projectName) {
+		transact(new TransactionVisitor<Void>() {
+
+			@Override
+			public Void transact(Session session) {
+				session.saveOrUpdate(new SvnProjectBean(projectName));
+				return null;
+			}
+		});
+		dataWriter.saveData();
 	}
 
 	@Override
-	public Project getProjectForName(String name) {
-		Session session = sessionProvider.get();
-		Transaction tx = session.beginTransaction();
-		try {
-		return (Project) session.createCriteria(SvnProjectBean.class)
-			.add(Restrictions.eq("name", name)).uniqueResult();
-		} finally {
-			tx.commit();
-		}
+	public SvnProjectBean getProjectForName(final String name) {
+		return transact(new TransactionVisitor<SvnProjectBean>() {
+
+			@Override
+			public SvnProjectBean transact(Session session) {
+				return (SvnProjectBean) session.createCriteria(SvnProjectBean.class)
+				.add(Restrictions.eq("name", name)).uniqueResult();
+			}
+		});
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<Project> getProjects() {
-		Session session = sessionProvider.get();
-		Transaction tx = session.beginTransaction();
-		try {
-		return session.createCriteria(SvnProjectBean.class).list();
-		} finally {
-			tx.commit();
-		}
+		return transact(new TransactionVisitor<Collection<Project>>() {
+
+			@Override
+			public Collection<Project> transact(Session session) {
+				return session.createCriteria(SvnProjectBean.class).list();
+			}
+		});
 	}
 
 	@Override
@@ -69,26 +76,25 @@ public class SvnRepositoryManager implements RepositoryManager {
 			List<String> paths = scanner.getProjectPaths(asString(getProjects()));
 			for(String p: paths) {
 				if(!isProject(p)) {
-					addProject(new SvnProjectBean(p));
+					addProject(p);
 				}
 			}
-			for(Project p: getProjects()) {
+			for(final Project p: getProjects()) {
 				if(!paths.contains(p.getPath())) {
-					Session session = sessionProvider.get();
-					Transaction tx = session.beginTransaction();
-					try {
-						session.delete(p);
-					} finally {
-						tx.commit();
-					}
+					transact(new TransactionVisitor<Void>() {
+						@Override
+						public Void transact(Session session) {
+							session.delete(p);
+							return null;
+						}
+					});
 				}
 			}
+			dataWriter.saveData();
 		} catch(Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-
-
 
 	private List<String> asString(Collection<Project> projects) {
 		ArrayList<String> list = new ArrayList<String>();
@@ -98,15 +104,14 @@ public class SvnRepositoryManager implements RepositoryManager {
 		return list;
 	}
 
-	private boolean isProject(String path) {
-		Session session = sessionProvider.get();
-		Transaction tx = session.beginTransaction();
-		try {
-		return session.createCriteria(SvnProjectBean.class)
-			.add(Restrictions.eq("path", path)).list().size() > 0;
-		} finally {
-			tx.commit();
-		}
+	private boolean isProject(final String path) {
+		return transact(new TransactionVisitor<Boolean>() {
+			@Override
+			public Boolean transact(Session session) {
+				return session.createCriteria(SvnProjectBean.class)
+					.add(Restrictions.eq("path", path)).list().size() > 0;
+			}
+		});
 	}
 
 
@@ -123,7 +128,7 @@ public class SvnRepositoryManager implements RepositoryManager {
 	}
 
 	@Override
-	public boolean isSubscribed(String name, Entity entity) {
+	public boolean isSubscribed(String name, User entity) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -135,15 +140,51 @@ public class SvnRepositoryManager implements RepositoryManager {
 	}
 
 	@Override
-	public void subscribe(String name, Entity entity) {
+	public void subscribe(String name, User entity) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void unsubscribe(String name, Entity entity) {
+	public void unsubscribe(String name, User entity) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private void mutateProject(final String projectPath, final UserVisitor visitor) {
+		transact(new TransactionVisitor<Void>() {
+
+			@Override
+			public Void transact(Session session) {
+				SvnProjectBean u = getProjectForName(projectPath);
+				if(u != null) {
+					visitor.modifyProject(u);
+					session.update(u);
+				} else {
+					throw new RuntimeException("Project not found");
+				}
+				return null;
+			}
+		});
+		dataWriter.saveData();
+	}
+	
+	private interface UserVisitor {
+		void modifyProject(SvnProjectBean project);
+	}
+	
+	private <T> T transact(TransactionVisitor<T> visitor) {
+		Session s = sessionProvider.get();
+		Transaction tx = s.beginTransaction();
+		T value = null;
+		value = visitor.transact(s);
+		tx.commit();
+		s.close();
+		return value;		
+	}
+	
+	private interface TransactionVisitor<T> {
+		 T transact(Session session);
 	}
 	
 }
