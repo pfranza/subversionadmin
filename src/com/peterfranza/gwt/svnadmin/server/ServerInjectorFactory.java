@@ -37,6 +37,7 @@ public class ServerInjectorFactory {
 				bind(String.class).annotatedWith(Names.named("repositoryPassword")).toInstance("ib.hudson");
 				
 				bind(ConfigFileWriter.class).annotatedWith(Names.named("passwordFile")).toInstance(new ConfigFileWriter(new File("svnpasswordz")));
+				bind(ConfigFileWriter.class).annotatedWith(Names.named("authorsFile")).toInstance(new ConfigFileWriter(new File("svnauthorz")));
 				
 				bind(PersistanceSubConfiguration.class).to(InMemoryDatabaseParams.class);
 				bind(Session.class).toProvider(HibernateSessionFactory.class);

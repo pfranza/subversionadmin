@@ -25,11 +25,6 @@ public class HbmUserImpl implements Serializable, User {
 	private String password;
 	private String email;
 	private boolean administrator;
-	
-	@Override
-	public boolean authenticate(String password) {
-		return Crypt.matches(this.password, password);
-	}
 
 	@Override
 	public String getEmailAddress() {
@@ -53,12 +48,16 @@ public class HbmUserImpl implements Serializable, User {
 
 	@Override
 	public void setPassword(String password) {
-		this.password = Crypt.crypt(password);
+		this.password = password;
 	}
 
 	@Override
 	public String getName() {
 		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	@Override
