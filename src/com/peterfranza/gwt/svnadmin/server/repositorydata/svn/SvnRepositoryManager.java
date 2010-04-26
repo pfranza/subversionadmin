@@ -36,7 +36,6 @@ public class SvnRepositoryManager implements RepositoryManager {
 	@Override
 	public void addProject(final String projectName) {
 		transact(new TransactionVisitor<Void>() {
-
 			@Override
 			public Void transact(Session session) {
 				session.saveOrUpdate(new SvnProjectBean(projectName));
@@ -49,11 +48,10 @@ public class SvnRepositoryManager implements RepositoryManager {
 	@Override
 	public SvnProjectBean getProjectForName(final String name) {
 		return transact(new TransactionVisitor<SvnProjectBean>() {
-
 			@Override
 			public SvnProjectBean transact(Session session) {
 				return (SvnProjectBean) session.createCriteria(SvnProjectBean.class)
-				.add(Restrictions.eq("name", name)).uniqueResult();
+					.add(Restrictions.eq("path", name)).uniqueResult();
 			}
 		});
 	}
@@ -62,7 +60,6 @@ public class SvnRepositoryManager implements RepositoryManager {
 	@Override
 	public Collection<Project> getProjects() {
 		return transact(new TransactionVisitor<Collection<Project>>() {
-
 			@Override
 			public Collection<Project> transact(Session session) {
 				return session.createCriteria(SvnProjectBean.class).list();
@@ -72,28 +69,24 @@ public class SvnRepositoryManager implements RepositoryManager {
 
 	@Override
 	public void scanForProjects() {
-		try {
-			List<String> paths = scanner.getProjectPaths(asString(getProjects()));
-			for(String p: paths) {
-				if(!isProject(p)) {
-					addProject(p);
-				}
+		List<String> paths = scanner.getProjectPaths(asString(getProjects()));
+		for(String p: paths) {
+			if(!isProject(p)) {
+				addProject(p);
 			}
-			for(final Project p: getProjects()) {
-				if(!paths.contains(p.getPath())) {
-					transact(new TransactionVisitor<Void>() {
-						@Override
-						public Void transact(Session session) {
-							session.delete(p);
-							return null;
-						}
-					});
-				}
-			}
-			dataWriter.saveData();
-		} catch(Exception e) {
-			throw new RuntimeException(e);
 		}
+		for(final Project p: getProjects()) {
+			if(!paths.contains(p.getPath())) {
+				transact(new TransactionVisitor<Void>() {
+					@Override
+					public Void transact(Session session) {
+						session.delete(p);
+						return null;
+					}
+				});
+			}
+		}
+		dataWriter.saveData();
 	}
 
 	private List<String> asString(Collection<Project> projects) {
