@@ -4,6 +4,7 @@ package com.peterfranza.gwt.svnadmin.server.entitydata;
 public interface User  extends Entity{
 
 	String getEmailAddress();
+	String getPassword();
 	boolean isAdministrator();
 	
 	boolean authenticate(String password);
@@ -11,5 +12,6 @@ public interface User  extends Entity{
 	void setPassword(String password);
 	void setEmailAddress(String emailAddress);
 	void setAdministrator(boolean isAdministrator);
+	
 	
 }

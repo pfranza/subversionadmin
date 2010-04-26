@@ -1,5 +1,6 @@
 package com.peterfranza.gwt.svnadmin.server;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import com.peterfranza.gwt.svnadmin.server.datastore.PersistanceSubConfiguration
 import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalGroupModule;
 import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalUserModule;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.svn.SvnManagementModule;
+import com.peterfranza.gwt.svnadmin.server.util.ConfigFileWriter;
 
 public class ServerInjectorFactory {
 
@@ -33,6 +35,9 @@ public class ServerInjectorFactory {
 				bind(String.class).annotatedWith(Names.named("repositoryUrl")).toInstance("http://svn/svn/");
 				bind(String.class).annotatedWith(Names.named("repositoryUsername")).toInstance("hudson");
 				bind(String.class).annotatedWith(Names.named("repositoryPassword")).toInstance("ib.hudson");
+				
+				bind(ConfigFileWriter.class).annotatedWith(Names.named("passwordFile")).toInstance(new ConfigFileWriter(new File("svnpasswordz")));
+				
 				bind(PersistanceSubConfiguration.class).to(InMemoryDatabaseParams.class);
 				bind(Session.class).toProvider(HibernateSessionFactory.class);
 			}

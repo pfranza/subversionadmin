@@ -61,8 +61,15 @@ public class HbmUserImpl implements Serializable, User {
 		return name;
 	}
 	
+	@Override
+	public String getPassword() {
+		return password;
+	}
+	
 	public long getId() {
 		return id;
 	}
+
+
 
 }
