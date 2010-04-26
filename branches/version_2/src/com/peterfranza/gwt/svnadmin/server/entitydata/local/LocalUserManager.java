@@ -7,21 +7,26 @@ import org.hibernate.Transaction;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.name.Named;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
+import com.peterfranza.gwt.svnadmin.server.util.ConfigFileWriter;
 import com.peterfranza.gwt.svnadmin.server.util.Crypt;
 
 public class LocalUserManager implements UserManager{
 
 	private Crypt crypt;
 	private Provider<Session> sessionProvider;
+	private ConfigFileWriter passwordFileWriter;
 
 
 	@Inject
 	public LocalUserManager(Crypt crypt,
-			Provider<Session> sessionProvider) {
+			Provider<Session> sessionProvider,
+			@Named("passwordFile") ConfigFileWriter passwordFileWriter) {
 		this.crypt = crypt;
 		this.sessionProvider = sessionProvider;
+		this.passwordFileWriter = passwordFileWriter;
 	}
 	
 	@Override
@@ -66,6 +71,7 @@ public class LocalUserManager implements UserManager{
 				return null;
 			}
 		});
+		exportPasswordFile();
 	}
 	
 	@Override
@@ -83,6 +89,7 @@ public class LocalUserManager implements UserManager{
 				}			
 
 			});
+			exportPasswordFile();
 		} else {
 			throw new RuntimeException("User Exists");
 		}
@@ -118,6 +125,14 @@ public class LocalUserManager implements UserManager{
 		});
 	}
 	
+	private void exportPasswordFile() {
+		StringBuffer buf = new StringBuffer();
+		for(User u: getUsers()) {
+			buf.append(u.getName()).append(":").append(u.getPassword()).append(System.getProperty("line.separator"));
+		}
+		passwordFileWriter.save(buf.toString().trim());
+	}
+	
 	private void mutateUser(final String username, final UserVisitor visitor) {
 		transact(new TransactionVisitor<Void>() {
 
@@ -133,6 +148,7 @@ public class LocalUserManager implements UserManager{
 				return null;
 			}
 		});
+		exportPasswordFile();
 	}
 	
 	private interface UserVisitor {
