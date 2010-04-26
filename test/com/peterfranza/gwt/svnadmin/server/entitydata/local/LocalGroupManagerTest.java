@@ -68,6 +68,7 @@ public class LocalGroupManagerTest extends TestCase {
 		groupManager.createGroup("testGroup");
 		assertEquals(0, groupManager.getGroup("testGroup").getMembers().size());
 		userManager.createUser("testUser");
+		userManager.setAdministrator("testUser", true);
 		groupManager.addMemberToGroup("testGroup", createSimpleUser("testUser"));
 		assertEquals(1, groupManager.getGroup("testGroup").getMembers().size());
 		assertTrue(groupManager.getGroup("testGroup").getMembers().iterator().next() instanceof User);

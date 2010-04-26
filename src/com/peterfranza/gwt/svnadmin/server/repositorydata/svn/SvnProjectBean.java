@@ -20,7 +20,6 @@ public class SvnProjectBean implements Serializable, Project{
 	@Id
 	private long id;
 
-	private String name;
 	private String path;
 	
 	public SvnProjectBean() {
@@ -28,31 +27,11 @@ public class SvnProjectBean implements Serializable, Project{
 	}
 	
 	public SvnProjectBean(String path) {
-		this.name = path;
 		this.path = path;
-	}
-	
-	@Override
-	public boolean canRead(
-			com.peterfranza.gwt.svnadmin.server.entitydata.Entity entity) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean canWrite(
-			com.peterfranza.gwt.svnadmin.server.entitydata.Entity entity) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 	
 	public long getId() {
 		return id;
-	}
-	
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	@Override
@@ -60,23 +39,27 @@ public class SvnProjectBean implements Serializable, Project{
 		return path;
 	}
 
-	@Override
-	public boolean isSubscribed(
-			com.peterfranza.gwt.svnadmin.server.entitydata.Entity entity) {
+	public boolean canRead(String entity) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
-	public void subscribe(
-			com.peterfranza.gwt.svnadmin.server.entitydata.Entity entity) {
+	public boolean canWrite(String entity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean isSubscribed(String entity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public void subscribe(String entity) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void unsubscribe(
-			com.peterfranza.gwt.svnadmin.server.entitydata.Entity entity) {
+	public void unsubscribe(String entity) {
 		// TODO Auto-generated method stub
 		
 	}
