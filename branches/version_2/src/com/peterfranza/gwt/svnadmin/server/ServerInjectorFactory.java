@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.customware.gwt.dispatch.server.service.DispatchServiceServlet;
+
 import org.hibernate.Session;
 
 import com.google.inject.AbstractModule;
@@ -18,6 +20,7 @@ import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.PersistanceSubConfiguration;
 import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalGroupModule;
 import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalUserModule;
+import com.peterfranza.gwt.svnadmin.server.handlers.HandlerBinding;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.svn.SvnManagementModule;
 import com.peterfranza.gwt.svnadmin.server.util.ConfigFileWriter;
 
@@ -29,6 +32,7 @@ public class ServerInjectorFactory {
 		modules.add(new SvnManagementModule());
 		modules.add(new LocalUserModule());
 		modules.add(new LocalGroupModule());
+		modules.add(new HandlerBinding());
 		modules.add(new AbstractModule() {
 			@Override
 			protected void configure() {
@@ -52,6 +56,7 @@ public class ServerInjectorFactory {
 			@Override
 			protected void configureServlets() {
 				serve("/trigger/mail").with(MailTriggerServlet.class);
+				serve("/subversionadministrator/dispatch" ).with( DispatchServiceServlet.class );
 			}
 		});
 	}
