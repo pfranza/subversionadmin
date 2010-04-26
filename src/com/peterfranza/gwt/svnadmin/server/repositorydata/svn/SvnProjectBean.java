@@ -1,12 +1,14 @@
 package com.peterfranza.gwt.svnadmin.server.repositorydata.svn;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 import com.peterfranza.gwt.svnadmin.server.repositorydata.Project;
+import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager.ACCESS;
 
 @Entity
 public class SvnProjectBean implements Serializable, Project{
@@ -20,6 +22,10 @@ public class SvnProjectBean implements Serializable, Project{
 	@Id
 	private long id;
 
+	private ArrayList<String> subscribers = new ArrayList<String>();
+	private ArrayList<String> writers = new ArrayList<String>();
+	private ArrayList<String> readers = new ArrayList<String>();
+	
 	private String path;
 	
 	public SvnProjectBean() {
@@ -29,10 +35,6 @@ public class SvnProjectBean implements Serializable, Project{
 	public SvnProjectBean(String path) {
 		this.path = path;
 	}
-	
-	public long getId() {
-		return id;
-	}
 
 	@Override
 	public String getPath() {
@@ -40,27 +42,44 @@ public class SvnProjectBean implements Serializable, Project{
 	}
 
 	public boolean canRead(String entity) {
-		// TODO Auto-generated method stub
-		return false;
+		return canWrite(entity) || readers.contains(entity);
 	}
 
 	public boolean canWrite(String entity) {
-		// TODO Auto-generated method stub
-		return false;
+		return writers.contains(entity);
 	}
 
 	public boolean isSubscribed(String entity) {
-		// TODO Auto-generated method stub
-		return false;
+		return subscribers.contains(entity);
 	}
 
 	public void subscribe(String entity) {
-		// TODO Auto-generated method stub
-		
+		if(!isSubscribed(entity)) {
+			subscribers.add(entity);
+		}
 	}
 
 	public void unsubscribe(String entity) {
-		// TODO Auto-generated method stub
+		subscribers.remove(entity);
+	}
+
+	public void setAccess(String entity, ACCESS access) {
+		writers.remove(entity);
+		readers.remove(entity);
+		
+		switch (access) {
+		case WRITE:
+			writers.add(entity);
+			break;
+			
+		case READ: 
+			readers.add(entity);
+			break;
+			
+		case NONE:
+			break;
+
+		}
 		
 	}
 

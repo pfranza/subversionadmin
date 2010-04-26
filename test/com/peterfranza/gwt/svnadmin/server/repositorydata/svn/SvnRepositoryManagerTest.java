@@ -9,8 +9,12 @@ import junit.framework.TestCase;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateBeanRegistry;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
+import com.peterfranza.gwt.svnadmin.server.entitydata.Entity;
+import com.peterfranza.gwt.svnadmin.server.entitydata.Group;
+import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.ProjectDataWriter;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
+import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager.ACCESS;
 
 public class SvnRepositoryManagerTest extends TestCase {
 
@@ -63,6 +67,96 @@ public class SvnRepositoryManagerTest extends TestCase {
 		assertEquals(2, reposManager.getProjects().size());
 		reposManager.scanForProjects();
 		assertEquals(3, reposManager.getProjects().size());
+	}
+	
+	public void testCanRead() throws Exception {
+		reposManager.addProject("testProj");
+		assertFalse(reposManager.canRead("testProj", createUser("testUser")));
+		reposManager.setReadWrite("testProj", createUser("testUser"), ACCESS.READ);
+		assertTrue(reposManager.canRead("testProj", createUser("testUser")));
+		reposManager.setReadWrite("testProj", createUser("testUser"), ACCESS.WRITE);
+		assertTrue(reposManager.canRead("testProj", createUser("testUser")));
+		reposManager.setReadWrite("testProj", createUser("testUser"), ACCESS.NONE);
+		assertFalse(reposManager.canRead("testProj", createUser("testUser")));
+	}
+	
+	public void testCanWrite() throws Exception {
+		reposManager.addProject("testProj");
+		assertFalse(reposManager.canWrite("testProj", createUser("testUser")));
+		reposManager.setReadWrite("testProj", createUser("testUser"), ACCESS.WRITE);
+		assertTrue(reposManager.canWrite("testProj", createUser("testUser")));
+		reposManager.setReadWrite("testProj", createUser("testUser"), ACCESS.READ);
+		assertFalse(reposManager.canWrite("testProj", createUser("testUser")));
+		reposManager.setReadWrite("testProj", createUser("testUser"), ACCESS.NONE);
+		assertFalse(reposManager.canWrite("testProj", createUser("testUser")));
+	}
+	
+	public void testGroupCanWrite() throws Exception {
+		reposManager.addProject("testProj");
+		assertFalse(reposManager.canWrite("testProj", createGroup("testGroup")));
+		reposManager.setReadWrite("testProj", createGroup("testGroup"), ACCESS.WRITE);
+		assertTrue(reposManager.canWrite("testProj", createGroup("testGroup")));
+		reposManager.setReadWrite("testProj", createGroup("testGroup"), ACCESS.READ);
+		assertFalse(reposManager.canWrite("testProj", createGroup("testGroup")));
+		reposManager.setReadWrite("testProj", createGroup("testGroup"), ACCESS.NONE);
+		assertFalse(reposManager.canWrite("testProj", createGroup("testGroup")));
+	}
+
+	public void testSubscription() throws Exception {
+		reposManager.addProject("testProj");
+		assertFalse(reposManager.isSubscribed("testProj", createUser("test1")));
+		reposManager.subscribe("testProj", createUser("test1"));
+		assertTrue(reposManager.isSubscribed("testProj", createUser("test1")));
+		reposManager.unsubscribe("testProj", createUser("test1"));
+		assertFalse(reposManager.isSubscribed("testProj", createUser("test1")));
+	}
+
+	private Entity createGroup(final String string) {
+		return new Group() {
+			
+			@Override
+			public String getName() {
+				return string;
+			}
+			
+			@Override
+			public Collection<Entity> getMembers() {
+				return new ArrayList<Entity>();
+			}
+		};
+	}
+	
+	private User createUser(final String string) {
+		return new User() {			
+			@Override
+			public String getName() {
+				return string;
+			}
+
+			@Override
+			public String getEmailAddress() {
+				return null;
+			}
+
+			@Override
+			public String getPassword() {
+				return null;
+			}
+
+			@Override
+			public boolean isAdministrator() {
+				return false;
+			}
+
+			@Override
+			public void setAdministrator(boolean isAdministrator) {}
+
+			@Override
+			public void setEmailAddress(String emailAddress) {}
+
+			@Override
+			public void setPassword(String password) {}
+		};
 	}
 	
 }
