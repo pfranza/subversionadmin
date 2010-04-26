@@ -28,8 +28,7 @@ public class HbmUserImpl implements Serializable, User {
 	
 	@Override
 	public boolean authenticate(String password) {
-		// TODO Auto-generated method stub
-		return false;
+		return Crypt.matches(this.password, password);
 	}
 
 	@Override
@@ -40,12 +39,6 @@ public class HbmUserImpl implements Serializable, User {
 	@Override
 	public boolean isAdministrator() {
 		return administrator;
-	}
-
-	@Override
-	public void save() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -60,7 +53,7 @@ public class HbmUserImpl implements Serializable, User {
 
 	@Override
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = Crypt.crypt(password);
 	}
 
 	@Override
