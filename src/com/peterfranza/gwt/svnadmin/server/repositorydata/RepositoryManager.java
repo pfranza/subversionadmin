@@ -13,8 +13,6 @@ public interface RepositoryManager {
 	void scanForProjects();
 	void addProject(Project project);
 	
-	ChangeSet getSummary(long revisionNumber);
-	
 	void setReadWrite(String name, Entity entity, ACCESS access);
 	boolean canRead(String name, Entity entity);
 	boolean canWrite(String name, Entity entity);
