@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.peterfranza.gwt.svnadmin.server.entitydata.Entity;
+import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.Project;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
 
 public class MockRepositoryManager implements RepositoryManager {
 
 	@Override
-	public void addProject(Project project) {
+	public void addProject(String project) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -48,7 +49,7 @@ public class MockRepositoryManager implements RepositoryManager {
 	}
 
 	@Override
-	public boolean isSubscribed(String name, Entity entity) {
+	public boolean isSubscribed(String name, User entity) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -66,13 +67,13 @@ public class MockRepositoryManager implements RepositoryManager {
 	}
 
 	@Override
-	public void subscribe(String name, Entity entity) {
+	public void subscribe(String name, User entity) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void unsubscribe(String name, Entity entity) {
+	public void unsubscribe(String name, User entity) {
 		// TODO Auto-generated method stub
 		
 	}
