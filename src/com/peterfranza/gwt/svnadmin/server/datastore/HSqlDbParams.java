@@ -12,7 +12,7 @@ import com.google.inject.name.Named;
 public class HSqlDbParams implements PersistanceSubConfiguration {
 
 	private final String dbName;
-	private final String hbm2ddl = "validate";
+	private final String hbm2ddl = "update"; //"validate";
 	private final String username = "sa";
 	private final String password = "";
 

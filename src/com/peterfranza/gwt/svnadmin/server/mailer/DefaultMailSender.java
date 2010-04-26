@@ -32,9 +32,9 @@ public class DefaultMailSender implements MailSender{
 	}
 	
 	@Override
-	public void sendMail(Collection<User> entities, String subject,
+	public void sendMail(Collection<User> entities, User from, String subject,
 			String body) {
-		sendMail(smtpServer, fromAddress, asArray(entities), subject, body);
+		sendMail(smtpServer, from != null ? from.getEmailAddress() : fromAddress, asArray(entities), subject, body);
 	}
 	
 	
