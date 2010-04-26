@@ -12,6 +12,7 @@ import org.tmatesoft.svn.core.SVNException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.peterfranza.gwt.svnadmin.server.entitydata.Entity;
+import com.peterfranza.gwt.svnadmin.server.entitydata.Group;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.Project;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.ProjectDataWriter;
@@ -110,41 +111,57 @@ public class SvnRepositoryManager implements RepositoryManager {
 
 	@Override
 	public boolean canRead(String name, Entity entity) {
-		// TODO Auto-generated method stub
-		return false;
+		return getProjectForName(name).canRead(asEntityString(entity));
 	}
 
 	@Override
 	public boolean canWrite(String name, Entity entity) {
-		// TODO Auto-generated method stub
-		return false;
+		return getProjectForName(name).canWrite(asEntityString(entity));
 	}
 
 	@Override
-	public boolean isSubscribed(String name, User entity) {
-		// TODO Auto-generated method stub
-		return false;
+	public void setReadWrite(String name, final Entity entity, final ACCESS access) {
+		mutateProject(name, new ProjectVisitor() {			
+			@Override
+			public void modifyProject(SvnProjectBean project) {
+				project.setAccess(asEntityString(entity), access);
+			}
+		});
 	}
 
 	@Override
-	public void setReadWrite(String name, Entity entity, ACCESS access) {
-		// TODO Auto-generated method stub
-		
+	public void subscribe(String name, final User entity) {
+		mutateProject(name, new ProjectVisitor() {		
+			@Override
+			public void modifyProject(SvnProjectBean project) {
+				project.subscribe(asEntityString(entity));
+			}
+		});
 	}
 
 	@Override
-	public void subscribe(String name, User entity) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unsubscribe(String name, User entity) {
-		// TODO Auto-generated method stub
-		
+	public void unsubscribe(String name, final User entity) {
+		mutateProject(name, new ProjectVisitor() {		
+			@Override
+			public void modifyProject(SvnProjectBean project) {
+				project.unsubscribe(asEntityString(entity));
+			}
+		});
 	}
 	
-	private void mutateProject(final String projectPath, final UserVisitor visitor) {
+	@Override
+	public boolean isSubscribed(String name, User entity) {
+		return getProjectForName(name).isSubscribed(asEntityString(entity));
+	}
+	
+	private String asEntityString(Entity entity) {
+		if(entity instanceof Group) {
+			return "@" + entity.getName();
+		}
+		return entity.getName();
+	}
+	
+	private void mutateProject(final String projectPath, final ProjectVisitor visitor) {
 		transact(new TransactionVisitor<Void>() {
 
 			@Override
@@ -162,7 +179,7 @@ public class SvnRepositoryManager implements RepositoryManager {
 		dataWriter.saveData();
 	}
 	
-	private interface UserVisitor {
+	private interface ProjectVisitor {
 		void modifyProject(SvnProjectBean project);
 	}
 	
