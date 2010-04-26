@@ -17,6 +17,7 @@ public class HbmUserImpl implements Serializable, User {
 	 */
 	private static final long serialVersionUID = 8288681953280166737L;
 
+	@SuppressWarnings("unused")
 	@GeneratedValue
 	@Id
 	private long id;
@@ -64,11 +65,6 @@ public class HbmUserImpl implements Serializable, User {
 	public String getPassword() {
 		return password;
 	}
-	
-	public long getId() {
-		return id;
-	}
-
 
 
 }

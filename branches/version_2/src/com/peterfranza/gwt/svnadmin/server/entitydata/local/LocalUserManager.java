@@ -37,13 +37,14 @@ public class LocalUserManager implements UserManager{
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<HbmUserImpl> getUsers() {
-		Session s = sessionProvider.get();
-		Transaction tx = s.beginTransaction();
-		try {
-			return s.createCriteria(HbmUserImpl.class).list();
-		} finally {
-			tx.commit();
-		}
+		return transact(new TransactionVisitor<Collection>() {
+			
+			@Override
+			public Collection transact(Session session) {
+				return session.createCriteria(HbmUserImpl.class).list();
+			}
+	
+		});
 	}
 	
 	@Override
@@ -53,86 +54,103 @@ public class LocalUserManager implements UserManager{
 	}
 	
 	@Override
-	public void removeUser(String username) {
-		Session s = sessionProvider.get();
-		Transaction tx = s.beginTransaction();
-		try {
-			User u = getUserForName(username);
-			if(u != null) {
-				s.delete(u);
+	public void removeUser(final String username) {
+		transact(new TransactionVisitor<Void>() {
+
+			@Override
+			public Void transact(Session session) {
+				User u = getUserForName(username);
+				if(u != null) {
+					session.delete(u);
+				}
+				return null;
 			}
-		} finally {
-			tx.commit();
+		});
+	}
+	
+	@Override
+	public void createUser(final String username) {
+
+		if(getUserForName(username) == null) {
+			transact(new TransactionVisitor<Void>() {
+
+				@Override
+				public Void transact(Session session) {
+					HbmUserImpl u = new HbmUserImpl();
+					u.setName(username);
+					session.saveOrUpdate(u);
+					return null;
+				}			
+
+			});
+		} else {
+			throw new RuntimeException("User Exists");
 		}
 	}
 	
 	@Override
-	public void createUser(String username) {
-		Session s = sessionProvider.get();
-		Transaction tx = s.beginTransaction();
-		try {
-			HbmUserImpl u = getUserForName(username);
-			if(u == null) {
-				u = new HbmUserImpl();
-				u.setName(username);
-				s.saveOrUpdate(u);
-			} else {
-				throw new RuntimeException("User Exists");
+	public void setPassword(String username, final String password) {
+		mutateUser(username, new UserVisitor() {			
+			@Override
+			public void modifyUser(HbmUserImpl user) {
+				user.setPassword(crypt.crypt(password));
 			}
-		} finally {
-			tx.commit();
-		}
+		});
 	}
 	
 	@Override
-	public void setPassword(String username, String password) {
-		Session s = sessionProvider.get();
-		Transaction tx = s.beginTransaction();
-		try {
-			HbmUserImpl u = getUserForName(username);
-			if(u != null) {
-				u.setPassword(crypt.crypt(password));
-				s.update(u);
-			} else {
-				throw new RuntimeException("User not found");
+	public void setEmailAddress(String username, final String email) {
+		mutateUser(username, new UserVisitor() {			
+			@Override
+			public void modifyUser(HbmUserImpl user) {
+				user.setEmailAddress(email);
 			}
-		} finally {
-			tx.commit();
-		}
+		});
 	}
 	
 	@Override
-	public void setEmailAddress(String username, String email) {
-		Session s = sessionProvider.get();
-		Transaction tx = s.beginTransaction();
-		try {
-			HbmUserImpl u = getUserForName(username);
-			if(u != null) {
-				u.setEmailAddress(email);
-				s.update(u);
-			} else {
-				throw new RuntimeException("User not found");
+	public void setAdministrator(String username, final boolean isAdmin) {
+		mutateUser(username, new UserVisitor() {			
+			@Override
+			public void modifyUser(HbmUserImpl user) {
+				user.setAdministrator(isAdmin);
 			}
-		} finally {
-			tx.commit();
-		}
+		});
 	}
 	
-	@Override
-	public void setAdministrator(String username, boolean isAdmin) {
+	private void mutateUser(final String username, final UserVisitor visitor) {
+		transact(new TransactionVisitor<Void>() {
+
+			@Override
+			public Void transact(Session session) {
+				HbmUserImpl u = getUserForName(username);
+				if(u != null) {
+					visitor.modifyUser(u);
+					session.update(u);
+				} else {
+					throw new RuntimeException("User not found");
+				}
+				return null;
+			}
+		});
+	}
+	
+	private interface UserVisitor {
+		void modifyUser(HbmUserImpl user);
+	}
+	
+	private <T> T transact(TransactionVisitor<T> visitor) {
 		Session s = sessionProvider.get();
 		Transaction tx = s.beginTransaction();
-		try {
-			HbmUserImpl u = getUserForName(username);
-			if(u != null) {
-				u.setAdministrator(isAdmin);
-				s.update(u);
-			} else {
-				throw new RuntimeException("User not found");
-			}
-		} finally {
-			tx.commit();
-		}
+		T value = null;
+		value = visitor.transact(s);
+		tx.commit();
+		s.close();
+		return value;		
+	}
+	
+	private interface TransactionVisitor<T> {
+		 T transact(Session session);
 	}
 	
 }
