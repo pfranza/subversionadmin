@@ -12,6 +12,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
 import com.google.inject.name.Names;
+import com.google.inject.servlet.ServletModule;
 import com.peterfranza.gwt.svnadmin.server.datastore.HSqlDbParams;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.PersistanceSubConfiguration;
@@ -31,10 +32,13 @@ public class ServerInjectorFactory {
 		modules.add(new AbstractModule() {
 			@Override
 			protected void configure() {
-				bind(String.class).annotatedWith(Names.named("DatabaseName")).toInstance("TestDB");
+				bind(String.class).annotatedWith(Names.named("DatabaseName")).toInstance("subversionAdmin");
 				bind(String.class).annotatedWith(Names.named("repositoryUrl")).toInstance("http://svn/svn/");
 				bind(String.class).annotatedWith(Names.named("repositoryUsername")).toInstance("hudson");
 				bind(String.class).annotatedWith(Names.named("repositoryPassword")).toInstance("ib.hudson");
+				
+				bind(String.class).annotatedWith(Names.named("smtpFromAddress")).toInstance("svn@test.com");
+				bind(String.class).annotatedWith(Names.named("smtpServer")).toInstance("mail");
 				
 				bind(ConfigFileWriter.class).annotatedWith(Names.named("passwordFile")).toInstance(new ConfigFileWriter(new File("svnpasswordz")));
 				bind(ConfigFileWriter.class).annotatedWith(Names.named("authorsFile")).toInstance(new ConfigFileWriter(new File("svnauthorz")));
@@ -42,6 +46,12 @@ public class ServerInjectorFactory {
 				bind(PersistanceSubConfiguration.class).to(HSqlDbParams.class);
 				bind(Session.class).toProvider(HibernateSessionFactory.class);
 				
+			}
+		});
+		modules.add(new ServletModule() {
+			@Override
+			protected void configureServlets() {
+				serve("/trigger/mail").with(MailTriggerServlet.class);
 			}
 		});
 	}

@@ -7,5 +7,5 @@ import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 
 @ImplementedBy(DefaultMailSender.class)
 public interface MailSender{
-	void sendMail(Collection<User> entities, String subject, String body);
+	void sendMail(Collection<User> entities, User from, String subject, String body);
 }
