@@ -12,8 +12,8 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
 import com.google.inject.name.Names;
+import com.peterfranza.gwt.svnadmin.server.datastore.HSqlDbParams;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
-import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
 import com.peterfranza.gwt.svnadmin.server.datastore.PersistanceSubConfiguration;
 import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalGroupModule;
 import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalUserModule;
@@ -39,8 +39,9 @@ public class ServerInjectorFactory {
 				bind(ConfigFileWriter.class).annotatedWith(Names.named("passwordFile")).toInstance(new ConfigFileWriter(new File("svnpasswordz")));
 				bind(ConfigFileWriter.class).annotatedWith(Names.named("authorsFile")).toInstance(new ConfigFileWriter(new File("svnauthorz")));
 				
-				bind(PersistanceSubConfiguration.class).to(InMemoryDatabaseParams.class);
+				bind(PersistanceSubConfiguration.class).to(HSqlDbParams.class);
 				bind(Session.class).toProvider(HibernateSessionFactory.class);
+				
 			}
 		});
 	}
