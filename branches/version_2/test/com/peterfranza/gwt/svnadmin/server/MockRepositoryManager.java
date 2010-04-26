@@ -22,37 +22,12 @@ public class MockRepositoryManager implements RepositoryManager {
 		public Collection<Project> getProjects() {
 			ArrayList<Project> l = new ArrayList<Project>();
 			l.add(new Project() {
-				
-				@Override
-				public void unsubscribe(Entity entity) {}
-				
-				@Override
-				public void subscribe(Entity entity) {}
-				
-				@Override
-				public boolean isSubscribed(Entity entity) {
-					return false;
-				}
-				
+
 				@Override
 				public String getPath() {
-					return null;
+					return "/test";
 				}
-				
-				@Override
-				public String getName() {
-					return null;
-				}
-				
-				@Override
-				public boolean canWrite(Entity entity) {
-					return false;
-				}
-				
-				@Override
-				public boolean canRead(Entity entity) {
-					return false;
-				}
+
 			});
 			return l;
 		}
@@ -64,5 +39,41 @@ public class MockRepositoryManager implements RepositoryManager {
 		
 		@Override
 		public void addProject(Project project) {}
+
+		@Override
+		public boolean canRead(String name, Entity entity) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean canWrite(String name, Entity entity) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean isSubscribed(String name, Entity entity) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public void setReadWrite(String name, Entity entity, ACCESS access) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void subscribe(String name, Entity entity) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void unsubscribe(String name, Entity entity) {
+			// TODO Auto-generated method stub
+			
+		}
 }
 

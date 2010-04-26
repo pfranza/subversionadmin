@@ -166,9 +166,9 @@ public class LocalGroupManager implements GroupManager {
 			buf.append(System.getProperty("line.separator"));
 			buf.append("[/"+p.getPath()+"]").append(System.getProperty("line.separator"));
 			for(User u: userManager.getUsers()) {
-				if(p.canWrite(u)) {
+				if(reposManager.canWrite(p.getPath(), u)) {
 					buf.append(u.getName()).append(" = rw").append(System.getProperty("line.separator"));
-				} else if(p.canRead(u)) {
+				} else if(reposManager.canRead(p.getPath(), u)) {
 					buf.append(u.getName()).append(" = r").append(System.getProperty("line.separator"));
 				} else {
 					buf.append(u.getName()).append(" = ").append(System.getProperty("line.separator"));

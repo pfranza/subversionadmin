@@ -27,6 +27,7 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
+import com.peterfranza.gwt.svnadmin.server.entitydata.Entity;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.ChangeSet;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.Project;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
@@ -312,6 +313,44 @@ public class SvnRepositoryManager implements RepositoryManager {
 		}
 
 	}
+
+	@Override
+	public boolean canRead(String name, Entity entity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean canWrite(String name, Entity entity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean isSubscribed(String name, Entity entity) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setReadWrite(String name, Entity entity, ACCESS access) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void subscribe(String name, Entity entity) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unsubscribe(String name, Entity entity) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
 	
 //	public static void main(String[] args) {
 //		RepositoryManager o = new ServerInjectorFactory().getInjector().getInstance(RepositoryManager.class);
