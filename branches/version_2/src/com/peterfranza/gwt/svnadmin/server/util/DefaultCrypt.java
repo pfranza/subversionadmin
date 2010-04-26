@@ -1,10 +1,6 @@
-package com.peterfranza.gwt.svnadmin.server.entitydata.local;
+package com.peterfranza.gwt.svnadmin.server.util;
 
-public class Crypt {
-	//
-	// Null constructor - can't instantiate class
-	private Crypt() {
-	}
+public class DefaultCrypt implements Crypt {
 
 	private static final char[] saltChars = ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./"
 			.toCharArray());
@@ -462,22 +458,10 @@ public class Crypt {
 		return (out);
 	}
 
-	/**
-	 * <P>
-	 * Encrypt a password given the cleartext password and a "salt".
-	 * </P>
-	 * 
-	 * @param salt
-	 *            A two-character string representing the salt used to iterate
-	 *            the encryption engine in lots of different ways. If you are
-	 *            generating a new encryption then this value should be
-	 *            randomised.
-	 * @param original
-	 *            The password to be encrypted.
-	 * @return A string consisting of the 2-character salt followed by the
-	 *         encrypted password.
+	/* (non-Javadoc)
+	 * @see com.peterfranza.gwt.svnadmin.server.util.Crypt#crypt(java.lang.String, java.lang.String)
 	 */
-	public static final String crypt(String salt, String original) {
+	public final String crypt(String salt, String original) {
 		while (salt.length() < 2)
 			salt += "A";
 
@@ -531,18 +515,10 @@ public class Crypt {
 		return (buffer.toString());
 	}
 
-	/**
-	 * <P>
-	 * Encrypt a password given the cleartext password. This method generates a
-	 * random salt using the 'java.util.Random' class.
-	 * </P>
-	 * 
-	 * @param original
-	 *            The password to be encrypted.
-	 * @return A string consisting of the 2-character salt followed by the
-	 *         encrypted password.
+	/* (non-Javadoc)
+	 * @see com.peterfranza.gwt.svnadmin.server.util.Crypt#crypt(java.lang.String)
 	 */
-	public static final String crypt(String original) {
+	public final String crypt(String original) {
 		java.util.Random randomGenerator = new java.util.Random();
 		int numSaltChars = saltChars.length;
 		String salt;
@@ -556,20 +532,10 @@ public class Crypt {
 		return crypt(salt, original);
 	}
 
-	/**
-	 * <P>
-	 * Check that <I>enteredPassword</I> encrypts to <I>encryptedPassword</I>.
-	 * </P>
-	 * 
-	 * @param encryptedPassword
-	 *            The <I>encryptedPassword</I>. The first two characters are
-	 *            assumed to be the salt. This string would be the same as one
-	 *            found in a Unix <U>/etc/passwd</U> file.
-	 * @param enteredPassword
-	 *            The password as entered by the user (or otherwise aquired).
-	 * @return <B>true</B> if the password should be considered correct.
+	/* (non-Javadoc)
+	 * @see com.peterfranza.gwt.svnadmin.server.util.Crypt#matches(java.lang.String, java.lang.String)
 	 */
-	public final static boolean matches(String encryptedPassword,
+	public final boolean matches(String encryptedPassword,
 			String enteredPassword) {
 		String salt = encryptedPassword.substring(0, 3);
 		String newCrypt = crypt(salt, enteredPassword);

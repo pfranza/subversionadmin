@@ -12,15 +12,18 @@ public class DefaultConfigurationExportManager implements ConfigurationExportMan
 
 	private UserManager userManager;
 	private ConfigFileWriter passwordFileWriter;
+	private ConfigFileWriter authorsFileWriter;
 
 	@Inject
 	public DefaultConfigurationExportManager(
 			UserManager userManager, 
 			GroupManager groupManager,
 			RepositoryManager repositoryManager,
-			@Named("passwordFile") ConfigFileWriter passwordFileWriter) {
+			@Named("passwordFile") ConfigFileWriter passwordFileWriter,
+			@Named("authorsFile") ConfigFileWriter authorsFileWriter) {
 		this.userManager = userManager;
 		this.passwordFileWriter = passwordFileWriter;
+		this.authorsFileWriter = authorsFileWriter;
 	}
 
 	@Override
