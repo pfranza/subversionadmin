@@ -18,6 +18,7 @@ public class HbmGroupImpl implements Serializable, Group {
 	 */
 	private static final long serialVersionUID = 1898458363908642997L;
 
+	@SuppressWarnings("unused")
 	@GeneratedValue
 	@Id
 	private long id;
