@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import junit.framework.TestCase;
 
+import com.peterfranza.gwt.svnadmin.server.MockRepositoryManager;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateBeanRegistry;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
@@ -13,6 +14,7 @@ import com.peterfranza.gwt.svnadmin.server.entitydata.Group;
 import com.peterfranza.gwt.svnadmin.server.entitydata.GroupManager;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.util.NoCrypt;
+import com.peterfranza.gwt.svnadmin.server.util.NullWriter;
 
 public class LocalGroupManagerTest extends TestCase {
 
@@ -34,9 +36,9 @@ public class LocalGroupManagerTest extends TestCase {
 					}
 				});
 		
-		userManager = new LocalUserManager(new NoCrypt(), hbm);
+		userManager = new LocalUserManager(new NoCrypt(), hbm, new NullWriter());
 		
-		groupManager = new LocalGroupManager(hbm, userManager);
+		groupManager = new LocalGroupManager(hbm, userManager, new NullWriter(), new MockRepositoryManager());
 	}
 	
 	public void testCreateGroup() throws Exception {

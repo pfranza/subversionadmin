@@ -10,6 +10,7 @@ import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
 import com.peterfranza.gwt.svnadmin.server.util.NoCrypt;
+import com.peterfranza.gwt.svnadmin.server.util.NullWriter;
 
 public class LocalUserManagerTest extends TestCase {
 
@@ -26,7 +27,7 @@ public class LocalUserManagerTest extends TestCase {
 						l.add(HbmUserImpl.class);
 						return l;
 					}
-				}));
+				}), new NullWriter());
 	}
 	
 	public void testCreateUser() throws Exception {
