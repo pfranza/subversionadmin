@@ -7,23 +7,6 @@ public interface Crypt {
 
 	/**
 	 * <P>
-	 * Encrypt a password given the cleartext password and a "salt".
-	 * </P>
-	 * 
-	 * @param salt
-	 *            A two-character string representing the salt used to iterate
-	 *            the encryption engine in lots of different ways. If you are
-	 *            generating a new encryption then this value should be
-	 *            randomised.
-	 * @param original
-	 *            The password to be encrypted.
-	 * @return A string consisting of the 2-character salt followed by the
-	 *         encrypted password.
-	 */
-	public abstract String crypt(String salt, String original);
-
-	/**
-	 * <P>
 	 * Encrypt a password given the cleartext password. This method generates a
 	 * random salt using the 'java.util.Random' class.
 	 * </P>

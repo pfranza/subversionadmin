@@ -458,8 +458,20 @@ public class DefaultCrypt implements Crypt {
 		return (out);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.peterfranza.gwt.svnadmin.server.util.Crypt#crypt(java.lang.String, java.lang.String)
+	/**
+	 * <P>
+	 * Encrypt a password given the cleartext password and a "salt".
+	 * </P>
+	 * 
+	 * @param salt
+	 *            A two-character string representing the salt used to iterate
+	 *            the encryption engine in lots of different ways. If you are
+	 *            generating a new encryption then this value should be
+	 *            randomised.
+	 * @param original
+	 *            The password to be encrypted.
+	 * @return A string consisting of the 2-character salt followed by the
+	 *         encrypted password.
 	 */
 	public final String crypt(String salt, String original) {
 		while (salt.length() < 2)

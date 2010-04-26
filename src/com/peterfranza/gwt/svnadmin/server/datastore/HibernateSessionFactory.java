@@ -39,7 +39,7 @@ public class HibernateSessionFactory implements Provider<Session> {
 
 	@Override
 	public Session get() {
-		return getFactory().getCurrentSession();
+		return getFactory().openSession();
 	}
 	
 }
