@@ -18,6 +18,7 @@ public class SvnProjectBean implements Serializable, Project{
 	 */
 	private static final long serialVersionUID = -7614248181767208529L;
 
+	@SuppressWarnings("unused")
 	@GeneratedValue
 	@Id
 	private long id;

@@ -44,6 +44,9 @@ public class SvnRepositoryManager implements RepositoryManager {
 			}
 		});
 		dataWriter.saveData();
+		for(Project p: getProjects()) {
+			System.out.println("  -- " + p.getPath());
+		}
 	}
 
 	@Override
@@ -81,6 +84,7 @@ public class SvnRepositoryManager implements RepositoryManager {
 				transact(new TransactionVisitor<Void>() {
 					@Override
 					public Void transact(Session session) {
+						System.out.println("rm: " + p.getPath());
 						session.delete(p);
 						return null;
 					}
