@@ -86,7 +86,7 @@ public class LDAPUserManager implements UserManager {
             System.out.println(dna.get());
             
             String query = "(&(objectClass=user)(mail=*))";
-    		String[] attributes1 = {"cn","userPrincipalName","name","mail","memberOf"};
+    		String[] attributes1 = {"cn","userPrincipalName","name","mail","memberOf","sAMAccountName"};
     		
             
             SearchControls ctrl = new SearchControls();

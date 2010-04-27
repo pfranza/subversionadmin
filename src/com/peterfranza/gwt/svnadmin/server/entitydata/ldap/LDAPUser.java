@@ -18,7 +18,7 @@ public class LDAPUser implements User {
 		
 		principal = attribs.get("userPrincipalName").get().toString();
 		email = attribs.get("mail").get().toString();
-		name = attribs.get("name").get().toString();
+		name = attribs.get("sAMAccountName").get().toString();
 		
 		for (Enumeration<?> vals = attribs.get("memberOf").getAll(); 
 				vals.hasMoreElements(); 
