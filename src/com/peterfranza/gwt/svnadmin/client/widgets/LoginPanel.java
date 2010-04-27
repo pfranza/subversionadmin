@@ -1,5 +1,7 @@
 package com.peterfranza.gwt.svnadmin.client.widgets;
 
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.FormPanel;
 import com.extjs.gxt.ui.client.widget.form.TextField;
@@ -18,12 +20,10 @@ public class LoginPanel extends FormPanel {
 	}};
 	
 	private Button login = new Button("Login");
-	private Button changePassword = new Button("Change Password");
+//	private Button changePassword = new Button("Change Password");
 	
 	public LoginPanel() {
 		setBorders(false);
-//		setBorder(false);
-//		setPadding(10, 0, 0, 0);
 		setAutoWidth(true);
 		setHeaderVisible(false);
 		
@@ -32,7 +32,7 @@ public class LoginPanel extends FormPanel {
 		add(password);
 		
 		addButton(login);
-		addButton(changePassword);
+//		addButton(changePassword);
 	}
 	
 	
@@ -46,6 +46,10 @@ public class LoginPanel extends FormPanel {
 	
 	public void clearPassword() {
 		password.setValue("");
+	}
+	
+	public void addLoginListener(SelectionListener<ButtonEvent> listener) {
+		login.addSelectionListener(listener);
 	}
 	
 }

@@ -1,11 +1,11 @@
 package com.peterfranza.gwt.svnadmin.server.handlers;
 
-import com.peterfranza.gwt.svnadmin.client.actions.CapabilitiesRequest;
-import com.peterfranza.gwt.svnadmin.client.actions.CapabilitiesResult;
-
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
+
+import com.peterfranza.gwt.svnadmin.client.actions.CapabilitiesRequest;
+import com.peterfranza.gwt.svnadmin.client.actions.CapabilitiesRequest.CapabilitiesResult;
 
 public class CapabilitiesRequestHandler implements ActionHandler<CapabilitiesRequest, CapabilitiesResult>{
 
