@@ -44,7 +44,7 @@ public class SvnProjectScanner implements ProjectScanner{
 	private Collection<? extends String> listEntries( SVNRepository repository, String path, Collection<String> knownPaths ) throws SVNException {
 		List<String> s = new ArrayList<String>();
 		Collection entries = repository.getDir( path, -1 , null , (Collection) null );
-		System.out.println("     searching " + path);
+		System.out.println("     searching /" + path);
 		if(isProject(entries)) {
 			s.add("/" + path);
 		} else if(isProject(path, knownPaths)) {
@@ -64,7 +64,7 @@ public class SvnProjectScanner implements ProjectScanner{
 	
 	private boolean isProject(String path, Collection<String> knownPaths) {
 		for(String kp: knownPaths) {
-			if(kp.equals(path)) {
+			if(kp.equals("/" + path)) {
 				return true;
 			}
 		}

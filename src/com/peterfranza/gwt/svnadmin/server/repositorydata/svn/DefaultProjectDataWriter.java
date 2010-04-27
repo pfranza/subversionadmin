@@ -79,7 +79,7 @@ public class DefaultProjectDataWriter implements ProjectDataWriter {
 
 		for(Project p: reposManager.getProjects()) {
 			buf.append(System.getProperty("line.separator"));
-			buf.append("[/"+p.getPath()+"]").append(System.getProperty("line.separator"));
+			buf.append("["+p.getPath()+"]").append(System.getProperty("line.separator"));
 			for(Group u: groupManager.getGroups()) {
 				if(reposManager.canWrite(p.getPath(), u)) {
 					buf.append(u.getName()).append(" = rw").append(System.getProperty("line.separator"));
