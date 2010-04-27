@@ -2,9 +2,12 @@ package com.peterfranza.gwt.svnadmin.client.widgets;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
 import com.extjs.gxt.ui.client.event.SelectionListener;
+import com.extjs.gxt.ui.client.widget.Viewport;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.layout.MarginData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.peterfranza.gwt.svnadmin.client.SubversionAdministrator;
 import com.peterfranza.gwt.svnadmin.client.actions.AuthenticationRequest;
 import com.peterfranza.gwt.svnadmin.client.actions.AuthenticationRequest.AuthenticationResult;
@@ -14,7 +17,7 @@ public class LoginWindow extends Window{
 	private LoginPanel panel = new LoginPanel();
 	
 	{
-		setSize(350, 150);  
+		setSize(335, 150);  
 		setPlain(true);  
 		setModal(true);  
 		setBlinkModal(true); 
@@ -26,7 +29,7 @@ public class LoginWindow extends Window{
 		panel.addLoginListener(new SelectionListener<ButtonEvent>() {
 			
 			@Override
-			public void componentSelected(ButtonEvent ce) {
+			public void componentSelected(final ButtonEvent ce) {
 				SubversionAdministrator.dispatcher.execute(
 						new AuthenticationRequest(panel.getUsername(), panel.getPassword()),
 						new AsyncCallback<AuthenticationResult>() {
@@ -40,7 +43,10 @@ public class LoginWindow extends Window{
 							public void onSuccess(AuthenticationResult result) {
 								if(result.isAuthenticated()) {
 									if(result.isAdministrator()) {
-										//TODO show forms
+										Viewport viewport = new Viewport();
+										viewport.add(new MainPanel(), new MarginData(10));
+										RootPanel.get().add(viewport);
+										hide(ce.getButton());
 									} else {
 										//TODO show change password dialog
 									}

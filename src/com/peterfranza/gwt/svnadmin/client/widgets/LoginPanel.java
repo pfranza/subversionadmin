@@ -20,7 +20,6 @@ public class LoginPanel extends FormPanel {
 	}};
 	
 	private Button login = new Button("Login");
-//	private Button changePassword = new Button("Change Password");
 	
 	public LoginPanel() {
 		setBorders(false);
@@ -32,7 +31,6 @@ public class LoginPanel extends FormPanel {
 		add(password);
 		
 		addButton(login);
-//		addButton(changePassword);
 	}
 	
 	
