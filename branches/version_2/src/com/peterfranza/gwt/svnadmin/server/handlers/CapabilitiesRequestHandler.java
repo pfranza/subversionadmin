@@ -4,16 +4,25 @@ import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
 
+import com.google.inject.Inject;
 import com.peterfranza.gwt.svnadmin.client.actions.CapabilitiesRequest;
 import com.peterfranza.gwt.svnadmin.client.actions.CapabilitiesRequest.CapabilitiesResult;
+import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
 
 public class CapabilitiesRequestHandler implements ActionHandler<CapabilitiesRequest, CapabilitiesResult>{
 
+	private UserManager userManager;
+
+	@Inject
+	public CapabilitiesRequestHandler(UserManager userManager) {
+		this.userManager = userManager;
+	}
+	
 	@Override
 	public CapabilitiesResult execute(CapabilitiesRequest arg0,
 			ExecutionContext arg1) throws ActionException {
 		CapabilitiesResult result = new CapabilitiesResult();
-		result.setLocalAccounts(true);
+		result.setLocalAccounts(userManager.isMutable());
 		return result;
 	}
 

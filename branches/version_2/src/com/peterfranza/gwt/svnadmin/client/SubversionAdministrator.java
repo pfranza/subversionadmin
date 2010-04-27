@@ -14,6 +14,7 @@ import com.peterfranza.gwt.svnadmin.client.widgets.LoginWindow;
 public class SubversionAdministrator implements EntryPoint {
 
 	public static DefaultDispatchAsync dispatcher = new DefaultDispatchAsync();
+	public static CapabilitiesResult result;
 	private LoginWindow login = new LoginWindow();
 	
 
@@ -30,6 +31,7 @@ public class SubversionAdministrator implements EntryPoint {
 
 			@Override
 			public void onSuccess(CapabilitiesResult result) {
+				SubversionAdministrator.result = result;
 				login.show();
 				login.center();
 			}
