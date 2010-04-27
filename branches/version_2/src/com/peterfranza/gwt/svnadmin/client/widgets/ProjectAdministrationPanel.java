@@ -21,8 +21,7 @@ public class ProjectAdministrationPanel extends ContentPanel {
 	public ProjectAdministrationPanel() {
 		super(new FitLayout());
 		setHeaderVisible(false);
-		addText("add content");
-		
+		addText("add content");		
 		addButton(addProject);
 		addButton(scanProject);
 		
