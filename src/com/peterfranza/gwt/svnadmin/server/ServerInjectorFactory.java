@@ -31,6 +31,7 @@ public class ServerInjectorFactory {
 	{
 		modules.add(new SvnManagementModule());
 		modules.add(new LocalUserModule());
+//		modules.add(new LDAPUserModule());
 		modules.add(new LocalGroupModule());
 		modules.add(new HandlerBinding());
 		modules.add(new AbstractModule() {
