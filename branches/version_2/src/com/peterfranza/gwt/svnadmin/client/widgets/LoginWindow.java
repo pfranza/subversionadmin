@@ -1,10 +1,18 @@
 package com.peterfranza.gwt.svnadmin.client.widgets;
 
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.widget.Window;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.peterfranza.gwt.svnadmin.client.SubversionAdministrator;
+import com.peterfranza.gwt.svnadmin.client.actions.AuthenticationRequest;
+import com.peterfranza.gwt.svnadmin.client.actions.AuthenticationRequest.AuthenticationResult;
 
 public class LoginWindow extends Window{
 
+	private LoginPanel panel = new LoginPanel();
+	
 	{
 		setSize(350, 150);  
 		setPlain(true);  
@@ -13,7 +21,38 @@ public class LoginWindow extends Window{
 		setClosable(false);
 		setHeading("Subversion Administration Login");  
 		setLayout(new FitLayout());
-		add(new LoginPanel());
+		add(panel);
+		
+		panel.addLoginListener(new SelectionListener<ButtonEvent>() {
+			
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				SubversionAdministrator.dispatcher.execute(
+						new AuthenticationRequest(panel.getUsername(), panel.getPassword()),
+						new AsyncCallback<AuthenticationResult>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								caught.printStackTrace();
+							}
+
+							@Override
+							public void onSuccess(AuthenticationResult result) {
+								if(result.isAuthenticated()) {
+									if(result.isAdministrator()) {
+										//TODO show forms
+									} else {
+										//TODO show change password dialog
+									}
+								} else {
+									com.google.gwt.user.client.Window.alert("Authentication Failed");
+								}
+							}
+							
+						});
+			}
+		});
+		
 	}
 	
 }

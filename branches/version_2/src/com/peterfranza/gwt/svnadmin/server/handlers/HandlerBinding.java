@@ -7,6 +7,7 @@ public class HandlerBinding extends ActionHandlerModule {
 	@Override
 	protected void configureHandlers() {
 		bindHandler(CapabilitiesRequestHandler.class);
+		bindHandler(AuthenticationHandler.class);
 	}
 
 }
