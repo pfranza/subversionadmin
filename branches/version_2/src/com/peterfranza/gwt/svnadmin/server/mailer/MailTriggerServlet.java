@@ -1,4 +1,4 @@
-package com.peterfranza.gwt.svnadmin.server;
+package com.peterfranza.gwt.svnadmin.server.mailer;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -16,7 +16,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
-import com.peterfranza.gwt.svnadmin.server.mailer.MailSender;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.ChangeSet;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.ChangeSetMiner;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.Project;

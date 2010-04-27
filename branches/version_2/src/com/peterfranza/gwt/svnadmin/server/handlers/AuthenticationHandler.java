@@ -31,11 +31,12 @@ public class AuthenticationHandler implements ActionHandler<AuthenticationReques
 		}
 		
 		if(userManager.authenticate(arg0.getUsername(), arg0.getPassword())) {
-			return new AuthenticationResult(true, userManager.getUserForName(arg0.getUsername()).isAdministrator());
-		} else {
-			return new AuthenticationResult(false, false);
-		}
-
+			User u = userManager.getUserForName(arg0.getUsername());
+			if(u != null) {
+				return new AuthenticationResult(true, u.isAdministrator());
+			}
+		} 
+		return new AuthenticationResult(false, false);
 	}
 
 	private boolean adminsExists() {

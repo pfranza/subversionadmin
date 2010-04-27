@@ -21,7 +21,7 @@ import com.peterfranza.gwt.svnadmin.server.util.NullWriter;
 public class ModulesTest extends TestCase {
 
 	public void testModules() throws Exception {
-		Injector i = Guice.createInjector(new LocalGroupModule(), new LocalUserModule(), new AbstractModule() {
+		Injector i = Guice.createInjector(new LocalGroupModule(), new LocalUserModule(new NullWriter()), new AbstractModule() {
 			
 			@Override
 			protected void configure() {
