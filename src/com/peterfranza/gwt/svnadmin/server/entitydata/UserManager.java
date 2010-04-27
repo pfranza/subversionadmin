@@ -14,4 +14,5 @@ public interface UserManager {
 	void setEmailAddress(String username, String email);
 	void setAdministrator(String username, boolean isAdmin);
 	
+	boolean isMutable();
 }
