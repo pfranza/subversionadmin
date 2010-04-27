@@ -125,6 +125,11 @@ public class LocalUserManager implements UserManager{
 		});
 	}
 	
+	@Override
+	public boolean isMutable() {
+		return true;
+	}
+	
 	private void exportPasswordFile() {
 		StringBuffer buf = new StringBuffer();
 		for(User u: getUsers()) {
