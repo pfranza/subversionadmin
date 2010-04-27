@@ -3,19 +3,19 @@ package com.peterfranza.gwt.svnadmin.client.widgets;
 import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.TabItem;
 import com.extjs.gxt.ui.client.widget.TabPanel;
+import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.MarginData;
-import com.google.gwt.user.client.Element;
 
 public class MainPanel extends ContentPanel {
 
 	private TabPanel folder = new TabPanel();
 	
-	{
+	public MainPanel(){
+		super(new FitLayout());
 		setHeaderVisible(false);
-		folder.setAutoWidth(true);
-		folder.setAutoHeight(true);  
-		
-		TabItem userAdmin = new TabItem("User Administration");   
+
+
+		TabItem userAdmin = new TabItem("User Administration");  
 		userAdmin.add(new UserAdministrationPanel(), new MarginData(10));
 		folder.add(userAdmin);
 		
@@ -23,17 +23,15 @@ public class MainPanel extends ContentPanel {
 		groupAdmin.add(new GroupAdministrationPanel(), new MarginData(10));
 		folder.add(groupAdmin); 
 		
-		TabItem projectAdmin = new TabItem("Project Administration");   
+		TabItem projectAdmin = new TabItem("Project Administration");  
 		projectAdmin.add(new ProjectAdministrationPanel(), new MarginData(10));
 		folder.add(projectAdmin);
 		
-		
-	}
-	
-	@Override
-	protected void onRender(Element parent, int pos) {
-		super.onRender(parent, pos);
 		add(folder);
+		
+//		ContentPanel cp = new ContentPanel(new BorderLayout());
+//		
+//		add(cp);
 	}
 	
 }
