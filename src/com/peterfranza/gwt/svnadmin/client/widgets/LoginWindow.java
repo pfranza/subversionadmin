@@ -44,7 +44,8 @@ public class LoginWindow extends Window{
 								if(result.isAuthenticated()) {
 									if(result.isAdministrator()) {
 										Viewport viewport = new Viewport();
-										viewport.add(new MainPanel(), new MarginData(10));
+										viewport.setLayout(new FitLayout());
+										viewport.add(new MainPanel(), new MarginData(5));
 										RootPanel.get().add(viewport);
 										hide(ce.getButton());
 									} else {
