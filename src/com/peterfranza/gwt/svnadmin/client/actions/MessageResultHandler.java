@@ -24,7 +24,7 @@ public class MessageResultHandler implements AsyncCallback<MessageResult>{
 			simple.setScrollMode(Scroll.AUTO);  
 			simple.setHideOnButtonClick(true);
 		} else {
-			Info.display("MessageBox", "{0}", new Params(result.getMessage()));
+			Info.display(result.getTitle(), "{0}", new Params(result.getMessage()));
 		}
 	}
 
