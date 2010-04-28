@@ -191,9 +191,16 @@ public class SvnRepositoryManager implements RepositoryManager {
 		Session s = sessionProvider.get();
 		Transaction tx = s.beginTransaction();
 		T value = null;
-		value = visitor.transact(s);
-		tx.commit();
-		return value;		
+		try {
+			value = visitor.transact(s);
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+			throw new RuntimeException(e);
+		} finally {
+			s.close();	
+		}
+		return value;	
 	}
 	
 	private interface TransactionVisitor<T> {
