@@ -62,10 +62,12 @@ public class LDAPUserManager implements UserManager {
 	public User getUserForName(String username) {
 		for(LDAPUser u: getUsers()) {
 			if(u.getEmailAddress().equalsIgnoreCase(username) ||
-					u.getPrincipal().equalsIgnoreCase(username)) {
+					u.getPrincipal().equalsIgnoreCase(username) ||
+					u.getName().equalsIgnoreCase(username)) {
 				return u;
 			}
 		}
+		System.out.println("name not found: " + username);
 		return null;
 	}
 
