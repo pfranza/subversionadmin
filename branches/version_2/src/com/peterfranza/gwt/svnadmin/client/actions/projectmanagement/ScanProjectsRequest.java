@@ -1,4 +1,6 @@
-package com.peterfranza.gwt.svnadmin.client.actions;
+package com.peterfranza.gwt.svnadmin.client.actions.projectmanagement;
+
+import com.peterfranza.gwt.svnadmin.client.actions.MessageResult;
 
 import net.customware.gwt.dispatch.shared.Action;
 

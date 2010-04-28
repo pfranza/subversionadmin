@@ -6,7 +6,7 @@ import net.customware.gwt.dispatch.shared.ActionException;
 
 import com.google.inject.Inject;
 import com.peterfranza.gwt.svnadmin.client.actions.MessageResult;
-import com.peterfranza.gwt.svnadmin.client.actions.ScanProjectsRequest;
+import com.peterfranza.gwt.svnadmin.client.actions.projectmanagement.ScanProjectsRequest;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
 
 public class ScanProjectHandler implements ActionHandler<ScanProjectsRequest, MessageResult>{
