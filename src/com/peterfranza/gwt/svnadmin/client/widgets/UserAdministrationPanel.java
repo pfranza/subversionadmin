@@ -16,8 +16,10 @@ import com.peterfranza.gwt.svnadmin.client.SubversionAdministrator;
 import com.peterfranza.gwt.svnadmin.client.actions.MessageResult;
 import com.peterfranza.gwt.svnadmin.client.actions.MessageResultHandler;
 import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.CreateUser;
+import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.FetchUserDetails;
 import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.ListUsers;
 import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.RemoveUser;
+import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.FetchUserDetails.UserDetails;
 import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.ListUsers.UserList;
 
 public class UserAdministrationPanel extends ContentPanel {
@@ -87,6 +89,27 @@ public class UserAdministrationPanel extends ContentPanel {
 								});
 					}
 				});
+			}
+		});
+		
+		modUser.addSelectionListener(new SelectionListener<ButtonEvent>() {
+			
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				SubversionAdministrator.dispatcher.execute(
+						new FetchUserDetails(userList.getItemText(userList.getSelectedIndex())),
+						new AsyncCallback<FetchUserDetails.UserDetails>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								caught.printStackTrace();
+							}
+
+							@Override
+							public void onSuccess(UserDetails result) {
+								new ModifyUserWindow(result).show();
+							}
+						});
 			}
 		});
 		
