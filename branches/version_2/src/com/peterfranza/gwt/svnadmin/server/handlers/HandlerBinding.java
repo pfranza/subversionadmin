@@ -9,6 +9,14 @@ import com.peterfranza.gwt.svnadmin.server.handlers.groupmgmt.ListUsersInGroupHa
 import com.peterfranza.gwt.svnadmin.server.handlers.groupmgmt.RemoveGroupHandler;
 import com.peterfranza.gwt.svnadmin.server.handlers.groupmgmt.RemoveUserFromGroupHandler;
 import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.AddProjectHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.AddProjectMemberHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.ListProjectMembersHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.ListProjectsHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.ProjectAddUserSubscriptionHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.ProjectListUserSubscriptionHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.ProjectRemoveUserSubscriptionHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.ProjectSetMemberAccessHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.RemoveProjectMemberHandler;
 import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.ScanProjectHandler;
 import com.peterfranza.gwt.svnadmin.server.handlers.usermgmt.ChangeUserEmailHandler;
 import com.peterfranza.gwt.svnadmin.server.handlers.usermgmt.ChangeUserPasswordHandler;
@@ -26,6 +34,14 @@ public class HandlerBinding extends ActionHandlerModule {
 		bindHandler(AuthenticationHandler.class);
 		
 		bindHandler(AddProjectHandler.class);
+		bindHandler(AddProjectMemberHandler.class);
+		bindHandler(ListProjectMembersHandler.class);
+		bindHandler(ListProjectsHandler.class);
+		bindHandler(ProjectAddUserSubscriptionHandler.class);
+		bindHandler(ProjectListUserSubscriptionHandler.class);
+		bindHandler(ProjectRemoveUserSubscriptionHandler.class);
+		bindHandler(ProjectSetMemberAccessHandler.class);
+		bindHandler(RemoveProjectMemberHandler.class);
 		bindHandler(ScanProjectHandler.class);
 		
 		bindHandler(ChangeUserEmailHandler.class);
