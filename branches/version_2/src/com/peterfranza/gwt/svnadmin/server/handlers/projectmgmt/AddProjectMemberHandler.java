@@ -9,6 +9,7 @@ import com.peterfranza.gwt.svnadmin.client.actions.MessageResult;
 import com.peterfranza.gwt.svnadmin.client.actions.projectmanagement.AddProjectMember;
 import com.peterfranza.gwt.svnadmin.server.entitydata.GroupManager;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
+import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager.ACCESS;
 
 public class AddProjectMemberHandler implements ActionHandler<AddProjectMember, MessageResult>{
 
@@ -25,8 +26,10 @@ public class AddProjectMemberHandler implements ActionHandler<AddProjectMember, 
 	@Override
 	public MessageResult execute(AddProjectMember arg0, ExecutionContext arg1)
 			throws ActionException {
-		// TODO Auto-generated method stub
-		return null;
+		reposManager.setReadWrite(arg0.getProject(), 
+				groupManager.getGroup(arg0.getMemberName()),
+				ACCESS.READ);
+		return new MessageResult("", "Access Granted");
 	}
 
 	@Override
