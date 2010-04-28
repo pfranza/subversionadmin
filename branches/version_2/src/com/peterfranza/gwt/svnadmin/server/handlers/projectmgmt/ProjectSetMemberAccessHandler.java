@@ -9,6 +9,7 @@ import com.peterfranza.gwt.svnadmin.client.actions.MessageResult;
 import com.peterfranza.gwt.svnadmin.client.actions.projectmanagement.ProjectSetMemberAccess;
 import com.peterfranza.gwt.svnadmin.server.entitydata.GroupManager;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
+import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager.ACCESS;
 
 public class ProjectSetMemberAccessHandler implements ActionHandler<ProjectSetMemberAccess, MessageResult>{
 
@@ -25,8 +26,10 @@ public class ProjectSetMemberAccessHandler implements ActionHandler<ProjectSetMe
 	@Override
 	public MessageResult execute(ProjectSetMemberAccess arg0,
 			ExecutionContext arg1) throws ActionException {
-		// TODO Auto-generated method stub
-		return null;
+		reposManager.setReadWrite(arg0.getProject(), 
+				groupManager.getGroup(arg0.getUsername()), 
+				arg0.isCanWrite() ? ACCESS.WRITE : arg0.isCanRead() ? ACCESS.READ : ACCESS.NONE);
+		return new MessageResult("", "Permissions Changed");
 	}
 
 	@Override

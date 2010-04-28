@@ -25,8 +25,8 @@ public class ProjectRemoveUserSubscriptionHandler implements ActionHandler<Proje
 	@Override
 	public MessageResult execute(ProjectRemoveUserSubscription arg0,
 			ExecutionContext arg1) throws ActionException {
-		// TODO Auto-generated method stub
-		return null;
+		reposManager.unsubscribe(arg0.getProject(), userManager.getUserForName(arg0.getMemberName()));
+		return new MessageResult("", "Subscription Removed");
 	}
 
 	@Override

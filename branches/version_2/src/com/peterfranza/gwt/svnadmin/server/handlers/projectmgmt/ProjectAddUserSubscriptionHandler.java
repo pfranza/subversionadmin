@@ -25,8 +25,8 @@ public class ProjectAddUserSubscriptionHandler implements ActionHandler<ProjectA
 	@Override
 	public MessageResult execute(ProjectAddUserSubscription arg0,
 			ExecutionContext arg1) throws ActionException {
-		// TODO Auto-generated method stub
-		return null;
+		reposManager.subscribe(arg0.getProject(), userManager.getUserForName(arg0.getMemberName()));
+		return new MessageResult("", "Subscription Added");
 	}
 
 	@Override
