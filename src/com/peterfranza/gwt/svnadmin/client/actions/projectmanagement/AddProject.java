@@ -1,8 +1,10 @@
-package com.peterfranza.gwt.svnadmin.client.actions;
+package com.peterfranza.gwt.svnadmin.client.actions.projectmanagement;
+
+import com.peterfranza.gwt.svnadmin.client.actions.MessageResult;
 
 import net.customware.gwt.dispatch.shared.Action;
 
-public class AddProjectRequest implements Action<MessageResult>{
+public class AddProject implements Action<MessageResult>{
 
 	/**
 	 * 
@@ -11,12 +13,12 @@ public class AddProjectRequest implements Action<MessageResult>{
 
 	private String projectPath;
 
-	public AddProjectRequest(String projectPath) {
+	public AddProject(String projectPath) {
 		super();
 		this.projectPath = projectPath;
 	}
 
-	public AddProjectRequest() {}
+	public AddProject() {}
 	
 	public String getProjectPath() {
 		return projectPath;

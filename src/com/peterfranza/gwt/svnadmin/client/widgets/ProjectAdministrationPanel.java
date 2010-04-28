@@ -13,9 +13,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.peterfranza.gwt.svnadmin.client.SubversionAdministrator;
-import com.peterfranza.gwt.svnadmin.client.actions.AddProjectRequest;
 import com.peterfranza.gwt.svnadmin.client.actions.MessageResultHandler;
-import com.peterfranza.gwt.svnadmin.client.actions.ScanProjectsRequest;
+import com.peterfranza.gwt.svnadmin.client.actions.projectmanagement.AddProject;
+import com.peterfranza.gwt.svnadmin.client.actions.projectmanagement.ScanProjectsRequest;
 import com.peterfranza.gwt.svnadmin.client.res.Resources;
 
 public class ProjectAdministrationPanel extends ContentPanel {
@@ -47,7 +47,7 @@ public class ProjectAdministrationPanel extends ContentPanel {
 				box.addCallback(new Listener<MessageBoxEvent>() {  
 					public void handleEvent(MessageBoxEvent be) {  
 						SubversionAdministrator.dispatcher.execute(
-								new AddProjectRequest(be.getValue()), new MessageResultHandler());
+								new AddProject(be.getValue()), new MessageResultHandler());
 					}  
 				});  
 			}
