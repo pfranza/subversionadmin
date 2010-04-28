@@ -90,6 +90,14 @@ public class GroupAdministrationPanel extends ContentPanel {
 			}
 		});
 		
+		modGroup.addSelectionListener(new SelectionListener<ButtonEvent>() {
+			
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				new GroupMembersWindow(groupList.getItemText(groupList.getSelectedIndex())).show();
+			}
+		});
+		
 	}
 	
 	private void refresh() {
