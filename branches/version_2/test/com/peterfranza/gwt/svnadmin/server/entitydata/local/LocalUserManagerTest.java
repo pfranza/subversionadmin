@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateBeanRegistry;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
+import com.peterfranza.gwt.svnadmin.server.datastore.SessionFactory;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
 import com.peterfranza.gwt.svnadmin.server.util.NoCrypt;
 import com.peterfranza.gwt.svnadmin.server.util.NullWriter;
@@ -19,7 +20,7 @@ public class LocalUserManagerTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-		userManager = new LocalUserManager(new NoCrypt(), new HibernateSessionFactory(
+		userManager = new LocalUserManager(new NoCrypt(), new SessionFactory(new HibernateSessionFactory(
 				new InMemoryDatabaseParams("test"), new HibernateBeanRegistry() {				
 					@Override
 					public Collection<Class<?>> getBeans() {
@@ -27,7 +28,7 @@ public class LocalUserManagerTest extends TestCase {
 						l.add(HbmUserImpl.class);
 						return l;
 					}
-				}), new NullWriter());
+				})), new NullWriter());
 	}
 	
 	public void testCreateUser() throws Exception {
@@ -100,7 +101,7 @@ public class LocalUserManagerTest extends TestCase {
 	
 	public void testFailSetEmail() throws Exception {
 		try {
-			userManager.setEmailAddress("badUser", "test@email.com");
+			userManager.setEmailAddress("badUser2", "test@email.com");
 			fail();
 		} catch (RuntimeException e) {}
 	}

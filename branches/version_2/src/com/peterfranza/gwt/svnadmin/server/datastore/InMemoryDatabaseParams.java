@@ -2,7 +2,7 @@ package com.peterfranza.gwt.svnadmin.server.datastore;
 
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Environment;
-import org.hibernate.context.ThreadLocalSessionContext;
+import org.hibernate.context.ManagedSessionContext;
 import org.hibernate.dialect.HSQLDialect;
 
 import com.google.inject.Inject;
@@ -25,7 +25,7 @@ public class InMemoryDatabaseParams implements PersistanceSubConfiguration {
 
 		config
 		.setProperty(Environment.DIALECT, HSQLDialect.class.getName())
-		.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS,	ThreadLocalSessionContext.class.getName())
+		.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS,	ManagedSessionContext.class.getName())
 		.setProperty(Environment.HBM2DDL_AUTO, hbm2ddl)
 		.setProperty("hibernate.connection.driver_class", "org.hsqldb.jdbcDriver")
 

@@ -5,11 +5,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 @Singleton
-public class HibernateSessionFactory implements Provider<Session> {
+public class HibernateSessionFactory {
 
 	private final PersistanceSubConfiguration configurator;
 	private SessionFactory sessionFactory;
@@ -37,8 +36,7 @@ public class HibernateSessionFactory implements Provider<Session> {
 		return sessionFactory;
 	}
 
-	@Override
-	public Session get() {
+	public Session getSession() {
 		return getFactory().openSession();
 	}
 	

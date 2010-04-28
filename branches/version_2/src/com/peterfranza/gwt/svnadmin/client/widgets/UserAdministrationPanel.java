@@ -8,6 +8,8 @@ import com.extjs.gxt.ui.client.widget.ContentPanel;
 import com.extjs.gxt.ui.client.widget.MessageBox;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ListBox;
 import com.peterfranza.gwt.svnadmin.client.SubversionAdministrator;
@@ -15,6 +17,7 @@ import com.peterfranza.gwt.svnadmin.client.actions.MessageResult;
 import com.peterfranza.gwt.svnadmin.client.actions.MessageResultHandler;
 import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.CreateUser;
 import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.ListUsers;
+import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.RemoveUser;
 import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.ListUsers.UserList;
 
 public class UserAdministrationPanel extends ContentPanel {
@@ -37,6 +40,14 @@ public class UserAdministrationPanel extends ContentPanel {
 		addButton(delUser);
 		refresh();
 		
+		userList.addChangeHandler(new ChangeHandler() {			
+			@Override
+			public void onChange(ChangeEvent event) {
+				modUser.setEnabled(userList.getSelectedIndex() != -1);
+				delUser.setEnabled(userList.getSelectedIndex() != -1);
+			}
+		});
+		
 		addUser.addSelectionListener(new SelectionListener<ButtonEvent>() {
 			
 			@Override
@@ -57,10 +68,34 @@ public class UserAdministrationPanel extends ContentPanel {
 			}
 		});
 		
+		delUser.addSelectionListener(new SelectionListener<ButtonEvent>() {
+			
+			@Override
+			public void componentSelected(ButtonEvent ce) {
+				MessageBox.confirm("Confirm", "Are you sure you want to do that?", new Listener<MessageBoxEvent>() {
+					
+					@Override
+					public void handleEvent(MessageBoxEvent be) {
+						SubversionAdministrator.dispatcher.execute(
+								new RemoveUser(userList.getItemText(userList.getSelectedIndex())), 
+								new MessageResultHandler(){
+									@Override
+									public void onSuccess(MessageResult result) {
+										super.onSuccess(result);
+										refresh();
+									}
+								});
+					}
+				});
+			}
+		});
+		
 	}
 	
 	private void refresh() {
 		userList.clear();
+		modUser.setEnabled(false);
+		delUser.setEnabled(false);
 		SubversionAdministrator.dispatcher.execute(new ListUsers(), new AsyncCallback<UserList>() {
 			@Override
 			public void onFailure(Throwable caught) {

@@ -9,9 +9,9 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
 import com.peterfranza.gwt.svnadmin.server.MockRepositoryManager;
-import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
 import com.peterfranza.gwt.svnadmin.server.datastore.PersistanceSubConfiguration;
+import com.peterfranza.gwt.svnadmin.server.datastore.SessionFactory;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.ProjectDataWriter;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
@@ -26,7 +26,7 @@ public class ModulesTest extends TestCase {
 			@Override
 			protected void configure() {
 				bind(PersistanceSubConfiguration.class).toInstance(new InMemoryDatabaseParams("test"));
-				bind(Session.class).toProvider(HibernateSessionFactory.class);
+				bind(Session.class).toProvider(SessionFactory.class);
 				
 				bind(ConfigFileWriter.class).annotatedWith(Names.named("passwordFile")).toInstance(new NullWriter());
 				bind(ConfigFileWriter.class).annotatedWith(Names.named("authorsFile")).toInstance(new NullWriter());
