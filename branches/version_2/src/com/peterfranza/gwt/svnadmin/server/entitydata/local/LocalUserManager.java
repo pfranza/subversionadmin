@@ -166,7 +166,6 @@ public class LocalUserManager implements UserManager{
 		T value = null;
 		value = visitor.transact(s);
 		tx.commit();
-		s.close();
 		return value;		
 	}
 	

@@ -11,8 +11,8 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
 import com.google.inject.servlet.ServletModule;
-import com.peterfranza.gwt.svnadmin.server.datastore.HSqlDbParams;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateModule;
+import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
 import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalGroupModule;
 import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalUserModule;
 import com.peterfranza.gwt.svnadmin.server.handlers.HandlerBinding;
@@ -31,7 +31,7 @@ public class ServerInjectorFactory {
 		modules.add(new LocalGroupModule());
 		modules.add(new HandlerBinding());
 		modules.add(new MailerModule("mail", "svn@test.com"));
-		modules.add(new HibernateModule("subversionAdmin", HSqlDbParams.class));
+		modules.add(new HibernateModule("subversionAdmin", InMemoryDatabaseParams.class));
 		modules.add(new ServletModule() {
 			@Override
 			protected void configureServlets() {

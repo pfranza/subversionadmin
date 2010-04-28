@@ -138,7 +138,6 @@ public class LocalGroupManager implements GroupManager {
 		T value = null;
 		value = visitor.transact(s);
 		tx.commit();
-		s.close();
 		return value;		
 	}
 	
