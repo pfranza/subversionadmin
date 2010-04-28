@@ -2,6 +2,11 @@ package com.peterfranza.gwt.svnadmin.server.handlers;
 
 import net.customware.gwt.dispatch.server.guice.ActionHandlerModule;
 
+import com.peterfranza.gwt.svnadmin.server.handlers.groupmgmt.AddUserToGroupHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.groupmgmt.CreateGroupHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.groupmgmt.ListGroupHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.groupmgmt.RemoveGroupHandler;
+import com.peterfranza.gwt.svnadmin.server.handlers.groupmgmt.RemoveUserFromGroupHandler;
 import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.AddProjectHandler;
 import com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt.ScanProjectHandler;
 import com.peterfranza.gwt.svnadmin.server.handlers.usermgmt.ChangeUserEmailHandler;
@@ -29,6 +34,12 @@ public class HandlerBinding extends ActionHandlerModule {
 		bindHandler(FetchUserDetailsHandler.class);
 		bindHandler(ListUsersHandler.class);
 		bindHandler(RemoveUserHandler.class);
+		
+		bindHandler(AddUserToGroupHandler.class);
+		bindHandler(CreateGroupHandler.class);
+		bindHandler(ListGroupHandler.class);
+		bindHandler(RemoveGroupHandler.class);
+		bindHandler(RemoveUserFromGroupHandler.class);
 	}
 
 }
