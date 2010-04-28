@@ -33,16 +33,23 @@ public class ListProjectMembers implements Action<ListProjectMembers.MembersList
 		 */
 		private static final long serialVersionUID = 8685394047867362720L;
 		
-		private ArrayList<String> names;
+		private ArrayList<String> readers;
+		private ArrayList<String> writers;
 		
-		public MembersList(ArrayList<String> names) {
-			this.names = names;
+		public MembersList(ArrayList<String> readers,
+				ArrayList<String> writers) {
+			this.readers = readers;
+			this.writers = writers;
 		}
 		
 		protected MembersList() {}
 		
-		public ArrayList<String> getMemberNames() {
-			return names;
+		public ArrayList<String> getReaders() {
+			return readers;
+		}
+		
+		public ArrayList<String> getWriters() {
+			return writers;
 		}
 	}
 	

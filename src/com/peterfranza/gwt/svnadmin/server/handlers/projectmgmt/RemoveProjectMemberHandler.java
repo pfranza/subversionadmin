@@ -9,6 +9,7 @@ import com.peterfranza.gwt.svnadmin.client.actions.MessageResult;
 import com.peterfranza.gwt.svnadmin.client.actions.projectmanagement.RemoveProjectMember;
 import com.peterfranza.gwt.svnadmin.server.entitydata.GroupManager;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
+import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager.ACCESS;
 
 public class RemoveProjectMemberHandler implements ActionHandler<RemoveProjectMember, MessageResult>{
 
@@ -25,8 +26,10 @@ public class RemoveProjectMemberHandler implements ActionHandler<RemoveProjectMe
 	@Override
 	public MessageResult execute(RemoveProjectMember arg0, ExecutionContext arg1)
 			throws ActionException {
-		// TODO Auto-generated method stub
-		return null;
+		reposManager.setReadWrite(arg0.getProject(), 
+				groupManager.getGroup(arg0.getMemberName()),
+				ACCESS.NONE);
+		return new MessageResult("", "Access Revoked");
 	}
 
 	@Override
