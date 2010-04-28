@@ -193,7 +193,6 @@ public class SvnRepositoryManager implements RepositoryManager {
 		T value = null;
 		value = visitor.transact(s);
 		tx.commit();
-		s.close();
 		return value;		
 	}
 	

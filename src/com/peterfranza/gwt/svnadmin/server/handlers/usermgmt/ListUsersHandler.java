@@ -13,7 +13,7 @@ import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.ListUsers.User
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
 
-public class ListUsersHandler implements ActionHandler<ListUsers, ListUsers.UserList>{
+public class ListUsersHandler implements ActionHandler<ListUsers, UserList>{
 
 	private UserManager userManager;
 
@@ -33,6 +33,7 @@ public class ListUsersHandler implements ActionHandler<ListUsers, ListUsers.User
 		for(User u: users) {
 			l.add(u.getName());
 		}
+		System.out.println("Listed " + l.size());
 		return l;
 	}
 
