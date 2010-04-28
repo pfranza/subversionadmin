@@ -21,7 +21,7 @@ public class HibernateModule extends AbstractModule {
 	protected void configure() {
 		bind(String.class).annotatedWith(Names.named("DatabaseName")).toInstance(databaseName);
 		bind(PersistanceSubConfiguration.class).to(configClass);
-		bind(Session.class).toProvider(HibernateSessionFactory.class).asEagerSingleton();		
+		bind(Session.class).toProvider(SessionFactory.class);		
 	}
 
 }

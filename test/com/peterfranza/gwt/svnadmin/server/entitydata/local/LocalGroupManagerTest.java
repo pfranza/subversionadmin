@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateBeanRegistry;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
+import com.peterfranza.gwt.svnadmin.server.datastore.SessionFactory;
 import com.peterfranza.gwt.svnadmin.server.entitydata.Entity;
 import com.peterfranza.gwt.svnadmin.server.entitydata.Group;
 import com.peterfranza.gwt.svnadmin.server.entitydata.GroupManager;
@@ -36,9 +37,9 @@ public class LocalGroupManagerTest extends TestCase {
 					}
 				});
 		
-		userManager = new LocalUserManager(new NoCrypt(), hbm, new NullWriter());
+		userManager = new LocalUserManager(new NoCrypt(), new SessionFactory(hbm), new NullWriter());
 		
-		groupManager = new LocalGroupManager(hbm, userManager, new ProjectDataWriter() {
+		groupManager = new LocalGroupManager(new SessionFactory(hbm), userManager, new ProjectDataWriter() {
 			@Override
 			public void saveData() {}
 		});

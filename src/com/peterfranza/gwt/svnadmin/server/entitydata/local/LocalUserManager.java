@@ -160,12 +160,19 @@ public class LocalUserManager implements UserManager{
 		void modifyUser(HbmUserImpl user);
 	}
 	
-	private <T> T transact(TransactionVisitor<T> visitor) {
+	private synchronized <T> T transact(TransactionVisitor<T> visitor) {
 		Session s = sessionProvider.get();
 		Transaction tx = s.beginTransaction();
 		T value = null;
-		value = visitor.transact(s);
-		tx.commit();
+		try {
+			value = visitor.transact(s);
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+			throw new RuntimeException(e);
+		} finally {
+			s.close();	
+		}
 		return value;		
 	}
 	

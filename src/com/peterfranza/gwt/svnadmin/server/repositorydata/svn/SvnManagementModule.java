@@ -27,7 +27,7 @@ public class SvnManagementModule extends AbstractModule {
 	}
 	
 	protected void configure() {
-		bind(RepositoryManager.class).to(SvnRepositoryManager.class);
+		bind(RepositoryManager.class).to(SvnRepositoryManager.class).asEagerSingleton();
 		bind(SVNRepository.class).toProvider(RepositoryFactory.class);
 		bind(ProjectDataWriter.class).to(DefaultProjectDataWriter.class);
 		

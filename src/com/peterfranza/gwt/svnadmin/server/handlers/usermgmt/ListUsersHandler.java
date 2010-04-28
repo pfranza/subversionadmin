@@ -33,7 +33,6 @@ public class ListUsersHandler implements ActionHandler<ListUsers, UserList>{
 		for(User u: users) {
 			l.add(u.getName());
 		}
-		System.out.println("Listed " + l.size());
 		return l;
 	}
 

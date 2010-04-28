@@ -9,6 +9,7 @@ import junit.framework.TestCase;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateBeanRegistry;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateSessionFactory;
 import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
+import com.peterfranza.gwt.svnadmin.server.datastore.SessionFactory;
 import com.peterfranza.gwt.svnadmin.server.entitydata.Entity;
 import com.peterfranza.gwt.svnadmin.server.entitydata.Group;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
@@ -43,7 +44,7 @@ public class SvnRepositoryManagerTest extends TestCase {
 				list.add("proj3/");
 				return list;
 			}
-		}, hbm, new ProjectDataWriter() {			
+		}, new SessionFactory(hbm), new ProjectDataWriter() {			
 			@Override
 			public void saveData() {}
 		});
