@@ -1,4 +1,4 @@
-package com.peterfranza.gwt.svnadmin.server.handlers;
+package com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt;
 
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
