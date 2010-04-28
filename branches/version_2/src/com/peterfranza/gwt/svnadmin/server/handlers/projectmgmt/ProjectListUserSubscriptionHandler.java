@@ -1,5 +1,7 @@
 package com.peterfranza.gwt.svnadmin.server.handlers.projectmgmt;
 
+import java.util.ArrayList;
+
 import net.customware.gwt.dispatch.server.ActionHandler;
 import net.customware.gwt.dispatch.server.ExecutionContext;
 import net.customware.gwt.dispatch.shared.ActionException;
@@ -7,7 +9,9 @@ import net.customware.gwt.dispatch.shared.ActionException;
 import com.google.inject.Inject;
 import com.peterfranza.gwt.svnadmin.client.actions.projectmanagement.ProjectListUserSubscriptions;
 import com.peterfranza.gwt.svnadmin.client.actions.projectmanagement.ProjectListUserSubscriptions.SubscriptionList;
+import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
+import com.peterfranza.gwt.svnadmin.server.repositorydata.Project;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
 
 public class ProjectListUserSubscriptionHandler implements ActionHandler<ProjectListUserSubscriptions, ProjectListUserSubscriptions.SubscriptionList>{
@@ -25,8 +29,17 @@ public class ProjectListUserSubscriptionHandler implements ActionHandler<Project
 	@Override
 	public SubscriptionList execute(ProjectListUserSubscriptions arg0,
 			ExecutionContext arg1) throws ActionException {
-		// TODO Auto-generated method stub
-		return null;
+		return new SubscriptionList(asStrings(reposManager.getProjectForName(arg0.getProject())));
+	}
+
+	private ArrayList<String> asStrings(Project p) {
+		ArrayList<String> l = new ArrayList<String>();
+		for(User s: userManager.getUsers()) {
+			if(reposManager.isSubscribed(p.getPath(), s)) {
+				l.add(s.getName());
+			}
+		}
+		return l;
 	}
 
 	@Override
