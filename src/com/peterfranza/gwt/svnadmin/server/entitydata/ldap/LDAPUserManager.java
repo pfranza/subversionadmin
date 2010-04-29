@@ -141,14 +141,4 @@ public class LDAPUserManager implements UserManager {
 		return false;
 	}
 	
-	public static void main(String[] args) {
-		LDAPUserManager um = new LDAPUserManager("ldap://192.168.100.200", 
-				"svn.user@openroadsconsulting.com", 
-				"1B.5ubv3r$ion", 
-				"SvnAdmin");
-		for(User u: um.getUsers()) {
-			System.out.println(u.getName() + "  " + u.getEmailAddress() + " " + u.isAdministrator());
-		}
-	}
-	
 }
