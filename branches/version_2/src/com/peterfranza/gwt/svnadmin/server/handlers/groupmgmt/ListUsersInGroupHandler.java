@@ -31,7 +31,9 @@ public class ListUsersInGroupHandler implements ActionHandler<ListUsersInGroup, 
 	private ArrayList<String> asStrings(Collection<Entity> members) {
 		ArrayList<String> l = new ArrayList<String>();
 		for(Entity u: members) {
-			l.add(u.getName());
+			if(u != null) {
+				l.add(u.getName());
+			}
 		}
 		return l;
 	}
