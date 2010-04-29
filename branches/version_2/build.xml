@@ -1,0 +1,54 @@
+<project name="SubversionAdministrator" default="compile_war">
+
+	<property name="gwt.home" location="../buildTools/gwt2.0.3" />
+	
+    <path id="library.gwt-user.classpath">
+         <pathelement location="${gwt.home}/gwt-user.jar" />
+    </path>
+	
+    <path id="client.compile.classpath">        
+         <fileset dir="war/WEB-INF/lib" includes="**/*.jar"/>
+         <path refid="library.gwt-user.classpath" />
+         <path refid="library.gwt-dev.classpath" />
+         <pathelement location="src" />
+     </path>
+	
+	<target name="compile_base">		
+	        <echo>${gwt.home}</echo>
+
+	        <path id="library.gwt-dev.classpath">
+	            <fileset dir="${gwt.home}" includes="gwt-dev.jar" />
+	        </path>
+
+	        <delete dir="war/WEB-INF/classes" failonerror="false" />	       
+	        <mkdir dir="war/WEB-INF/classes" />
+	        
+	        <javac target="1.6" srcdir="src" destdir="war/WEB-INF/classes" 
+	            classpathref="client.compile.classpath" />
+
+	        <copy todir="war/WEB-INF/classes">
+	          <fileset dir="src" excludes="**/*.java"/>
+	        </copy>
+		</target> 
+		
+		<target name="compile_war">
+	          <path id="gwt.cp">        
+	                <pathelement location="war/WEB-INF/classes" />
+	                <path refid="client.compile.classpath" />
+	            </path>
+			
+			<!--
+	        <delete dir="war/subversionadministrator" failonerror="false" />
+	        <java fork="true" classpathref="gwt.cp"
+	            classname="com.google.gwt.dev.Compiler">
+	            <jvmarg line="-Xmx256m" />
+	            <arg line="-war war" />
+	            <arg line="com.peterfranza.gwt.svnadmin.SubversionAdministrator" />
+	        </java>
+	        -->
+
+	        <zip destfile="subversionadministrator.war" basedir="war"/>		
+	</target>
+
+	
+</project>
