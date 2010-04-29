@@ -49,7 +49,12 @@ public class LoginWindow extends Window{
 										RootPanel.get().add(viewport);
 										hide(ce.getButton());
 									} else {
-										//TODO show change password dialog
+										if(SubversionAdministrator.result.getLocalAccounts()) {
+											hide(ce.getButton());
+											new ChangePasswordWindow(result).show();
+										} else {
+											com.google.gwt.user.client.Window.alert("Only admins can login");
+										}
 									}
 								} else {
 									com.google.gwt.user.client.Window.alert("Authentication Failed");
