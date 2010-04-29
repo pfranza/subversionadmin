@@ -25,7 +25,7 @@ public class ServerInjectorFactory {
 	private List<Module> modules = new ArrayList<Module>();
 	
 	{
-		modules.add(new SvnManagementModule("http://svn/svn", "hudson", "ib.hudson", new ConfigFileWriter(new File("svnauthorz"))));
+		modules.add(new SvnManagementModule("http://subversionadmin.googlecode.com/svn/", "", "", new ConfigFileWriter(new File("svnauthorz"))));
 		modules.add(new LocalUserModule(new ConfigFileWriter(new File("svnpasswordz"))));
 //		modules.add(new LDAPUserModule("", "", "", ""));
 		modules.add(new LocalGroupModule());
