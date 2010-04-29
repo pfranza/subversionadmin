@@ -84,7 +84,8 @@ public class CachedUserManager implements UserManager{
 	}
 	
 	public void invalidate() {
-		
+		setCache = null;
+		userCache.clear();
 	}
 	
 	private static class CacheEntry<T> {
