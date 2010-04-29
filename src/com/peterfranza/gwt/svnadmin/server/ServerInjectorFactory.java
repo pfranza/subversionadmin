@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.Configuration;
+
 import net.customware.gwt.dispatch.server.service.DispatchServiceServlet;
 
 import com.google.inject.Guice;
@@ -25,6 +27,8 @@ public class ServerInjectorFactory {
 	private List<Module> modules = new ArrayList<Module>();
 	
 	{
+		final Configuration cfg = ConfigurationFactory.getConfig();
+		
 		modules.add(new SvnManagementModule("http://subversionadmin.googlecode.com/svn/", "", "", new ConfigFileWriter(new File("svnauthorz"))));
 		modules.add(new LocalUserModule(new ConfigFileWriter(new File("svnpasswordz"))));
 //		modules.add(new LDAPUserModule("", "", "", ""));
@@ -35,6 +39,7 @@ public class ServerInjectorFactory {
 		modules.add(new ServletModule() {
 			@Override
 			protected void configureServlets() {
+				bind(Configuration.class).toInstance(cfg);
 				serve("/subversionadministrator/dispatch" ).with( DispatchServiceServlet.class );
 			}
 		});
