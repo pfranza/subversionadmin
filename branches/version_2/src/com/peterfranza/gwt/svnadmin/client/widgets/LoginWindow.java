@@ -30,8 +30,9 @@ public class LoginWindow extends Window{
 			
 			@Override
 			public void componentSelected(final ButtonEvent ce) {
+				final String username = panel.getUsername();
 				SubversionAdministrator.dispatcher.execute(
-						new AuthenticationRequest(panel.getUsername(), panel.getPassword()),
+						new AuthenticationRequest(username, panel.getPassword()),
 						new AsyncCallback<AuthenticationResult>() {
 
 							@Override
@@ -51,7 +52,7 @@ public class LoginWindow extends Window{
 									} else {
 										if(SubversionAdministrator.result.getLocalAccounts()) {
 											hide(ce.getButton());
-											new ChangePasswordWindow(result).show();
+											new ChangePasswordWindow(username).show();
 										} else {
 											com.google.gwt.user.client.Window.alert("Only admins can login");
 										}
