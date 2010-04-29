@@ -12,6 +12,7 @@ import com.peterfranza.gwt.svnadmin.server.entitydata.Entity;
 import com.peterfranza.gwt.svnadmin.server.entitydata.Group;
 import com.peterfranza.gwt.svnadmin.server.entitydata.GroupManager;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
+import com.peterfranza.gwt.svnadmin.server.entitydata.cache.CachedUserManager;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.ProjectDataWriter;
 
 public class LocalGroupManager implements GroupManager {
@@ -28,7 +29,7 @@ public class LocalGroupManager implements GroupManager {
 		ProjectDataWriter dataWriter) {
 		this.sessionProvider = sessionProvider;
 		this.dataWriter = dataWriter;
-		this.userManager = userManager;
+		this.userManager = new CachedUserManager(userManager, 30000);
 	}
 
 

@@ -11,6 +11,7 @@ import com.peterfranza.gwt.svnadmin.server.entitydata.Group;
 import com.peterfranza.gwt.svnadmin.server.entitydata.GroupManager;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
+import com.peterfranza.gwt.svnadmin.server.entitydata.cache.CachedUserManager;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.Project;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.ProjectDataWriter;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
@@ -28,7 +29,7 @@ public class DefaultProjectDataWriter implements ProjectDataWriter {
 			GroupManager groupManager,
 			@Named("authorsFile") ConfigFileWriter authorsFileWriter,
 			RepositoryManager reposManager) {
-		this.userManager = userManager;
+		this.userManager = new CachedUserManager(userManager, 30000);
 		this.groupManager = groupManager;
 		this.authorsFileWriter = authorsFileWriter;
 		this.reposManager = reposManager;
@@ -38,9 +39,11 @@ public class DefaultProjectDataWriter implements ProjectDataWriter {
 		StringBuffer buf = new StringBuffer();
 		for (Iterator<User> iterator = users.iterator(); iterator.hasNext();) {
 			User user = iterator.next();
-			buf.append(user.getName());
-			if(iterator.hasNext()) {
-				buf.append(", ");
+			if(user != null) {
+				buf.append(user.getName());
+				if(iterator.hasNext()) {
+					buf.append(", ");
+				}
 			}
 		}
 		return buf.toString();
@@ -62,8 +65,9 @@ public class DefaultProjectDataWriter implements ProjectDataWriter {
 	public void saveData() {
 		StringBuffer buf = new StringBuffer();
 		
+		buf.append("[groups]").append(System.getProperty("line.separator"));
 		for(Group u: groupManager.getGroups()) {
-			buf.append("@").append(u.getName()).append(" = ").append(implode(asUsers(u))).append(System.getProperty("line.separator"));
+			buf.append(u.getName()).append(" = ").append(implode(asUsers(u))).append(System.getProperty("line.separator"));
 		}
 		
 		buf.append(System.getProperty("line.separator"));
@@ -82,11 +86,11 @@ public class DefaultProjectDataWriter implements ProjectDataWriter {
 			buf.append("["+p.getPath()+"]").append(System.getProperty("line.separator"));
 			for(Group u: groupManager.getGroups()) {
 				if(reposManager.canWrite(p.getPath(), u)) {
-					buf.append(u.getName()).append(" = rw").append(System.getProperty("line.separator"));
+					buf.append("@").append(u.getName()).append(" = rw").append(System.getProperty("line.separator"));
 				} else if(reposManager.canRead(p.getPath(), u)) {
-					buf.append(u.getName()).append(" = r").append(System.getProperty("line.separator"));
+					buf.append("@").append(u.getName()).append(" = r").append(System.getProperty("line.separator"));
 				} else {
-					buf.append(u.getName()).append(" = ").append(System.getProperty("line.separator"));
+					buf.append("@").append(u.getName()).append(" = ").append(System.getProperty("line.separator"));
 				}
 			}
 			for(User u: userManager.getUsers()) {

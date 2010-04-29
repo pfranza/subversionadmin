@@ -9,6 +9,7 @@ import com.peterfranza.gwt.svnadmin.client.actions.AuthenticationRequest;
 import com.peterfranza.gwt.svnadmin.client.actions.AuthenticationRequest.AuthenticationResult;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
+import com.peterfranza.gwt.svnadmin.server.entitydata.cache.CachedUserManager;
 
 public class AuthenticationHandler implements ActionHandler<AuthenticationRequest, AuthenticationResult>{
 
@@ -16,7 +17,7 @@ public class AuthenticationHandler implements ActionHandler<AuthenticationReques
 
 	@Inject
 	public AuthenticationHandler(UserManager userManager) {
-		this.userManager = userManager;
+		this.userManager = new CachedUserManager(userManager, 30000);
 	}
 	
 	@Override
