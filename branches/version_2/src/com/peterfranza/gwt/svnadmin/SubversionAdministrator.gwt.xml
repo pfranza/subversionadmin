@@ -13,6 +13,7 @@
 
   <!-- Other module inherits                                      -->
   <inherits name='com.extjs.gxt.ui.GXT'/>
+  <inherits name='net.customware.gwt.presenter.Presenter' />
   <inherits name='net.customware.gwt.dispatch.Dispatch' />
   <inherits name='com.google.gwt.inject.Inject'/>
   <!-- Specify the app entry point class.                         -->

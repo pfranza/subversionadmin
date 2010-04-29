@@ -8,6 +8,7 @@ import com.extjs.gxt.ui.client.widget.layout.FitLayout;
 import com.extjs.gxt.ui.client.widget.layout.MarginData;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.peterfranza.gwt.svnadmin.client.ErrorHandler;
 import com.peterfranza.gwt.svnadmin.client.SubversionAdministrator;
 import com.peterfranza.gwt.svnadmin.client.actions.AuthenticationRequest;
 import com.peterfranza.gwt.svnadmin.client.actions.AuthenticationRequest.AuthenticationResult;
@@ -37,7 +38,7 @@ public class LoginWindow extends Window{
 
 							@Override
 							public void onFailure(Throwable caught) {
-								caught.printStackTrace();
+								ErrorHandler.onFailure(caught);
 							}
 
 							@Override
