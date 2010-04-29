@@ -15,7 +15,7 @@ public class HibernateModule extends AbstractModule {
 			Class<? extends PersistanceSubConfiguration> configClass) {
 		super();
 		this.databaseName = databaseName;
-		this.databaseHome = databaseHome;
+		this.databaseHome = databaseHome + "/db";
 		this.configClass = configClass;
 	}
 
