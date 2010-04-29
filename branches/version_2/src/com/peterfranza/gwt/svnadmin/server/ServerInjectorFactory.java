@@ -4,17 +4,20 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.configuration.Configuration;
+import javax.servlet.ServletContext;
 
 import net.customware.gwt.dispatch.server.service.DispatchServiceServlet;
+
+import org.apache.commons.configuration.Configuration;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Stage;
 import com.google.inject.servlet.ServletModule;
+import com.peterfranza.gwt.svnadmin.server.datastore.HSqlDbParams;
 import com.peterfranza.gwt.svnadmin.server.datastore.HibernateModule;
-import com.peterfranza.gwt.svnadmin.server.datastore.InMemoryDatabaseParams;
+import com.peterfranza.gwt.svnadmin.server.entitydata.ldap.LDAPUserModule;
 import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalGroupModule;
 import com.peterfranza.gwt.svnadmin.server.entitydata.local.LocalUserModule;
 import com.peterfranza.gwt.svnadmin.server.handlers.HandlerBinding;
@@ -26,16 +29,40 @@ public class ServerInjectorFactory {
 
 	private List<Module> modules = new ArrayList<Module>();
 	
-	{
-		final Configuration cfg = ConfigurationFactory.getConfig();
+	public ServerInjectorFactory(ServletContext servletContext){
+		final Configuration cfg = new ConfigurationFactory(servletContext).get();
 		
-		modules.add(new SvnManagementModule("http://subversionadmin.googlecode.com/svn/", "", "", new ConfigFileWriter(new File("svnauthorz"))));
-		modules.add(new LocalUserModule(new ConfigFileWriter(new File("svnpasswordz"))));
-//		modules.add(new LDAPUserModule("", "", "", ""));
+		modules.add(new SvnManagementModule(
+				cfg.getString("svnadministrator.svn.url"),
+				cfg.getString("svnadministrator.svn.username", ""),
+				cfg.getString("svnadministrator.svn.password", ""),
+				new ConfigFileWriter(new File(cfg.getString("svnadministrator.svn.authorsfile")))));
+		
+		if(cfg.getBoolean("svnadministrator.users.useActiveDirectory", false)) {
+			modules.add(new LDAPUserModule(
+					cfg.getString("svnadministrator.users.ad.url"), 
+					cfg.getString("svnadministrator.users.ad.username", ""), 
+					cfg.getString("svnadministrator.users.ad.password", ""), 
+					cfg.getString("svnadministrator.users.ad.admingroup", "")));
+		} else {
+			modules.add(new LocalUserModule(new ConfigFileWriter(
+					new File(cfg.getString("svnadministrator.svn.passwordsfile")))));
+		}
+		
+		if(cfg.getBoolean("svnadministrator.email.enable", true)) {
+			modules.add(new MailerModule(
+					cfg.getString("svnadministrator.email.smtpserver", "mail"), 
+					cfg.getString("svnadministrator.email.defaultsender", "svn-changes@localhost.com")));
+		}
+		
+		
+		modules.add(new HibernateModule(
+				"SubversionAdminData",
+				cfg.getString("svnadministrator.config.home", System.getProperty("user.dir")),
+				HSqlDbParams.class));
+		
 		modules.add(new LocalGroupModule());
 		modules.add(new HandlerBinding());
-		modules.add(new MailerModule("mail", "svn@test.com"));
-		modules.add(new HibernateModule("subversionAdmin", InMemoryDatabaseParams.class));
 		modules.add(new ServletModule() {
 			@Override
 			protected void configureServlets() {

@@ -15,16 +15,19 @@ public class HSqlDbParams implements PersistanceSubConfiguration {
 	private final String hbm2ddl = "update"; //"validate";
 	private final String username = "sa";
 	private final String password = "";
+	private String home;
 
 	@Inject
-	public HSqlDbParams(@Named("DatabaseName") String name) {
+	public HSqlDbParams(@Named("DatabaseName") String name,
+			@Named("DatabaseHome") String home) {
 		dbName = name;
+		this.home = home;
 	}
 
 	@Override
 	public void configure(AnnotationConfiguration config) {
 
-		File f = new File(new File(System.getProperty("user.dir")), dbName);
+		File f = new File(new File(home), dbName);
 		config.setProperty(Environment.DIALECT, HSQLDialect.class.getName())
 		.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS,
 		"org.hibernate.context.ThreadLocalSessionContext")

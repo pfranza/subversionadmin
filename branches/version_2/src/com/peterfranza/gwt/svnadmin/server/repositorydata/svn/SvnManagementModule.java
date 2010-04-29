@@ -24,6 +24,9 @@ public class SvnManagementModule extends AbstractModule {
 		this.repositoryUsername = repositoryUsername;
 		this.authorzWriter = authorzWriter;
 		this.repositoryPassword = repositoryPassword;
+		
+		System.out.println("Managing Repository " + repositoryUsername + "@" + repositoryUrl);
+		
 	}
 	
 	protected void configure() {
