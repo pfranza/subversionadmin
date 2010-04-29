@@ -63,7 +63,7 @@ public class DefaultProjectDataWriter implements ProjectDataWriter {
 		StringBuffer buf = new StringBuffer();
 		
 		for(Group u: groupManager.getGroups()) {
-			buf.append(u.getName()).append(" = ").append(implode(asUsers(u))).append(System.getProperty("line.separator"));
+			buf.append("@").append(u.getName()).append(" = ").append(implode(asUsers(u))).append(System.getProperty("line.separator"));
 		}
 		
 		buf.append(System.getProperty("line.separator"));
