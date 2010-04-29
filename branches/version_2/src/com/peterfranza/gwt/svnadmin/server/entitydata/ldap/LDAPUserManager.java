@@ -6,6 +6,7 @@ import java.util.Hashtable;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
@@ -74,14 +75,7 @@ public class LDAPUserManager implements UserManager {
 	@Override
 	public Collection<LDAPUser> getUsers() {
         try {           
-            Hashtable<String, String> env = new Hashtable<String, String>();
-            env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-            env.put(Context.PROVIDER_URL, url);
-            env.put(Context.REFERRAL, "follow");         
-    		env.put(Context.SECURITY_AUTHENTICATION, "simple");
-    		env.put(Context.SECURITY_PRINCIPAL, ldapUsername);
-    		env.put(Context.SECURITY_CREDENTIALS, ldapPassword);           
-            DirContext context = new InitialDirContext(env);
+            DirContext context = createContext();
             
             Attributes attributes = context.getAttributes(context.getNameInNamespace() );
             Attribute dna = attributes.get("defaultNamingContext");
@@ -108,6 +102,18 @@ public class LDAPUserManager implements UserManager {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+	}
+
+	private DirContext createContext() throws NamingException {
+		Hashtable<String, String> env = new Hashtable<String, String>();
+		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+		env.put(Context.PROVIDER_URL, url);
+		env.put(Context.REFERRAL, "follow");         
+		env.put(Context.SECURITY_AUTHENTICATION, "simple");
+		env.put(Context.SECURITY_PRINCIPAL, ldapUsername);
+		env.put(Context.SECURITY_CREDENTIALS, ldapPassword);           
+		DirContext context = new InitialDirContext(env);
+		return context;
 	}
 
 	@Override
@@ -137,8 +143,8 @@ public class LDAPUserManager implements UserManager {
 	
 	public static void main(String[] args) {
 		LDAPUserManager um = new LDAPUserManager("ldap://192.168.100.200", 
-				"username", 
-				"password", 
+				"svn.user@openroadsconsulting.com", 
+				"1B.5ubv3r$ion", 
 				"SvnAdmin");
 		for(User u: um.getUsers()) {
 			System.out.println(u.getName() + "  " + u.getEmailAddress() + " " + u.isAdministrator());
