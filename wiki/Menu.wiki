@@ -2,8 +2,10 @@
 
 ===Getting Started===
   * Setting up SVN
-    * Using Active Directory
+    Using Local User Account
+    Using Active Directory
   * Setting up Subversion Administrator
-    * Using Active Directory
+    Using Local User Account
+    Using Active Directory
 
 ===Using Subversion Administrator===
