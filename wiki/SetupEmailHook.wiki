@@ -1,4 +1,7 @@
 #summary One-sentence summary of this page.
 
 Insert the following into your 'hooks/post-commit' script
-`wget -o /dev/null -O /dev/null http://localhost:8080/subversionadmin/trigger/mail?revision=$REV`
+
+{{{
+wget -o /dev/null -O /dev/null http://localhost:8080/subversionadmin/trigger/mail?revision=$REV
+}}}
