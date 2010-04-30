@@ -1,9 +1,9 @@
 =Contents=
 
-=Getting Started=
+===Getting Started===
   * Setting up SVN
     * Using Active Directory
   * Setting up Subversion Administrator
     * Using Active Directory
 
-=Using Subversion Administrator=
+===Using Subversion Administrator===
