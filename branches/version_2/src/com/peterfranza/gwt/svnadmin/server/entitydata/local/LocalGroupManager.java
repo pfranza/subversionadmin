@@ -72,7 +72,11 @@ public class LocalGroupManager implements GroupManager {
 				Collection<Entity> l = new ArrayList<Entity>();
 				Collection<HbmGroupImpl> hgl = session.createCriteria(HbmGroupImpl.class).list();
 				for(HbmGroupImpl hg: hgl) {
-					l.add(new GroupAdapter(hg));
+					if(hg != null && hg.getName() != null) {
+						l.add(new GroupAdapter(hg));
+					} else if(hg != null){
+						session.delete(hg);
+					}
 				}
 				return l; 
 			}
