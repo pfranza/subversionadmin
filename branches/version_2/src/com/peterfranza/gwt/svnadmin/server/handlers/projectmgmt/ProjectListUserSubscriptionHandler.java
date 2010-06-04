@@ -11,6 +11,7 @@ import com.peterfranza.gwt.svnadmin.client.actions.projectmanagement.ProjectList
 import com.peterfranza.gwt.svnadmin.client.actions.projectmanagement.ProjectListUserSubscriptions.SubscriptionList;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
+import com.peterfranza.gwt.svnadmin.server.entitydata.cache.CachedUserManager;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.Project;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.RepositoryManager;
 
@@ -23,7 +24,7 @@ public class ProjectListUserSubscriptionHandler implements ActionHandler<Project
 	public ProjectListUserSubscriptionHandler(RepositoryManager reposManager,
 			UserManager userManager) {
 		this.reposManager = reposManager;
-		this.userManager = userManager;
+		this.userManager = new CachedUserManager(userManager, 30000);
 	}
 	
 	@Override

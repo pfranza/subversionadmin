@@ -12,6 +12,7 @@ import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.ListUsers;
 import com.peterfranza.gwt.svnadmin.client.actions.usermanagement.ListUsers.UserList;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
+import com.peterfranza.gwt.svnadmin.server.entitydata.cache.CachedUserManager;
 
 public class ListUsersHandler implements ActionHandler<ListUsers, UserList>{
 
@@ -19,7 +20,7 @@ public class ListUsersHandler implements ActionHandler<ListUsers, UserList>{
 
 	@Inject
 	public ListUsersHandler(UserManager userManager) {
-		this.userManager = userManager;
+		this.userManager = new CachedUserManager(userManager, 30000);
 	}
 	
 	@Override

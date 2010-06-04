@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
+import com.peterfranza.gwt.svnadmin.server.entitydata.cache.CachedUserManager;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.ChangeSet;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.ChangeSetMiner;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.Project;
@@ -42,7 +43,7 @@ public class MailTriggerServlet extends HttpServlet {
 		this.changeMiner = changeMiner;
 		this.mailer = mailer;
 		this.reposManager = reposManager;
-		this.userManager = userManager;
+		this.userManager = new CachedUserManager(userManager, 30000);
 	}
 	
 	@Override
