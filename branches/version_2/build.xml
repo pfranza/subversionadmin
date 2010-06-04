@@ -47,7 +47,7 @@
 	        </java>
 	        -->
 
-	        <zip destfile="subversionadministrator.war" basedir="war"/>		
+	        <zip destfile="subversionadministrator_2.2b.war" basedir="war"/>		
 	</target>
 
 	

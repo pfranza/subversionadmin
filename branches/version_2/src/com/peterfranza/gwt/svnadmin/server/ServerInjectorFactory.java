@@ -43,7 +43,14 @@ public class ServerInjectorFactory {
 					cfg.getString("svnadministrator.users.ad.url"), 
 					cfg.getString("svnadministrator.users.ad.username", ""), 
 					cfg.getString("svnadministrator.users.ad.password", ""), 
-					cfg.getString("svnadministrator.users.ad.admingroup", "")));
+					cfg.getString("svnadministrator.users.ad.admingroup", ""),
+					cfg.getString("svnadministrator.users.ad.query"),
+					cfg.getStringArray("svnadministrator.users.ad.query.attr"),
+					cfg.getString("svnadministrator.users.ad.query.usernamekey"),
+					cfg.getString("svnadministrator.users.ad.query.mailkey"),
+					cfg.getString("svnadministrator.users.ad.query.principlekey"),
+					cfg.getString("svnadministrator.users.ad.query.memberofkey")
+					));
 		} else {
 			modules.add(new LocalUserModule(new ConfigFileWriter(
 					new File(cfg.getString("svnadministrator.svn.passwordsfile")))));
