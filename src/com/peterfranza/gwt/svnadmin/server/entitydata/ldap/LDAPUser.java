@@ -14,15 +14,18 @@ public class LDAPUser implements User {
 	private String name;
 	private boolean isAdministrator = false;
 	
-	public LDAPUser(Attributes attribs, String administratorsGroup) throws NamingException {
-		
-		principal = attribs.get("userPrincipalName").get().toString();
-		email = attribs.get("mail").get().toString();
-		name = attribs.get("sAMAccountName").get().toString();
+	public LDAPUser(Attributes attribs, String administratorsGroup, 
+			String usernameKey, String mailKey, String principleKey, String memberOfKey) throws NamingException {
+				
+		principal = attribs.get(principleKey) != null ? attribs.get(principleKey).get().toString() : "";
+		email = attribs.get(mailKey) != null ? attribs.get(mailKey).get().toString() : "";
+		name = attribs.get(usernameKey) != null ? attribs.get(usernameKey).get().toString() : "";
 
-		for (Enumeration<?> vals = attribs.get("memberOf").getAll(); 
-				vals.hasMoreElements(); 
-				isAdministrator |= vals.nextElement().toString().toLowerCase().contains(administratorsGroup.toLowerCase()));
+		if(attribs.get(memberOfKey) != null) {
+			for (Enumeration<?> vals = attribs.get(memberOfKey).getAll(); 
+			vals.hasMoreElements(); 
+			isAdministrator |= vals.nextElement().toString().toLowerCase().contains(administratorsGroup.toLowerCase()));
+		}
 	}
 	
 	@Override

@@ -15,6 +15,7 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
@@ -25,17 +26,37 @@ public class LDAPUserManager implements UserManager {
 	private String ldapUsername;
 	private String ldapPassword;
 	private String adminGroup;
+	private String ldapQuery;
+	private String[] ldapQueryAttrs;
+	private String usernameKey;
+	private String mailKey;
+	private String principleKey;
+	private String memberOfKey;
+	private String subcontext = "OU=Users";
 	
 	@Inject
 	public LDAPUserManager(
 			@Named("ldapUrl") String url, 
 			@Named("ldapUsername") String ldapUsername, 
 			@Named("ldapPassword") String ldapPassword,
-			@Named("ldapAdminGroup") String adminGroup) {
+			@Named("ldapAdminGroup") String adminGroup,
+			@Named("ldapQuery") String ldapQuery,
+			@Named("ldapQueryAttributes") Provider<String[]> ldapQueryAttrs,
+			@Named("usernameKey") String usernameKey,
+			@Named("mailKey") String mailKey,
+			@Named("principleKey") String principleKey,
+			@Named("memberOfKey") String memberOfKey) {
+		
 		this.url = url;
 		this.ldapUsername = ldapUsername;
 		this.ldapPassword = ldapPassword;
 		this.adminGroup = adminGroup;
+		this.ldapQuery = ldapQuery;
+		this.ldapQueryAttrs = ldapQueryAttrs.get();
+		this.usernameKey = usernameKey;
+		this.mailKey = mailKey;
+		this.principleKey = principleKey;
+		this.memberOfKey = memberOfKey;
 	}
 	
 	@Override
@@ -80,24 +101,24 @@ public class LDAPUserManager implements UserManager {
             Attributes attributes = context.getAttributes(context.getNameInNamespace() );
             Attribute dna = attributes.get("defaultNamingContext");
             System.out.println(dna.get());
-            
-            String query = "(&(objectClass=user)(mail=*))";
-    		String[] attributes1 = {"cn","userPrincipalName","name","mail","memberOf","sAMAccountName"};
     		
             
             SearchControls ctrl = new SearchControls();
             ctrl.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            ctrl.setReturningAttributes(attributes1);
+            ctrl.setReturningAttributes(ldapQueryAttrs);
             
-            NamingEnumeration<?> enumeration = context.search(dna.get().toString(), query, ctrl);
+            NamingEnumeration<?> enumeration = context.search(dna.get().toString(), ldapQuery, ctrl);
             ArrayList<LDAPUser> users = new ArrayList<LDAPUser>();
+
             while (enumeration.hasMoreElements()) {
     			SearchResult result = (SearchResult) enumeration.next();
     			Attributes attribs = result.getAttributes();
     			if (null != attribs) {
-    				users.add(new LDAPUser(attribs, adminGroup));
+    				users.add(new LDAPUser(attribs, adminGroup, 
+    						usernameKey, mailKey, principleKey, memberOfKey));
     			}
             }
+            
             return users;
         } catch (Exception e) {
             throw new RuntimeException(e);
