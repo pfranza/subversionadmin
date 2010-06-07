@@ -2,6 +2,8 @@ package com.peterfranza.gwt.svnadmin.server.repositorydata.svn;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import com.google.inject.Inject;
@@ -84,26 +86,105 @@ public class DefaultProjectDataWriter implements ProjectDataWriter {
 		for(Project p: reposManager.getProjects()) {
 			buf.append(System.getProperty("line.separator"));
 			buf.append("["+p.getPath()+"]").append(System.getProperty("line.separator"));
-			for(Group u: groupManager.getGroups()) {
-				if(reposManager.canWrite(p.getPath(), u)) {
-					buf.append("@").append(u.getName()).append(" = rw").append(System.getProperty("line.separator"));
-				} else if(reposManager.canRead(p.getPath(), u)) {
-					buf.append("@").append(u.getName()).append(" = r").append(System.getProperty("line.separator"));
+			
+			for(Person person: initializePermissions(getNewPersonCollection(userManager), p.getPath(), 
+					groupManager, userManager, reposManager).getPeople()) {
+				if(person.canWrite) {
+					buf.append(person.person.getName()).append(" = rw").append(System.getProperty("line.separator"));
+				} else if(person.canRead) {
+					buf.append(person.person.getName()).append(" = r").append(System.getProperty("line.separator"));
 				} else {
-					buf.append("@").append(u.getName()).append(" = ").append(System.getProperty("line.separator"));
+					buf.append(person.person.getName()).append(" = ").append(System.getProperty("line.separator"));
 				}
-			}
-			for(User u: userManager.getUsers()) {
-				if(reposManager.canWrite(p.getPath(), u)) {
-					buf.append(u.getName()).append(" = rw").append(System.getProperty("line.separator"));
-				} else if(reposManager.canRead(p.getPath(), u)) {
-					buf.append(u.getName()).append(" = r").append(System.getProperty("line.separator"));
-				} 
 			}
 			
 		}
 		
 		authorsFileWriter.save(buf.toString().trim());
+	}
+	
+	private static PersonCollection initializePermissions(PersonCollection collection,
+			String reposPath, GroupManager groupManager, 
+			UserManager userManager, RepositoryManager reposManager) {
+		for(Group grp: groupManager.getGroups()) {
+			if(reposManager.canWrite(reposPath, grp)) {
+				for(User u: getAllUsers(grp)) {
+					collection.setWrite(u);
+				}
+			} else if(reposManager.canRead(reposPath, grp)) {
+				for(User u: getAllUsers(grp)) {
+					collection.setRead(u);	
+				}
+			} 
+		}
+		for(User u: userManager.getUsers()) {
+			if(reposManager.canWrite(reposPath, u)) {
+				collection.setWrite(u);
+			} else if(reposManager.canRead(reposPath, u)) {
+				collection.setRead(u);
+			} 
+		}
+		return collection;
+	}
+	
+	private static Collection<User> getAllUsers(Group grp) {
+		ArrayList<User> p = new ArrayList<User>();
+		for(Entity e: grp.getMembers()) {
+			if(e instanceof User) {
+				p.add((User)e);
+			} else if( e instanceof Group) {
+				p.addAll(getAllUsers((Group)e));
+			}
+		}
+			
+		return p;
+	}
+	
+	
+	private static PersonCollection getNewPersonCollection(UserManager userManager) {
+		PersonCollection pc = new PersonCollection();
+		for(User u: userManager.getUsers()) {
+			pc.people.put(u.getName(), new Person(u));
+		}
+		return pc;
+	}
+	
+	private static class Person implements Comparable<Person>{
+		private User person;
+		private boolean canRead;
+		private boolean canWrite;
+		
+		private Person(User u) {
+			this.person = u;
+			if(u.isAdministrator()) {
+				canWrite = true;
+			}
+ 		}
+
+		@Override
+		public int compareTo(Person o) {
+			return person.getName().compareToIgnoreCase(o.person.getName());
+		}
+		
+	}
+	
+	private static class PersonCollection {
+		private HashMap<String, Person> people = new HashMap<String, Person>();
+
+		public void setWrite(User u) {
+			people.get(u.getName()).canWrite = true;
+		}
+
+		public void setRead(User u) {
+			people.get(u.getName()).canRead = true;
+		}
+		
+		public Collection<Person> getPeople() {
+			ArrayList<Person> p = new ArrayList<Person>(people.values());
+			Collections.sort(p);
+			return p;
+		}
+		
 	}
 	
 }
