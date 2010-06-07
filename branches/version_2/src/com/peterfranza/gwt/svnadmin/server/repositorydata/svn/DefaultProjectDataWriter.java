@@ -42,7 +42,7 @@ public class DefaultProjectDataWriter implements ProjectDataWriter {
 		for (Iterator<User> iterator = users.iterator(); iterator.hasNext();) {
 			User user = iterator.next();
 			if(user != null) {
-				buf.append(user.getName());
+				buf.append(user.getName().toLowerCase());
 				if(iterator.hasNext()) {
 					buf.append(", ");
 				}
@@ -51,25 +51,13 @@ public class DefaultProjectDataWriter implements ProjectDataWriter {
 		return buf.toString();
 	}
 	
-	private Collection<User> asUsers(Group group) {
-		Collection<User> list = new ArrayList<User>();
-		for(Entity e: group.getMembers()) {
-			if(e instanceof Group) {
-				list.addAll(asUsers((Group)e));
-			} else {
-				list.add((User)e);
-			}
-		}
-		return list;
-	}
-	
 	@Override
 	public void saveData() {
 		StringBuffer buf = new StringBuffer();
 		
 		buf.append("[groups]").append(System.getProperty("line.separator"));
 		for(Group u: groupManager.getGroups()) {
-			buf.append(u.getName()).append(" = ").append(implode(asUsers(u))).append(System.getProperty("line.separator"));
+			buf.append(u.getName()).append(" = ").append(implode(getAllUsers(u))).append(System.getProperty("line.separator"));
 		}
 		
 		buf.append(System.getProperty("line.separator"));
@@ -79,7 +67,7 @@ public class DefaultProjectDataWriter implements ProjectDataWriter {
 		buf.append("* = r").append(System.getProperty("line.separator"));
 		for(User u: userManager.getUsers()) {
 			if(u.isAdministrator()) {
-				buf.append(u.getName()).append(" = rw").append(System.getProperty("line.separator"));
+				buf.append(u.getName().toLowerCase()).append(" = rw").append(System.getProperty("line.separator"));
 			}
 		}
 
