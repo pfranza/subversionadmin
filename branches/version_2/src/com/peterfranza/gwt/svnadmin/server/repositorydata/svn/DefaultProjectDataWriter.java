@@ -78,11 +78,20 @@ public class DefaultProjectDataWriter implements ProjectDataWriter {
 			for(Person person: initializePermissions(getNewPersonCollection(userManager), p.getPath(), 
 					groupManager, userManager, reposManager).getPeople()) {
 				if(person.canWrite) {
-					buf.append(person.person.getName().toLowerCase()).append(" = rw").append(System.getProperty("line.separator"));
+					buf.append(person.person.getName()).append(" = rw").append(System.getProperty("line.separator"));
+					if(!person.person.getName().equals(person.person.getName().toLowerCase())) {
+						buf.append(person.person.getName().toLowerCase()).append(" = rw").append(System.getProperty("line.separator"));
+					}
 				} else if(person.canRead) {
-					buf.append(person.person.getName().toLowerCase()).append(" = r").append(System.getProperty("line.separator"));
+					buf.append(person.person.getName()).append(" = r").append(System.getProperty("line.separator"));
+					if(!person.person.getName().equals(person.person.getName().toLowerCase())) {
+						buf.append(person.person.getName().toLowerCase()).append(" = r").append(System.getProperty("line.separator"));
+					}
 				} else {
-					buf.append(person.person.getName().toLowerCase()).append(" = ").append(System.getProperty("line.separator"));
+					buf.append(person.person.getName()).append(" = ").append(System.getProperty("line.separator"));
+					if(!person.person.getName().equals(person.person.getName().toLowerCase())) {
+						buf.append(person.person.getName().toLowerCase()).append(" = ").append(System.getProperty("line.separator"));
+					}
 				}
 			}
 			
