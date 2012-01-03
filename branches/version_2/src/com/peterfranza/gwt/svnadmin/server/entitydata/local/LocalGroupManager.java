@@ -11,6 +11,7 @@ import com.google.inject.Provider;
 import com.peterfranza.gwt.svnadmin.server.entitydata.Entity;
 import com.peterfranza.gwt.svnadmin.server.entitydata.Group;
 import com.peterfranza.gwt.svnadmin.server.entitydata.GroupManager;
+import com.peterfranza.gwt.svnadmin.server.entitydata.User;
 import com.peterfranza.gwt.svnadmin.server.entitydata.UserManager;
 import com.peterfranza.gwt.svnadmin.server.entitydata.cache.CachedUserManager;
 import com.peterfranza.gwt.svnadmin.server.repositorydata.ProjectDataWriter;
@@ -182,7 +183,10 @@ public class LocalGroupManager implements GroupManager {
 				if(s.startsWith("@")) {
 					l.add(getGroup(s.substring(1)));
 				} else {
-					l.add(userManager.getUserForName(s));
+					User user = userManager.getUserForName(s);
+					if(user != null) {
+						l.add(user);
+					}
 				}
 			}
 			return l;
