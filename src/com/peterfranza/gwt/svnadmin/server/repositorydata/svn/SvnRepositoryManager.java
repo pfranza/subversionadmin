@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -51,13 +52,25 @@ public class SvnRepositoryManager implements RepositoryManager {
 
 	@Override
 	public SvnProjectBean getProjectForName(final String name) {
+		
 		return transact(new TransactionVisitor<SvnProjectBean>() {
 			@Override
 			public SvnProjectBean transact(Session session) {
-				return (SvnProjectBean) session.createCriteria(SvnProjectBean.class)
-					.add(Restrictions.eq("path", name)).uniqueResult();
+				try {
+					return (SvnProjectBean) session.createCriteria(SvnProjectBean.class)
+							.add(Restrictions.eq("path", name)).uniqueResult();
+				} catch (NonUniqueResultException e) {
+					List<?> lst = session.createCriteria(SvnProjectBean.class)
+							.add(Restrictions.eq("path", name)).list();
+					for(int i = 1; i < lst.size(); i++) {
+						session.delete(lst.get(i));
+					}
+
+					return (SvnProjectBean) lst.get(0);
+				}
 			}
 		});
+		
 	}
 
 	@SuppressWarnings("unchecked")

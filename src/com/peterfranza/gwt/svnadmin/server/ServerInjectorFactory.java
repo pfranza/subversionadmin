@@ -32,6 +32,8 @@ public class ServerInjectorFactory {
 	public ServerInjectorFactory(ServletContext servletContext){
 		final Configuration cfg = new ConfigurationFactory(servletContext).get();
 		
+		System.out.println(cfg.getString("svnadministrator.svn.authorsfile"));
+		
 		modules.add(new SvnManagementModule(
 				cfg.getString("svnadministrator.svn.url"),
 				cfg.getString("svnadministrator.svn.username", ""),
